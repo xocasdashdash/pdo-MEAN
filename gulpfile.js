@@ -1,0 +1,78 @@
+/*!
+ * gulp
+ * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-minify-css gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del --save-dev
+ */
+
+// Load plugins
+var gulp = require('gulp'),
+    sass = require('gulp-ruby-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    minifycss = require('gulp-minify-css'),
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify'),
+    imagemin = require('gulp-imagemin'),
+    rename = require('gulp-rename'),
+    concat = require('gulp-concat'),
+    notify = require('gulp-notify'),
+    nodemon = require('gulp-nodemon'),
+    cache = require('gulp-cache'),
+    livereload = require('gulp-livereload'),
+    del = require('del');
+
+// Styles
+/*
+gulp.task('styles', function() {
+  return gulp.src('src/styles/main.scss')
+    .pipe(sass({ style: 'expanded', }))
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+    .pipe(gulp.dest('dist/styles'))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(minifycss())
+    .pipe(gulp.dest('dist/styles'))
+    .pipe(notify({ message: 'Styles task complete' }));
+});
+*/
+// Scripts
+gulp.task('scripts', function() {
+    return gulp.src('server/**/*.js')
+        .pipe(jshint('.jshintrc'))
+        .pipe(jshint.reporter('default'))
+        .pipe(notify({
+            message: 'Scripts verificados',
+            onLast: true
+        }));
+});
+
+
+// Watch
+gulp.task('watch', function() {
+    // Watch .js files
+    gulp.watch('server/**/*.js', ['scripts']);
+    // Create LiveReload server
+    livereload.listen();
+
+    // Watch any files in dist/, reload on change
+    gulp.watch(['server/**'])
+        .on('change', livereload.changed);
+
+});
+
+gulp.task('serve', function() {
+    nodemon({
+        'script': 'server/server.js',
+        env: {
+            'NODE_ENV': 'development'
+        },
+        nodeArgs: ['--debug']
+
+    });
+});
+
+
+// Default task
+
+gulp.task('default', function() {
+    gulp.start('scripts');
+    gulp.start('watch');
+    gulp.start('serve');
+});

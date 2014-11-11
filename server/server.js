@@ -7,14 +7,16 @@
 var express = require('express'); // call express
 var app = express(); // define our app using express
 var bodyParser = require('body-parser');
-var mongoose   = require('mongoose');
+var mongoose = require('mongoose');
 
 
 mongoose.connect('mongodb://gestor:gestor1234@localhost/mean-pdo'); // connect to our database
 
-require('./app/models/models.js').initialize();
+require('./app/models/models.js')
+    .initialize();
 
 var Pdo = mongoose.model('Pdo');
+var School = mongoose.model('School');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({
@@ -35,26 +37,7 @@ router.get('/', function(req, res) {
     });
 });
 
-router.route('/pdo')
-//Crear un pisado
-.post(function(req, res) {
-	console.log('Recibida propuesta');
-    var pdo = new Pdo();
-    pdo.name = req.body.name;
-    pdo.surname = req.body.surname;
-    pdo.email = req.body.email;
-    pdo.phone = req.body.phone;
-    pdo.num_id = req.body.num_id;
-    pdo.save(function(err) {
-    	console.log(err);
-        if (err) {
-            res.send(err);
-        }
-        res.json('Pisado creado!'); 
-
-    });
-});
-
+require('./app/routes/routes.js').initialize(app);
 
 
 // more routes for our API will happen here
@@ -62,8 +45,12 @@ router.route('/pdo')
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', router);
+console.log(app._router.stack);
+
 
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log(Math.round(new Date()
+    .getTime() / 1000));
+console.log('Magic happens on porat ' + port);

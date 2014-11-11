@@ -4,33 +4,27 @@ Uses MongoDB for storage and mongoose for data access
 */
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
+var denormalize = require('mongoose-denormalize');
+
 var Schema = mongoose.Schema;
 
 module.exports = function() {
     var PdoSchema = new Schema({
         name: {
             type: String,
-            required: true,
-            validate: validate({
-                validator: 'isAlpha',
-                message: 'Solamente numeros y letras'
-            })
+            required: true
         },
         surname: {
             type: String,
-            required: true,
-            validate: validate({
-                validator: 'isAlpha',
-                message: 'Solamente numeros y letras'
-            })
+            required: true
         },
         num_id: {
             type: String,
             required: true,
-            validate: [validate({
+            validate: validate({
                 validator: 'isAlphanumeric',
                 message: 'Solamente números y letras'
-            })]
+            })
         },
         email: {
             type: String,
@@ -47,7 +41,16 @@ module.exports = function() {
                 validator: 'isNumeric',
                 message: 'Solamente números'
             })
+        },
+        school: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'School'
+        }
+    });
+    PdoSchema.plugin(denormalize, {
+        schoolname: {
+            from: 'school'
         }
     });
     mongoose.model('Pdo', PdoSchema);
-}
+};

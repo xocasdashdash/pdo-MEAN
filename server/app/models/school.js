@@ -4,17 +4,16 @@ Uses MongoDB for storage and mongoose for data access
 */
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
+var denormalize = require('mongoose-denormalize');
+
 var Schema = mongoose.Schema;
 
 module.exports = function() {
     var SchoolSchema = new Schema({
-        name: {
+        schoolname: {
             type: String,
             required: true,
-            validate: validate({
-                validator: 'isAlphanumeric',
-                message: 'Solamente numeros y letras'
-            })
+            unique: true
         },
         url: {
             type: String,
@@ -27,11 +26,19 @@ module.exports = function() {
         email: {
             type: String,
             required: true,
+            unique: true,
             validate: validate({
                 validator: 'isEmail',
                 message: 'No es un e-mail valido'
             })
         }
     });
+    SchoolSchema.plugin(denormalize, {
+        schoolname: {
+            to: 'Pdo',
+            ref: 'school'
+        }
+    });
     mongoose.model('School', SchoolSchema);
-}
+
+};
