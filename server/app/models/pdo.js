@@ -44,13 +44,30 @@ module.exports = function() {
         },
         school: {
             type: mongoose.Schema.ObjectId,
-            ref: 'School'
+            ref: 'School',
+            required: true
+        },
+        grade: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Grade',
+            required: true
+        },
+        course: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Course',
+            required: true
         }
     });
     PdoSchema.plugin(denormalize, {
         schoolname: {
             from: 'school'
-        }
+        },
+        name:{
+            from: 'grade'
+        },
+        name:{
+            from: 'course'
+        },
     });
     mongoose.model('Pdo', PdoSchema);
 };

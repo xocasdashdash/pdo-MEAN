@@ -13,7 +13,6 @@ module.exports = function() {
         schoolname: {
             type: String,
             required: true,
-            unique: true
         },
         url: {
             type: String,
@@ -26,7 +25,6 @@ module.exports = function() {
         email: {
             type: String,
             required: true,
-            unique: true,
             validate: validate({
                 validator: 'isEmail',
                 message: 'No es un e-mail valido'

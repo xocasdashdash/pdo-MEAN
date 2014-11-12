@@ -9,7 +9,8 @@ var denormalize = require('mongoose-denormalize');
 var Schema = mongoose.Schema;
 
 module.exports = function() {
-    var CourseSchema = new Schema({
+
+    var GradeSchema = new Schema({
         name: {
             type: String,
             required: true
@@ -17,15 +18,21 @@ module.exports = function() {
         code: {
             type: String,
             required: true,
+            unique: true,
             validate: validate({
                 validator: 'isAlphanumeric',
                 message: 'Solamente números y letras - No espacios'
             })
         },
-        grade: {
+        school: {
             type: mongoose.Schema.ObjectId,
-            ref: 'Grade'
+            ref: 'School'
         }
     });
-    mongoose.model('Course', CourseSchema);
-};
+    GradeSchema.plugin(denormalize, {
+        schoolname: {
+            from: 'school'
+        }
+    });
+    mongoose.model('Grade',GradeSchema);
+}

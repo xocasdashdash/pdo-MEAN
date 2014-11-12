@@ -8,6 +8,7 @@
   "dependencies": {
     "body-parser": "~1.0.1",
     "express": "~4.0.0",
+    "faker": "^2.0.1",
     "mongoose": "~3.6.13",
     "mongoose-denormalize": "0.0.1",
     "mongoose-validator": "^1.0.2"
