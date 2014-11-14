@@ -29,7 +29,8 @@ module.exports = function() {
                 validator: 'isEmail',
                 message: 'No es un e-mail valido'
             })
-        }
+        },
+        school_codes:[]
     });
     SchoolSchema.plugin(denormalize, {
         schoolname: {

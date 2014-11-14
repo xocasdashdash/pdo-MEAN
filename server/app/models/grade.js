@@ -35,4 +35,4 @@ module.exports = function() {
         }
     });
     mongoose.model('Grade',GradeSchema);
-}
+};

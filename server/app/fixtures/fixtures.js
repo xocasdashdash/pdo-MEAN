@@ -1,11 +1,12 @@
 /**
  * Datos ficticios de la aplicacion
  */
-'use strict'
+'use strict';
 var mongoose = require('mongoose');
 var faker = require('faker');
-
+var data = require('./data.js')();
 var db = mongoose.connection;
+var q = require('q');
 
 db.on('error', console.error);
 db.on('open', function() {
@@ -63,20 +64,36 @@ var SchoolArray = [{
 }];
 
 var schools = [];
-for (var i = 0; i < SchoolArray.length; i++) {
+var prom_schools = q.defer();
+for (var i = 0; i < data.Schools.length; i++) {
 
     var school = new School();
-    school.schoolname = SchoolArray[i].schoolname;
-    school.url = SchoolArray[i].url;
-    school.email = SchoolArray[i].email;
+    school.schoolname = data.Schools[i].schoolname;
+    school.url = data.Schools[i].url;
+    school.email = data.Schools[i].email;
+    school.school_codes = data.Schools[i].school_codes;
     school.save(function(err, school) {
         if (err) {
-            console.log(err);
+            prom_schools.reject(err);
         } else {
             schools.push(school);
         }
         if (i === schools.length) {
-            mongoose.connection.close();
+            prom_schools.resolve(schools);
         }
     });
-}
+};
+
+prom_schools.promise.then(function(schools) {
+	console.log('hecho!');
+	//Aqui ya con todas las escuelas en schools puedo ir haciendo cada asignatura
+	for(var i = 0; i < schools.length; i++){
+		console.log(schools[i]);
+	}
+	mongoose.connection.close();
+
+}).catch(function(err){
+	console.log('error');
+	console.log(err);
+	mongoose.connection.close();
+});

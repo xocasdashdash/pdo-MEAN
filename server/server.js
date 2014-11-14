@@ -45,7 +45,6 @@ require('./app/routes/routes.js').initialize(app);
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', router);
-console.log(app._router.stack);
 
 
 // START THE SERVER

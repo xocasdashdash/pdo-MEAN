@@ -62,10 +62,10 @@ module.exports = function() {
         schoolname: {
             from: 'school'
         },
-        name:{
+        gradename:{
             from: 'grade'
         },
-        name:{
+        coursename:{
             from: 'course'
         },
     });
