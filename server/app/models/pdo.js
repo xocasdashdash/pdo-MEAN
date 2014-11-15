@@ -47,9 +47,9 @@ module.exports = function() {
             ref: 'School',
             required: true
         },
-        grade: {
+        program: {
             type: mongoose.Schema.ObjectId,
-            ref: 'Grade',
+            ref: 'Program',
             required: true
         },
         course: {
@@ -62,10 +62,10 @@ module.exports = function() {
         schoolname: {
             from: 'school'
         },
-        gradename:{
-            from: 'grade'
+        gradename: {
+            from: 'program'
         },
-        coursename:{
+        coursename: {
             from: 'course'
         },
     });

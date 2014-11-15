@@ -1,4 +1,4 @@
-var models = ['school.js', 'grade.js','course.js','pdo.js'];
+var models = ['school.js', 'program.js','course.js','pdo.js'];
 
 exports.initialize = function() {
     var exportedModel;

@@ -1,3 +1,7 @@
+/*
+Los datos sacados de la web tienen dos duplicados (G500 y G550) asi que les he puesto un 1 al final para diferenciarlos y que no de problemas
+*/
+
 var request = require('request');
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
@@ -292,12 +296,12 @@ grados = [{
     "school": ""
 }, {
     "name": "Grado en Educación Infantil (Semipresencial)",
-    "code": "G500",
+    "code": "G5001",
     "school_code": "204",
     "school": ""
 }, {
     "name": "Grado en Educación Primaria (Semipresencial)",
-    "code": "G550",
+    "code": "G5501",
     "school_code": "204",
     "school": ""
 }, {

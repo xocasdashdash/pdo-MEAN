@@ -10,7 +10,7 @@ var Schema = mongoose.Schema;
 
 module.exports = function() {
 
-    var GradeSchema = new Schema({
+    var ProgramSchema = new Schema({
         name: {
             type: String,
             required: true
@@ -29,10 +29,10 @@ module.exports = function() {
             ref: 'School'
         }
     });
-    GradeSchema.plugin(denormalize, {
+    ProgramSchema.plugin(denormalize, {
         schoolname: {
             from: 'school'
         }
     });
-    mongoose.model('Grade',GradeSchema);
+    mongoose.model('Program',ProgramSchema);
 };

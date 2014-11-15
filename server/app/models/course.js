@@ -22,9 +22,9 @@ module.exports = function() {
                 message: 'Solamente números y letras - No espacios'
             })
         },
-        grade: {
+        program: {
             type: mongoose.Schema.ObjectId,
-            ref: 'Grade'
+            ref: 'Program'
         }
     });
     mongoose.model('Course', CourseSchema);
