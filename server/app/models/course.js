@@ -7,6 +7,8 @@ var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
+var Program = mongoose.model('Program');
+
 
 module.exports = function() {
     var CourseSchema = new Schema({
@@ -26,6 +28,21 @@ module.exports = function() {
             type: mongoose.Schema.ObjectId,
             ref: 'Program'
         }
+    });
+    CourseSchema.plugin(denormalize, {
+        name: {
+            from: 'program'
+        }
+    });
+    CourseSchema.pre('save', function(next) {
+        Program.update({
+            _id: this.program
+        }, {
+            $inc: {
+                number_of_courses: 1
+            }
+        }).exec();
+        next();
     });
     mongoose.model('Course', CourseSchema);
 };

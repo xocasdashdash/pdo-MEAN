@@ -27,6 +27,10 @@ module.exports = function() {
         school: {
             type: mongoose.Schema.ObjectId,
             ref: 'School'
+        },
+        number_of_courses:{
+            type: Number,
+            default: 0
         }
     });
     ProgramSchema.plugin(denormalize, {

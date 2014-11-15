@@ -26,7 +26,7 @@ module.exports = {
         "schoolname": "CCSS",
         "url": "www.uah.es/ccss",
         "email": "ccss@uah.es",
-        "school_codes": ["103", "208"]
+        "school_codes": ["103", "208", "206"]
     }, {
         "schoolname": "Filosofía",
         "url": "www.uah.es/filosofia",
