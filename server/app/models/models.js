@@ -1,10 +1,9 @@
-var models = ['school.js', 'program.js','course.js','pdo.js'];
+'use strict';
+var models = ['school.js', 'program.js','course.js','user.js','pdo.js'];
 
 exports.initialize = function() {
-    var exportedModel;
     var l = models.length;
     for (var i = 0; i < l; i++) {
-        exportedModel = require('./' + models[i]);
-        exportedModel();
+        require('./' + models[i]);        
     }
 };

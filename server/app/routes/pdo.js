@@ -1,10 +1,11 @@
+'use strict';
 var express = require('express'); // call express
 var mongoose = require('mongoose');
 
 var School = mongoose.model('School');
 var Pdo = mongoose.model('Pdo');
 module.exports = function(app) {
-    router = express.Router();
+    var router = express.Router();
     router.route('/')
     //Crear un pisado
     .post(function(req, res) {

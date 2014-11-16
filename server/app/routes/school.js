@@ -1,10 +1,12 @@
+'use strict';
+
 var express = require('express'); // call express
 var mongoose = require('mongoose');
 
 var School = mongoose.model('School');
 
 module.exports = function(app) {
-    router = express.Router();
+    var router = express.Router();
     router.route('/')
         .post(function(req, res) {
             var school = new School();

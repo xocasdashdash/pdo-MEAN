@@ -1,6 +1,7 @@
 /*
 Los datos sacados de la web tienen dos duplicados (G500 y G550) asi que les he puesto un 1 al final para diferenciarlos y que no de problemas
 */
+'use strict';
 
 var request = require('request');
 var cheerio = require('cheerio');
@@ -9,7 +10,7 @@ var jf = require('jsonfile');
 var q = require('q');
 
 var encoding = 'iso-8859-1';
-grados = [{
+var grados = [{
     "name": "Grado en Derecho",
     "code": "G400",
     "school_code": "105",
@@ -347,10 +348,8 @@ var req_callback = function(index, defer) {
         $ = cheerio.load(body);
         var p = $('.table td a.popup');
         p.each(function(j, elem) {
-            var a = $(this)
-                .text(),
-                result_regex;
-            asignatura = {};
+            var a = $(this).text(),
+                result_regex, asignatura = {};
             result_regex = regex_nombre_code.exec(a);
             if (result_regex !== null) {
 

@@ -2,13 +2,15 @@
 * DataModel of the app. 
 Uses MongoDB for storage and mongoose for data access
 */
+'use strict';
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
 
-module.exports = function() {
+module.exports =
+    (function() {
     var PdoSchema = new Schema({
         name: {
             type: String,
@@ -70,4 +72,4 @@ module.exports = function() {
         },
     });
     mongoose.model('Pdo', PdoSchema);
-};
+})();

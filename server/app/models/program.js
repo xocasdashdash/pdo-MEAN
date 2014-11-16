@@ -2,14 +2,15 @@
 * DataModel of the app. 
 Uses MongoDB for storage and mongoose for data access
 */
+'use strict';
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
 
-module.exports = function() {
-
+module.exports = (function() {
+    console.log('Programa cargado');
     var ProgramSchema = new Schema({
         name: {
             type: String,
@@ -28,7 +29,7 @@ module.exports = function() {
             type: mongoose.Schema.ObjectId,
             ref: 'School'
         },
-        number_of_courses:{
+        number_of_courses: {
             type: Number,
             default: 0
         }
@@ -38,5 +39,5 @@ module.exports = function() {
             from: 'school'
         }
     });
-    mongoose.model('Program',ProgramSchema);
-};
+    mongoose.model('Program', ProgramSchema);
+})();

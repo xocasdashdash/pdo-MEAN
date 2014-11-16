@@ -1,3 +1,4 @@
+'use strict';
 var routes = ['school.js', 'pdo.js'];
 
 exports.initialize = function(app) {

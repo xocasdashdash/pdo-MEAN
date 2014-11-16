@@ -1,7 +1,15 @@
 /*
 Los datos sacados de la web tienen dos duplicados (G500 y G550) asi que les he puesto un 1 al final para diferenciarlos y que no de problemas
 */
+'use strict';
+
 module.exports = {
+    Users: [{
+        "username": "joaquin.fernandez@uah.es",
+        "email": "joaquin.fernandez@edu.uah.es",
+        "password": "1234",
+        "role": "ROLE_ADMIN"
+    }],
     Schools: [{
         "schoolname": "EPS",
         "url": "www.uah.es/politecnica",
