@@ -8,8 +8,6 @@ var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
-var Program = mongoose.model('Program');
-
 
 module.exports = (function() {
     var CourseSchema = new Schema({
@@ -35,30 +33,6 @@ module.exports = (function() {
             from: 'program'
         }
     });
-    CourseSchema.pre('save', function(next) {
-        var course = this;
-        if (course.isNew) {
-            Program.update({
-                _id: course.program
-            }, {
-                $inc: {
-                    number_of_courses: 1
-                }
-            }).exec();
-        }
-        next();
-    });
-    CourseSchema.pre('remove', function(next) {
-        var course = this;
-        Program.update({
-            _id: course.program
-        }, {
-            $inc: {
-                number_of_courses: -1
-            }
-        }).exec();
-        next();
-    });
-
+    
     mongoose.model('Course', CourseSchema);
 })();

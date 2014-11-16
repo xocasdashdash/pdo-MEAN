@@ -10,7 +10,6 @@ var denormalize = require('mongoose-denormalize');
 var Schema = mongoose.Schema;
 
 module.exports = (function() {
-    console.log('Programa cargado');
     var ProgramSchema = new Schema({
         name: {
             type: String,
