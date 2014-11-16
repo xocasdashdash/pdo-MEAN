@@ -1,4 +1,3 @@
-
 /**
 * DataModel of the app. 
 Uses MongoDB for storage and mongoose for data access
@@ -37,14 +36,29 @@ module.exports = (function() {
         }
     });
     CourseSchema.pre('save', function(next) {
+        var course = this;
+        if (course.isNew) {
+            Program.update({
+                _id: course.program
+            }, {
+                $inc: {
+                    number_of_courses: 1
+                }
+            }).exec();
+        }
+        next();
+    });
+    CourseSchema.pre('remove', function(next) {
+        var course = this;
         Program.update({
-            _id: this.program
+            _id: course.program
         }, {
             $inc: {
-                number_of_courses: 1
+                number_of_courses: -1
             }
         }).exec();
         next();
     });
+
     mongoose.model('Course', CourseSchema);
 })();

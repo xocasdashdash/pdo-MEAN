@@ -8,7 +8,7 @@ Uses MongoDB for storage and mongoose for data access
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
-
+var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 
 module.exports = (function() {
@@ -52,6 +52,24 @@ module.exports = (function() {
         school_name: {
             type: [String],
         }
+    });
+    UserSchema.pre('save', function(next) {
+        var user = this;
+        if (!user.isModified('password')) {
+            next();
+        }
+        bcrypt.genSalt(12, function(err, salt) {
+            if (err) {
+                next(err);
+            }
+            bcrypt.hash(user.password, salt, function(err, hash) {
+                if (err) {
+                    next(err);
+                }
+                user.password = hash;
+                next();
+            });
+        });
     });
     mongoose.model('User', UserSchema);
 
