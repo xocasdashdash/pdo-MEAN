@@ -13,6 +13,7 @@
     "express": "~4.0.0",
     "express-enrouten": "^1.1.1",
     "faker": "^2.0.1",
+    "hal": "^0.1.0",
     "iconv-lite": "^0.4.4",
     "jsonfile": "^2.0.0",
     "mongoose": "~3.6.13",

@@ -25,6 +25,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use(function (req, res, next) {
+    req.route_gen = req.app.locals.enrouten;
+    next();
+});
+
 var port = process.env.PORT || 8081; // set our port
 
 //All the Routes are in the controllers directory
