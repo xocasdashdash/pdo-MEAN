@@ -16,6 +16,7 @@
     "hal": "^0.1.0",
     "iconv-lite": "^0.4.4",
     "jsonfile": "^2.0.0",
+    "moment": "^2.8.4",
     "mongoose": "~3.6.13",
     "mongoose-denormalize": "0.0.1",
     "mongoose-validator": "^1.0.2",

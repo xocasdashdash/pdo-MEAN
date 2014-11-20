@@ -28,6 +28,14 @@ module.exports = (function() {
         program: {
             type: mongoose.Schema.ObjectId,
             ref: 'Program'
+        },
+        created_on:{
+            type: Date,
+            default: Date.now
+        },
+        updated_on:{
+            type: Date,
+            default: Date.now
         }
     });
     CourseSchema.plugin(denormalize, {
@@ -36,7 +44,6 @@ module.exports = (function() {
         }
     });
     CourseSchema.methods.resource = function(route_gen) {
-        var prom = q.defer();
         var res = new hal.Resource(this.toObject(), route_gen.path('get_course', {
             course_id: this._id
         }));
@@ -50,9 +57,7 @@ module.exports = (function() {
         res.link('delete', route_gen.path('delete_course', {
             course_id: this._id
         }));
-        prom.resolve(res.toJSON());
-        return prom.promise;
-
+        return res.toJSON();
     };
 
     mongoose.model('Course', CourseSchema);

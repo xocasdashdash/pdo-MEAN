@@ -25,6 +25,7 @@ module.exports = (function() {
                 }
             }).exec();
         }
+        course.updated_on = Date.now;
         next();
     });
     Course.schema.pre('remove', function(next) {

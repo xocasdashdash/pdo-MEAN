@@ -10,6 +10,7 @@ var app = express(); // define our app using express
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var enrouten = require('express-enrouten');
+var moment = require('moment');
 
 mongoose.connect('mongodb://gestor:gestor1234@localhost/mean-pdo'); // connect to our database
 
@@ -25,9 +26,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     req.route_gen = req.app.locals.enrouten;
     next();
+});
+
+app.use(function(req, res, next) {
+	req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : Date.now();
+	req.query.limit = req.query.limit ? req.query.limit : 2;
+	next();
 });
 
 var port = process.env.PORT || 8081; // set our port

@@ -36,7 +36,7 @@ module.exports = function(router) {
                 course.save(function(err) {
                     if (err) {
                         res.send(err);
-                    }                    
+                    }
                     course.resource(req.route_gen).then(function(resp) {
                         res.json(resp);
                     });
@@ -49,24 +49,68 @@ module.exports = function(router) {
     router({
         name: 'get_courses',
         path: '/'
-    }).post(function(req, res) {
+    }).get(function(req, res) {
+        var from = req.query.createdOnBefore ? req.query.createdOnBefore : Date.now(),
+            limit = req.query.limit;
         var response = [];
-        Program.find({});
 
+        Course.find({
+            created_on: {
+                $lte: from
+            }
+        }).sort('-createdOn')
+            .limit(limit).exec(function(err, courses) {
+                if (err) {
+                    res.send(err);
+                }
+                if (courses.length === 0) {
+                    var error = new Error();
+                    error.message = 'Course not found';
+                    error.code = '404';
+                    res.status(404);
+                    res.send(error);
+                }
+                courses.forEach(function(course) {
+                    response.push(course.resource(req.route_gen));
+                });
+                res.send(response);
+            });
     });
 
     router({
         name: 'get_course',
         path: '/:course_id'
     }).get(function(req, res) {
-
+        Course.findOne({
+            _id: req.params.course_id
+        }, function(err, course) {
+            if (err) {
+                res.send(err);
+            }
+            console.log(course);
+            res.send(course.resource(req.route_gen));
+        });
     });
     router({
         name: 'edit_course',
         path: '/:course_id'
-    }).put(function(req, res) {
-
+    }).patch(function(req, res) {
+        Course.findByIdAndUpdate(
+            req.params.course_id, {
+                $set: req.body
+            }, function(err, course) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!course) {
+                    var error = new Error();
+                    error.message = 'Course not found';
+                    res.status(404).send(error);
+                }
+                res.send(course.resource(req.route_gen));
+            });
     });
+
     router({
         name: 'delete_course',
         path: '/:course_id'

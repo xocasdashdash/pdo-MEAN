@@ -58,6 +58,10 @@ module.exports =
             type: mongoose.Schema.ObjectId,
             ref: 'Course',
             required: true
+        },
+        created_on: {
+            type: Date,
+            default: Date.now
         }
     });
     PdoSchema.plugin(denormalize, {

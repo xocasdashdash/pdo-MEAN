@@ -51,6 +51,10 @@ module.exports = (function() {
         },
         school_name: {
             type: [String],
+        },
+        created_on: {
+            type: Date,
+            default: Date.now
         }
     });
     UserSchema.pre('save', function(next) {
