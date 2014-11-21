@@ -29,11 +29,11 @@ module.exports = (function() {
             type: mongoose.Schema.ObjectId,
             ref: 'Program'
         },
-        created_on:{
+        created_on: {
             type: Date,
             default: Date.now
         },
-        updated_on:{
+        updated_on: {
             type: Date,
             default: Date.now
         }

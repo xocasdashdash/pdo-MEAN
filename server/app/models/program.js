@@ -6,6 +6,7 @@ Uses MongoDB for storage and mongoose for data access
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
+var hal = require('hal');
 
 var Schema = mongoose.Schema;
 
@@ -42,5 +43,25 @@ module.exports = (function() {
             from: 'school'
         }
     });
+    ProgramSchema.methods.resource = function(route_gen) {
+        var res = new hal.Resource(
+            this.toObject(), route_gen.path('get_program', {
+                program_id: this._id
+            }));
+
+        res.link('courses', route_gen.path('get_program_courses', {
+            program_id: this._id
+        }));
+
+        res.link('edit', route_gen.path('edit_program', {
+            program_id: this._id
+        }));
+
+        res.link('delete', route_gen.path('delete_program', {
+            program_id: this._id
+        }));
+        
+        return res.toJSON();
+    };
     mongoose.model('Program', ProgramSchema);
 })();
