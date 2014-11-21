@@ -1,5 +1,5 @@
 'use strict';
-var models = ['school.js', 'program.js','course.js','user.js','pdo.js'];
+var models = ['school.js', 'program.js','course.js','user.js','pdo.js','pre_hooks.js'];
 
 exports.initialize = function() {
     var l = models.length;

@@ -8,8 +8,8 @@ var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
-var Program = mongoose.model('Program');
-
+var q = require('q');
+var hal = require('hal');
 
 module.exports = (function() {
     var CourseSchema = new Schema({
@@ -28,6 +28,14 @@ module.exports = (function() {
         program: {
             type: mongoose.Schema.ObjectId,
             ref: 'Program'
+        },
+        created_on:{
+            type: Date,
+            default: Date.now
+        },
+        updated_on:{
+            type: Date,
+            default: Date.now
         }
     });
     CourseSchema.plugin(denormalize, {
@@ -35,30 +43,22 @@ module.exports = (function() {
             from: 'program'
         }
     });
-    CourseSchema.pre('save', function(next) {
-        var course = this;
-        if (course.isNew) {
-            Program.update({
-                _id: course.program
-            }, {
-                $inc: {
-                    number_of_courses: 1
-                }
-            }).exec();
-        }
-        next();
-    });
-    CourseSchema.pre('remove', function(next) {
-        var course = this;
-        Program.update({
-            _id: course.program
-        }, {
-            $inc: {
-                number_of_courses: -1
-            }
-        }).exec();
-        next();
-    });
+    CourseSchema.methods.resource = function(route_gen) {
+        var res = new hal.Resource(this.toObject(), route_gen.path('get_course', {
+            course_id: this._id
+        }));
+        res.link('program', route_gen.path('get_program', {
+            program_id: this.program
+        }));
+        res.link('courses', route_gen.path('get_courses'));
+        res.link('edit', route_gen.path('edit_course', {
+            course_id: this._id
+        }));
+        res.link('delete', route_gen.path('delete_course', {
+            course_id: this._id
+        }));
+        return res.toJSON();
+    };
 
     mongoose.model('Course', CourseSchema);
 })();

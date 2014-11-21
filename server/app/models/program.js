@@ -10,7 +10,6 @@ var denormalize = require('mongoose-denormalize');
 var Schema = mongoose.Schema;
 
 module.exports = (function() {
-    console.log('Programa cargado');
     var ProgramSchema = new Schema({
         name: {
             type: String,
@@ -32,6 +31,10 @@ module.exports = (function() {
         number_of_courses: {
             type: Number,
             default: 0
+        },
+        created_on: {
+            type: Date,
+            default: Date.now
         }
     });
     ProgramSchema.plugin(denormalize, {
