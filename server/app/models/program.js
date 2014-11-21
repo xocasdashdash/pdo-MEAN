@@ -31,6 +31,10 @@ module.exports = (function() {
         number_of_courses: {
             type: Number,
             default: 0
+        },
+        created_on: {
+            type: Date,
+            default: Date.now
         }
     });
     ProgramSchema.plugin(denormalize, {

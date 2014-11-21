@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(req, res, next) {
-	req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : Date.now();
+	req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment(0).format();
 	req.query.limit = req.query.limit ? req.query.limit : 2;
 	next();
 });

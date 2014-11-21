@@ -115,7 +115,23 @@ module.exports = function(router) {
         name: 'delete_course',
         path: '/:course_id'
     }).delete(function(req, res) {
-
+        Course.findByIdAndRemove(
+            req.params.course_id, function(err, removedDoc) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!removedDoc) {
+                    var err = new Error();
+                    err.message = 'Course not found';
+                    err.code = '404';
+                    res.status(400).send(err);
+                }
+                res.status(200).send({
+                    message: 'Removed',
+                    type: 'success',
+                    removedDoc: removedDoc
+                });
+            });
     });
 
 
