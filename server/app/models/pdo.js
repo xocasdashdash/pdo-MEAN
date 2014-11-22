@@ -6,7 +6,7 @@ Uses MongoDB for storage and mongoose for data access
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
-
+var hal = require('hal');
 var Schema = mongoose.Schema;
 
 module.exports =
@@ -62,6 +62,10 @@ module.exports =
         created_on: {
             type: Date,
             default: Date.now
+        },
+        group_id: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Group'
         }
     });
     PdoSchema.plugin(denormalize, {
@@ -75,5 +79,31 @@ module.exports =
             from: 'course'
         },
     });
+
+    PdoSchema.methods.resource = function(route_gen) {
+        var res = new hal.Resource(this.toObject(), route_gen.path('get_pdo', {
+            pdo_id: this._id
+        }));
+
+        res.link('group', route_gen.path('get_group', {
+            group_id: this.group_id
+        }));
+
+        res.link('comment', route_gen.path('comment_pdo', {
+            pdo_id: this._id
+        }));
+
+        res.link('comment_group',route_gen.path('comment_group_pdo',{
+            group_id: this.group_id
+        }));
+
+        res.link('delete', route_gen.path('delete_pdo', {
+            course_id: this._id
+        }));
+
+
+        return res.toJSON();
+
+    };
     mongoose.model('Pdo', PdoSchema);
 })();
