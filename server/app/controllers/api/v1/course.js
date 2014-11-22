@@ -37,10 +37,7 @@ module.exports = function(router) {
                     if (err) {
                         res.send(err);
                     }
-                    course.resource(req.route_gen).then(function(resp) {
-                        res.json(resp);
-                    });
-
+                    res.send(course.resource(req.route_gen));
                 });
             }
         });
@@ -50,9 +47,8 @@ module.exports = function(router) {
         name: 'get_courses',
         path: '/'
     }).get(function(req, res) {
-        var from = req.query.createdOnBefore ? req.query.createdOnBefore : Date.now(),
+        var from = req.query.createdOnBefore,
             limit = req.query.limit;
-        var response = [];
 
         Course.find({
             created_on: {
@@ -70,10 +66,9 @@ module.exports = function(router) {
                     res.status(404);
                     res.send(error);
                 }
-                courses.forEach(function(course) {
-                    response.push(course.resource(req.route_gen));
-                });
-                res.send(response);
+                res.send(courses.map(function(course) {
+                    return course.resource(req.route_gen);
+                }));
             });
     });
 
@@ -121,10 +116,10 @@ module.exports = function(router) {
                     res.send(err);
                 }
                 if (!removedDoc) {
-                    var err = new Error();
-                    err.message = 'Course not found';
-                    err.code = '404';
-                    res.status(400).send(err);
+                    var error = new Error();
+                    error.message = 'Course not found';
+                    error.code = '404';
+                    res.status(400).send(error);
                 }
                 res.status(200).send({
                     message: 'Removed',

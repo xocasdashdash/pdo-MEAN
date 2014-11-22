@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 
 var School = mongoose.model('School');
 var Program = mongoose.model('Program');
+var Course = mongoose.model('Course');
 
 module.exports = function(router) {
 
@@ -26,7 +27,7 @@ module.exports = function(router) {
 
 
     router({
-        name: 'program_edit',
+        name: 'edit_program',
         path: '/:program_id/edit'
     }).put(function(req, res) {
         Program.findById(req.params.program_id, function(err, program) {
@@ -41,7 +42,8 @@ module.exports = function(router) {
             } else {
                 program.name = req.body.name ? req.body.name : program.name;
                 program.code = req.body.code ? req.body.code : program.code;
-                program.school = req.body.school ? mongoose.Types.ObjectId(req.body.school) : program.school;
+                program.school = req.body.school ?
+                    mongoose.Types.ObjectId(req.body.school) : program.school;
                 program.save(function(err) {
                     if (err) {
                         res.send(err);
@@ -54,26 +56,47 @@ module.exports = function(router) {
     });
 
     router({
+        name: 'get_program_courses',
+        path: '/:program_id/courses'
+    }).get(function(req, res) {
+        Course.find({
+            program: req.params.program_id
+        }, function(err, courses) {
+            if (err) {
+                res.send(err);
+            }
+            if (courses.length === 0) {
+                var error = new Error();
+                error.message = 'Courses not found';
+                error.code = '404';
+                res.status(404).send(error);
+            }
+            res.send(courses.map(function(course) {
+                return (course.resource(req.route_gen));
+            }));
+        });
+    });
+
+    router({
         name: 'get_programs',
         path: '/'
     }).get(function(req, res) {
-        var response = [];
         Program.find({}, function(err, programs) {
             if (err) {
                 res.send(err);
             }
-            var resp;
-            for (var i = programs.length - 1; i >= 0; i--) {
-                resp = programs[i].toObject();
-                resp.programs = {};
-                resp.programs.link = req.app.locals.enrouten.path('get_programs', '');
-                resp._self = {};
-                resp._self.href = req.app.locals.enrouten.path('get_program', {
-                    program_id: programs[i]._id
-                });
-                response.push(resp);
+            if (programs.length === 0) {
+                var error = new Error();
+                error.message = 'Programs not found';
+                error.code = 404;
+                res.status(404).send(error);
             }
-            res.json(response);
+
+            res.send(
+                programs.map(function(program) {
+                    return program.resource(req.route_gen);
+                }));
+
         });
     });
 
@@ -85,15 +108,37 @@ module.exports = function(router) {
             if (err) {
                 res.send(err);
             }
-            var resp = program.toObject();
-
-            resp.programs = {};
-            resp.programs.link = req.app.locals.enrouten.path('get_programs', '');
-            resp._self = {};
-            resp._self.href = req.app.locals.enrouten.path('get_program', {
-                program_id: program._id
-            });
-            res.json(resp);
+            if (!program) {
+                var error = new Error();
+                error.message = 'Program not found';
+                error.code = '404';
+                res.status(404).send(error);
+            }
+            res.send(program.resource(req.route_gen));
         });
+    });
+    router({
+        name: 'delete_program',
+        path: '/:program_id'
+    }).get(function(req, res) {
+        Program.findOneAndRemove(
+            req.params.program_id,
+            function(err, removedDoc) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!removedDoc) {
+                    var error = new Error();
+                    error.message = 'Program not found';
+                    error.code = '404';
+                    res.status(404).send(error);
+                }
+                res.status(200).send({
+                    message: 'Removed',
+                    type: 'success',
+                    removedDoc: removedDoc
+                });
+
+            });
     });
 };

@@ -21,31 +21,37 @@ module.exports = function(router) {
             if (err) {
                 res.send(err);
             }
-            res.json(school);
+            res.send(school.resource(req.route_gen));
         });
     });
+
     router({
         name: 'get_schools',
         path: '/'
     }).get(function(req, res) {
-        var response = [];
-        School.find({}, function(err, school) {
-            var resp;
-            if (err) {
-                res.send(err);
+        var from = req.query.createdOnBefore,
+            limit = req.query.limit;
+        console.log(from, limit);
+        School.find({
+            created_on: {
+                $lte: from
             }
-            for (var i = school.length - 1; i >= 0; i--) {
-                resp = school[i].toObject();
-                resp.schools = {};
-                resp.schools.link = req.app.locals.enrouten.path('schools', '');
-                resp._self = {};
-                resp._self.href = req.app.locals.enrouten.path('school', {
-                    school_id: school._id
-                });
-                response.push(resp);
-            }
-            res.json(response);
-        });
+        }).sort('-createdOn')
+            .limit(limit).exec(function(err, schools) {
+                if (err) {
+                    res.send(err);
+                }
+                if (schools.length === 0) {
+                    var error = new Error();
+                    error.message = 'Schools not found';
+                    error.code = '404';
+                    res.status(404);
+                    res.send(error);
+                }
+                res.send(schools.map(function(school) {
+                    return school.resource(req.route_gen);
+                }));
+            });
     });
 
 
@@ -54,46 +60,90 @@ module.exports = function(router) {
         path: '/:school_id'
     }).get(function(req, res) {
 
-        School.findById(req.params.school_id, function(err, school) {
-            var resp;
-            if (err) {
-                res.send(err);
-            }
-            resp = school.toObject();
-            resp.schools = {};
-            resp.schools.link = req.app.locals.enrouten.path('get_schools', '');
-            resp._self = {};
-            resp._self.href = req.app.locals.enrouten.path('get_school', {
-                school_id: school._id
+        School.findById(
+            req.params.school_id,
+            function(err, school) {
+                var resp;
+                if (err) {
+                    res.send(err);
+                }
+                if (!school) {
+                    var error = new Error();
+                    error.message = 'School not found';
+                    error.code = '404';
+                    res.status(404).send(error);
+                }
+                res.send(school.resource(req.route_gen));
             });
-            res.json(resp);
-        });
     });
+
     router({
-        name: 'school_edit',
-        path: '/:school_id/edit'
-    }).put(function(req, res) {
-        School.findById(req.params.school_id, function(err, school) {
+        name: 'get_school_programs',
+        path: '/:school_id/programs'
+    }).get(function(req, res) {
+        Program.find({
+            school: req.params.school_id
+        }, function(err, programs) {
             if (err) {
                 res.send(err);
             }
-            if (school === null) {
+            if (programs.length === 0) {
                 var error = new Error();
-                error.status = 404;
-                error.message = 'Escuela no encontrada';
-                res.send(error);
-            } else {
-                school.schoolname = req.body.schoolname ? req.body.schoolname : school.schoolname;
-                school.email = req.body.email ? req.body.email : school.email;
-                school.url = req.body.url ? req.body.url : school.url;
-                school.save(function(err) {
-                    if (err) {
-                        res.send(err);
-                    }
-                    res.json(school);
-                });
+                error.message = 'Programs not found';
+                error.code = '404';
+                res.status(404).send(error);
             }
+            res.send(
+                programs.map(function(program) {
+                    return program.resource(req.route_gen);
+                })
+            );
 
         });
     });
+
+    router({
+        name: 'edit_school',
+        path: '/:school_id'
+    }).patch(function(req, res) {
+        School.findByIdAndUpdate(
+            req.params.school_id, {
+                $set: req.body
+            },
+            function(err, school) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!school) {
+                    var error = new Error();
+                    error.message = 'School not found';
+                    res.status(404).send(error);
+                }
+                res.send(school.resource(req.route_gen));
+            });
+    });
+
+    router({
+        name: 'delete_school',
+        path: '/:school_id'
+    }).delete(function(req, res) {
+        School.findByIdAndRemove(
+            req.params.school_id, function(err, removedDoc) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!removedDoc) {
+                    var error = new Error();
+                    error.message = 'School not found';
+                    error.code = '404';
+                    res.status(400).send(error);
+                }
+                res.status(200).send({
+                    message: 'Removed',
+                    type: 'success',
+                    removedDoc: removedDoc
+                });
+            });
+    });
+
 };
