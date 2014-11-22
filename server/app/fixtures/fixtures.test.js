@@ -5,7 +5,7 @@
 // Requires
 var mongoose = require('mongoose');
 var faker = require('faker');
-var data = require('./data.js');
+var data = require('./data.test.js');
 var async = require('async');
 var _ = require('underscore');
 var bcrypt = require('bcrypt');
@@ -33,10 +33,6 @@ db_conn.on('open', function() {
     console.log('Conectado a BD');
     db = mongoose.connection.db;
     defer_db_conn.resolve(db);
-    /*for(var propName in defer_db_conn.promise){
-        console.log(propName);
-        console.log(defer_db_conn.promise[propName]);   
-    }*/
 });
 db_conn.on('error', function(err) {
     console.log(err);
@@ -46,7 +42,6 @@ db_conn.on('disconnected', function() {
 });
 // connect to our database
 mongoose.connect('mongodb://gestor:gestor1234@localhost/mean-pdo');
-
 function resetData(db) {
     var prom_array = [],
         deferred,

@@ -76,15 +76,14 @@ module.exports = function(router) {
         name: 'get_course',
         path: '/:course_id'
     }).get(function(req, res) {
-        Course.findOne({
-            _id: req.params.course_id
-        }, function(err, course) {
-            if (err) {
-                res.send(err);
-            }
-            console.log(course);
-            res.send(course.resource(req.route_gen));
-        });
+        Course.findById(
+            req.params.course_id,
+            function(err, course) {
+                if (err) {
+                    res.send(err);
+                }
+                res.send(course.resource(req.route_gen));
+            });
     });
     router({
         name: 'edit_course',

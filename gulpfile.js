@@ -1,6 +1,9 @@
 /*!
  * gulp
- * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-minify-css gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del --save-dev
+ * $ npm install gulp-ruby-sass gulp-autoprefixer 
+ gulp-minify-css gulp-jshint gulp-concat gulp-uglify
+  gulp-imagemin gulp-notify gulp-rename gulp-livereload
+   gulp-cache del --save-dev
  */
 
 // Load plugins
@@ -17,14 +20,16 @@ var gulp = require('gulp'),
     nodemon = require('gulp-nodemon'),
     cache = require('gulp-cache'),
     livereload = require('gulp-livereload'),
-    del = require('del');
+    del = require('del'),
+    mocha = require('gulp-mocha');
 
 // Styles
 /*
 gulp.task('styles', function() {
   return gulp.src('src/styles/main.scss')
     .pipe(sass({ style: 'expanded', }))
-    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+    .pipe(autoprefixer('last 2 version',
+     'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
     .pipe(gulp.dest('dist/styles'))
     .pipe(rename({ suffix: '.min' }))
     .pipe(minifycss())
@@ -48,12 +53,13 @@ gulp.task('scripts', function() {
 gulp.task('watch', function() {
     // Watch .js files
     gulp.watch('server/**/*.js', ['scripts']);
+    gulp.watch('server/test/*.js', ['test']);
     // Create LiveReload server
-    livereload.listen();
+    //livereload.listen();
 
     // Watch any files in dist/, reload on change
-    gulp.watch(['server/**'])
-        .on('change', livereload.changed);
+    //gulp.watch(['server/**'])
+    //    .on('change', livereload.changed);
 
 });
 
@@ -68,6 +74,26 @@ gulp.task('serve', function() {
     });
 });
 
+gulp.task('test',['serve','scripts'],function() {
+
+    return gulp.src(['server/test/test-*.js'], {
+        read: false
+    })
+        .pipe(mocha({
+            reporter: 'spec',
+            globals: {
+                should: require('./server/test/config-mocha')
+            },
+            timeout: 2000
+        })).pipe(notify({
+            message: 'Scripts testeados',
+            onLast: true
+        }));
+});
+gulp.task('test-watch',function(){
+    gulp.watch('server/**/*.js', ['test']);
+    gulp.start('test');
+});
 
 // Default task
 
