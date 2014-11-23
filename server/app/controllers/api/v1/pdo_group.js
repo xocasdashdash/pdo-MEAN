@@ -17,10 +17,11 @@ module.exports = function(router) {
         pdo_group.summary = req.body.summary;
         pdo_ids = JSON.parse(req.body.pdos).map(
             function(pdo) {
-                console.log(pdo);
+                //console.log(pdo);
                 return mongoose.Types.ObjectId(pdo);
             });
         pdo_group.pdos = pdo_ids;
+        
         pdo_group.save(function(err, pdo_group) {
             if (err) {
                 res.send(err);
@@ -33,7 +34,7 @@ module.exports = function(router) {
     router({
         name: 'add_comment',
         path: '/:pdo_group_id/comment'
-    }).post(function(req, res) {
+    }).put(function(req, res) {
         var comment = {
             title: req.body.title,
             text: req.body.text
@@ -49,7 +50,7 @@ module.exports = function(router) {
             }
             if (!pdo_group) {
                 var error = new Error();
-                error.message = 'Pdo group not found';
+                error.message = 'Pdo group nota found';
                 error.code = 404;
                 res.status(404).send(error);
                 return;
@@ -71,7 +72,7 @@ module.exports = function(router) {
                 }
                 if (!pdo_group) {
                     var error = new Error();
-                    error.message = 'Pdo group not found';
+                    error.message = 'Pdo group notb found';
                     error.code = 404;
                     res.status(404).send(error);
                     return;
@@ -95,7 +96,7 @@ module.exports = function(router) {
                 }
                 if (!pdo_group) {
                     var error = new Error();
-                    error.message = 'Pdo group not found';
+                    error.message = 'Pdo group notc found';
                     error.code = 404;
                     res.status(404).send(error);
                     return;
@@ -108,7 +109,7 @@ module.exports = function(router) {
                     }
                     if (!pdo_group) {
                         var error = new Error();
-                        error.message = 'Pdo group not found';
+                        error.message = 'Pdo group notd found';
                         error.code = 404;
                         res.status(404).send(error);
                         return;
@@ -132,7 +133,7 @@ module.exports = function(router) {
                 }
                 if (!pdo_group) {
                     var error = new Error();
-                    error.message = 'Pdo group not found';
+                    error.message = 'Pdo group note found';
                     error.code = 404;
                     res.status(404).send(error);
                     return;
@@ -154,7 +155,7 @@ module.exports = function(router) {
                 }
                 if (!removedDoc) {
                     var error = new Error();
-                    error.message = 'PdoGroup not found';
+                    error.message = 'PdoGroup notf found';
                     error.code = '404';
                     res.status(400).send(error);
                 }

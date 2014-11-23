@@ -19,8 +19,9 @@ var gulp = require('gulp'),
     notify = require('gulp-notify'),
     nodemon = require('gulp-nodemon'),
     cache = require('gulp-cache'),
-    livereload = require('gulp-livereload'),
+    //livereload = require('gulp-livereload'),
     del = require('del'),
+    wait = require('gulp-wait'),
     mocha = require('gulp-mocha');
 
 // Styles
@@ -40,7 +41,7 @@ gulp.task('styles', function() {
 // Scripts
 gulp.task('scripts', function() {
     return gulp.src('server/**/*.js')
-        .pipe(jshint('.jshintrc'))
+        .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(notify({
             message: 'Scripts verificados',
@@ -52,8 +53,8 @@ gulp.task('scripts', function() {
 // Watch
 gulp.task('watch', function() {
     // Watch .js files
-    gulp.watch('server/**/*.js', ['scripts']);
-    gulp.watch('server/test/*.js', ['test']);
+    gulp.watch('server/app/**/*.js', ['scripts']);
+    //gulp.watch('server/test/*.js', ['test']);
     // Create LiveReload server
     //livereload.listen();
 
@@ -67,14 +68,16 @@ gulp.task('serve', function() {
     nodemon({
         'script': 'server/server.js',
         env: {
-            'NODE_ENV': 'development'
+            'NODE_ENV': 'development',
+            'ENVIROMENT': 'dev'
         },
+        ignore: ['server/test/*'],
         nodeArgs: ['--debug']
 
     });
 });
 
-gulp.task('test',['serve','scripts'],function() {
+gulp.task('test', function() {
 
     return gulp.src(['server/test/test-*.js'], {
         read: false
@@ -84,14 +87,14 @@ gulp.task('test',['serve','scripts'],function() {
             globals: {
                 should: require('./server/test/config-mocha')
             },
-            timeout: 2000
+            timeout: 200000
         })).pipe(notify({
             message: 'Scripts testeados',
             onLast: true
         }));
 });
-gulp.task('test-watch',function(){
-    gulp.watch('server/**/*.js', ['test']);
+gulp.task('test-watch', function() {
+    gulp.watch('server/test/**/*.js', ['test']);
     gulp.start('test');
 });
 

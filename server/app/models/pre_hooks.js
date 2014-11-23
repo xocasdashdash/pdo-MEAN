@@ -49,7 +49,7 @@ module.exports = (function() {
             prom_array = [];
         prom_array = pdo_group.pdos.map(function(pdo_id) {
             var deferred = q.defer();
-            PdoGroup.findByIdAndUpdate(pdo_id, {
+            Pdo.findByIdAndUpdate(pdo_id, {
                 $set: {
                     group_id: pdo_group._id
                 }
@@ -60,7 +60,7 @@ module.exports = (function() {
                 }
                 if (!pdo) {
                     var error = new Error();
-                    error.message = 'Pdo group not found';
+                    error.message = 'Pdo not found';
                     error.code = 404;
                     deferred.reject(error);
                     return;

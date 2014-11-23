@@ -42,10 +42,11 @@ db_conn.on('disconnected', function() {
 });
 // connect to our database
 mongoose.connect('mongodb://gestor:gestor1234@localhost/mean-pdo');
+
 function resetData(db) {
     var prom_array = [],
         deferred,
-        collecion_dropped = function(err) {
+        collection_dropped = function(err) {
             if (err) {
                 deferred.reject(err);
             }
@@ -54,8 +55,7 @@ function resetData(db) {
     for (var i in mongoose.connection.collections) {
         deferred = q.defer();
         prom_array.push(deferred);
-
-        mongoose.connection.collections[i].drop(collecion_dropped);
+        mongoose.connection.collections[i].drop(collection_dropped);
     }
     return q.all(prom_array);
 }
