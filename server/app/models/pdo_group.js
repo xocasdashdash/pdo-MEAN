@@ -15,8 +15,7 @@ module.exports =
     var CommentsSchema = new Schema({
         author: {
             type: mongoose.Schema.ObjectId,
-            ref: 'User',
-            required: true
+            ref: 'User'
         },
         title: {
             type: String,
@@ -31,6 +30,22 @@ module.exports =
             default: Date.now()
         }
     });
+
+    CommentsSchema.methods.resource = function(route_gen) {
+
+        var res = new hal.Resource(this.toObject(),
+            route_gen.path('get_comment', {
+                pdo_group_id: this.parent()._id,
+                comment_id: this._id
+            }));
+
+        res.link('delete', route_gen.path('delete_comment', {
+            pdo_group_id: this.parent()._id,
+            comment_id: this._id
+        }));
+
+        return res;
+    };
 
     var PdoGroupSchema = new Schema({
         title: {
@@ -67,19 +82,9 @@ module.exports =
         }
     });
 
-    CommentsSchema.methods.resource = function(route_gen) {
-        var res = new hal.Resource(this.toObject(),
-            route_gen.path('get_comment', {
-                comment_id: this._id
-            }));
-        res.link('delete', route_gen.path('delete_comment', {
-            comment_id: this._id
-        }));
-        return res;
-    };
 
     PdoGroupSchema.methods.resource = function(route_gen) {
-
+    	
         var res = new hal.Resource(this.toObject(),
             route_gen.path('get_pdo_group', {
                 pdo_group_id: this._id

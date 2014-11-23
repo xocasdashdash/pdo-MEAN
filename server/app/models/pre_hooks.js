@@ -1,10 +1,12 @@
 'use strict';
 var mongoose = require('mongoose');
-
+var q = require('q');
 
 module.exports = (function() {
     var Program = mongoose.model('Program');
     var Course = mongoose.model('Course');
+    var PdoGroup = mongoose.model('PdoGroup');
+    var Pdo = mongoose.model('Pdo');
 
     //Program Hooks
     Program.schema.pre('remove', function(next) {
@@ -39,5 +41,41 @@ module.exports = (function() {
         }).exec();
         next();
     });
+
+    //Incluir hook post save en el grupo para que
+    // añada/elimine las referencias en los PDO
+    PdoGroup.schema.pre('save', function(next) {
+        var pdo_group = this,
+            prom_array = [];
+        prom_array = pdo_group.pdos.map(function(pdo_id) {
+            var deferred = q.defer();
+            Pdo.findByIdAndUpdate(pdo_id, {
+                $set: {
+                    group_id: pdo_group._id
+                }
+            }, function(err, pdo) {
+                if (err) {
+                    deferred.reject(err);
+                    return;
+                }
+                if (!pdo) {
+                    var error = new Error();
+                    error.message = 'Pdo not found';
+                    error.code = 404;
+                    deferred.reject(error);
+                    return;
+                }
+                deferred.resolve(pdo);
+            });
+            return deferred.promise;
+        });
+        q.all(prom_array).then(function(value) {
+            next();
+        }, function(reason) {
+            next(reason);
+        });
+
+    });
+
 
 })();

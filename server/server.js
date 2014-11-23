@@ -11,9 +11,17 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var enrouten = require('express-enrouten');
 var moment = require('moment');
+var config = require('./config/config');
 
-mongoose.connect('mongodb://gestor:gestor1234@localhost/mean-pdo'); // connect to our database
 
+var dbURI = '';
+mongoose.connect(config.db.mongodb); // connect to our database
+
+// CONNECTION EVENTS
+// When successfully connected
+mongoose.connection.on('connected', function() {
+    console.log('Mongoose default connection open to ' + config.db.mongodb);
+});
 require('./app/models/models.js')
     .initialize();
 
@@ -32,9 +40,9 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(req, res, next) {
-	req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
-	req.query.limit = req.query.limit ? req.query.limit : 2;
-	next();
+    req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
+    req.query.limit = req.query.limit ? req.query.limit : 2;
+    next();
 });
 
 var port = process.env.PORT || 8081; // set our port
