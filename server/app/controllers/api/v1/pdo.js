@@ -16,13 +16,11 @@ module.exports = function(router) {
         name: 'create_pdo',
         path: '/'
     }).post(function(req, res) {
-        console.log('called create_pdo');
         var pdo = new Pdo(),
             promise_array = [],
             deferred_school = q.defer(),
             deferred_course = q.defer(),
             deferred_program = q.defer();
-        console.log(req.body);
         pdo.name = req.body.name;
         pdo.surname = req.body.surname;
         pdo.email = req.body.email;
