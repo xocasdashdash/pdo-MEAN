@@ -22,6 +22,7 @@
         "beforeEach",
         "afterEach",
         "config",
-        "request"
+        "request",
+        "expect"
     ]
 }

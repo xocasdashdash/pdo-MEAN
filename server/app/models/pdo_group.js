@@ -84,12 +84,14 @@ module.exports =
 
 
     PdoGroupSchema.methods.resource = function(route_gen) {
-    	
+        console.log('aqui');
         var res = new hal.Resource(this.toObject(),
             route_gen.path('get_pdo_group', {
                 pdo_group_id: this._id
             }));
 
+        console.log('aqui');
+        console.log('aqui');
 
         res.link('comment', route_gen.path('add_comment', {
             pdo_group_id: this._id
@@ -98,11 +100,14 @@ module.exports =
         res.embed('comments', this.comments.map(function(comment) {
             return comment.resource(route_gen);
         }));
+        console.log('aqui');
+        console.log('aqui');
+        console.log('aqui');
 
         res.link('delete', route_gen.path('delete_group', {
             pdo_group_id: this._id
         }));
-
+        console.log(res.toJSON());
         return res.toJSON();
 
     };

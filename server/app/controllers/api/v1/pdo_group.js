@@ -170,6 +170,44 @@ module.exports = function(router) {
     });
 
     router({
+        name: 'remove_pdo_from_group',
+        path: '/:pdo_group_id/pdo'
+    }).delete(function(req, res) {
+        PdoGroup.findOne({
+            _id: req.params.pdo_group_id
+        }).exec()
+            .then(function(pdo_group) {
+                if (!pdo_group) {
+                    var error = new Error();
+                    error.message = 'Pdo group not found';
+                    error.code = 404;
+                    res.status(404).send(error);
+                    return;
+                }
+                //No me deja quitar PDO a los grupos que tengan solo un PDO
+                if (pdo_group.pdos.length > 1) {
+                    return PdoGroup.findByIdAndUpdate(req.params.pdo_group_id, {
+                        $pull: {
+                            pdos: req.body.pdo_id
+                        }
+                    }).exec();
+                } else {
+                    var err = new Error();
+                    err.message = 'Last PDO in group';
+                    err.code = 400;
+                    return q.reject(err);
+                }
+            }).then(function(pdo_group) {
+                res.send(pdo_group.resource(req.route_gen));
+                return;
+            }).reject(function(reason) {
+                res.send(reason);
+                return;
+            });
+
+    });
+
+    router({
         name: 'delete_group',
         path: '/:pdo_group_id'
     }).delete(function(req, res) {
