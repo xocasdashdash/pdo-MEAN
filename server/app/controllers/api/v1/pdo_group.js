@@ -147,26 +147,36 @@ module.exports = function(router) {
         name: 'add_pdo_to_group',
         path: '/:pdo_group_id/pdo'
     }).put(function(req, res) {
-        PdoGroup.findByIdAndUpdate(req.params.pdo_group_id, {
-            $addToSet: {
-                pdos: req.body.pdos
-            }
-        }, function(err, pdo_group) {
-            //res.status(400).send(new Error('errrorrrr'));
-            //return;
-            if (err) {
-                res.send(err);
-                return;
-            }
-            if (!pdo_group) {
-                var error = new Error();
-                error.message = 'Pdo group not found';
-                error.code = 404;
-                res.status(404).send(error);
-                return;
-            }
-            res.send(pdo_group.resource(req.route_gen));
-        });
+        console.log('BODY:');
+        console.log(req.body.pdos);
+
+        PdoGroup.findById(req.params.pdo_group_id).exec()
+            .then(function(pdo_group) {
+                if (!pdo_group) {
+                    var error = new Error();
+                    error.message = 'Pdo group not found';
+                    error.code = 404;
+                    res.status(404).send(error);
+                    return;
+                }
+                console.log('MEtiendo PDO ...'+pdo_group.pdos.length);
+                pdo_group.addPdo(req.body.pdos);
+                console.log('Guardando grupo...'+pdo_group.pdos.length);
+                pdo_group.save(function(err, saved_doc) {
+                    if (err) {
+                        console.log(err);
+
+                        res.send(err);
+                        return;
+                    }
+
+                    res.send(saved_doc.resource(req.route_gen));
+                    return;
+                });
+            })
+            .reject(function(reason) {
+                res.send(reason);
+            });
     });
 
     router({
@@ -194,10 +204,11 @@ module.exports = function(router) {
                 } else {
                     var err = new Error();
                     err.message = 'Last PDO in group';
-                    err.code = 400;
+                    err.code = 403;
                     return q.reject(err);
                 }
             }).then(function(pdo_group) {
+                //Incluir aqui llamada para que limpie el campo GROUP_ID del PDO
                 res.send(pdo_group.resource(req.route_gen));
                 return;
             }).reject(function(reason) {
@@ -227,6 +238,27 @@ module.exports = function(router) {
                     type: 'success',
                     removedDoc: removedDoc
                 });
+            });
+    });
+
+    router({
+        name: 'change_pdo_group_status',
+        path: '/:pdo_group_id'
+    }).put(function(req, res) {
+        PdoGroup.findByIdAndUpdate(
+            req.params.pdo_group_id, {
+                status: req.body.status
+            }, function(err, updated_doc) {
+                if (err) {
+                    res.send(err);
+                }
+                if (!updated_doc) {
+                    var error = new Error();
+                    error.message = 'PdoGroup not found';
+                    error.code = '404';
+                    res.status(404).send(error);
+                }
+                res.status(200).send(updated_doc.resource(req.route_gen));
             });
     });
 };

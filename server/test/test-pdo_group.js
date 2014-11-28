@@ -73,20 +73,19 @@ describe('Test de grupos de PDOs', function() {
                 }).
                 catch (function(reason) {
                     console.log(reason);
-                    console.log(reason.stack);
-                    expect(1).to.equal(2);
-
+                    //console.log(reason.stack);
                     done(reason);
                 });
 
             }).
             catch (function(reason) {
                 console.log(reason);
-                console.log(reason.stack);
+                //console.log(reason.stack);
                 done(reason);
             });
         });
     });
+
     it('should create a pdo_group', function(done) {
         var pdo_group = {}, pdo_group_creado, prom;
         pdo_group.title = 'Titulo del grupo de pdo';
@@ -100,19 +99,18 @@ describe('Test de grupos de PDOs', function() {
             .expect(200);
 
         prom
-
-        .then(function(result) {
-            pdo_group_created = result.body;
-            pdo_group_created.status.should.equal('STATUS_PENDIENTE');
-            pdo_group_created.title.should.equal(pdo_group.title);
-            pdo_group_created.should.have.property('pdos').with.length(2);
-            pdo_group_created.pdos[0].should.equal(created_pdo[0]._id);
-            //console.log(pdo_group_created);
-            done();
-        }, function(reason) {
-            //console.log('FALLO1');
-            done(reason);
-        });
+            .then(function(result) {
+                pdo_group_created = result.body;
+                pdo_group_created.status.should.equal('STATUS_PENDING');
+                pdo_group_created.title.should.equal(pdo_group.title);
+                pdo_group_created.should.have.property('pdos').with.length(2);
+                pdo_group_created.pdos[0].should.equal(created_pdo[0]._id);
+                //console.log(pdo_group_created);
+                done();
+            }, function(reason) {
+                //console.log('FALLO1');
+                done(reason);
+            });
         return prom.promise;
     });
 
@@ -127,7 +125,7 @@ describe('Test de grupos de PDOs', function() {
 
         prom.then(function(result) {
             pdo_group_created = result.body;
-            pdo_group_created.status.should.equal('STATUS_PENDIENTE');
+            pdo_group_created.status.should.equal('STATUS_PENDING');
             pdo_group_created.should.have.property('pdos').with.length(3);
             pdo_group_created.pdos[2].should.equal(pdo_to_add_later._id);
             done();
@@ -137,7 +135,23 @@ describe('Test de grupos de PDOs', function() {
         });
         return prom;
     });
+    it('a pdo should have a pdo_group', function(done) {
 
+        Pdo.findById(pdo_to_add_later._id, function(err, pdo) {
+            if (err) {
+                done(err);
+            }
+            if (!pdo) {
+                done('PDO NOT FOUND');
+            }
+            for (var prop in pdo.toObject()) {
+                //console.log(prop + ':' + pdo.toObject()[prop]);
+            }
+            pdo.toObject().should.have.property('group_id');
+            done();
+        });
+
+    });
     it('should remove a pdo from a group', function(done) {
         var prom, payload = {};
         payload.pdo_id = pdo_to_add_later._id;
@@ -162,8 +176,25 @@ describe('Test de grupos de PDOs', function() {
 
         return prom;
     });
+    it('a pdo should not have a pdo_group', function(done) {
+        var pdo_deleted_from_group = pdo_to_add_later;
+
+        Pdo.findById(pdo_deleted_from_group._id, function(err, found_pdo) {
+            if (err) {
+                done(err);
+            }
+            if (!found_pdo) {
+                done('PDO NOT FOUND');
+            }
+            console.log(found_pdo.toObject());
+            expect(found_pdo.group_id).to.be.undefined;
+            done();
+        });
+
+    });
 
     after(function(done) {
+        //done();
         //Limpieza
         created_pdo.push(pdo_to_add_later);
         q.all(

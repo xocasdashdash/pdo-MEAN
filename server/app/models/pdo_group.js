@@ -64,16 +64,31 @@ module.exports =
             ref: 'User',
             required: false
         },
+        old_status: {
+            type: String,
+            required: true,
+            default: 'STATUS_PENDING',
+            validator: validate({
+                validator: 'isIn',
+                arguments: ['STATUS_RESOLVED',
+                    'STATUS_NOT_RESOLVED',
+                    'STATUS_ATTENDED',
+                    'STATUS_UPCHAINED',
+                    'STATUS_PENDING'
+                ]
+            })
+        },
         status: {
             type: String,
             required: true,
-            default: 'STATUS_PENDIENTE',
+            default: 'STATUS_PENDING',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['STATUS_RESUELTO',
-                    'STATUS_NO_RESUELTO',
-                    'STATUS_ELEVADO',
-                    'STATUS_PENDIENTE'
+                arguments: ['STATUS_RESOLVED',
+                    'STATUS_NOT_RESOLVED',
+                    'STATUS_ATTENDED',
+                    'STATUS_UPCHAINED',
+                    'STATUS_PENDING'
                 ]
             })
         },
@@ -82,16 +97,20 @@ module.exports =
         }
     });
 
+    PdoGroupSchema.methods.addPdo = function(pdo_id) {
+        if (this.pdos.indexOf(pdo_id) !== -1) {
+            return;
+        } else {
+            console.log('pdo added');
+            this.pdos.push(pdo_id);
+        }
+    };
 
     PdoGroupSchema.methods.resource = function(route_gen) {
-        console.log('aqui');
         var res = new hal.Resource(this.toObject(),
             route_gen.path('get_pdo_group', {
                 pdo_group_id: this._id
             }));
-
-        console.log('aqui');
-        console.log('aqui');
 
         res.link('comment', route_gen.path('add_comment', {
             pdo_group_id: this._id
@@ -100,17 +119,54 @@ module.exports =
         res.embed('comments', this.comments.map(function(comment) {
             return comment.resource(route_gen);
         }));
-        console.log('aqui');
-        console.log('aqui');
-        console.log('aqui');
 
         res.link('delete', route_gen.path('delete_group', {
             pdo_group_id: this._id
         }));
-        console.log(res.toJSON());
         return res.toJSON();
 
     };
+    //I use this to be able to access this values on a save hook
+    PdoGroupSchema.pre('save', function(next) {
+        var pdo_group = this,
+            error;
+        if (pdo_group.isModified('status')) {
+            switch (pdo_group.old_status) {
+                case 'STATUS_PENDING':
+                    if (pdo_group.status === 'STATUS_ATTENDED') {
+                        next();
+                    } else {
+                        error = new Error('INCOMPLETE TRANSITION. INVALID NEW STATUS');
+                        next(error);
+                    }
+                    break;
+                case 'STATUS_ATTENDED':
+                    if (pdo_group.status === 'STATUS_UPCHAINED' ||
+                        pdo_group.status === 'STATUS_RESOLVED') {
+                        next();
+                    } else {
+                        error = new Error('INCOMPLETE TRANSITION. INVALID NEW STATUS');
+                        next(error);
+                    }
+                    break;
+                case 'STATUS_UPCHAINED':
+                    if (pdo_group.status === 'STATUS_NOT_RESOLVED' ||
+                        pdo_group.status === 'STATUS_RESOLVED') {
+                        next();
+                    } else {
+                        error = new Error('INCOMPLETE TRANSITION. INVALID NEW STATUS');
+                        next(error);
+                    }
+                    break;
+                    //case 'STATUS_RESOLVED':
+                    //case 'STATUS_NOT_RESOLVED':
+                default:
+                    error = new Error('STATUS DOES NOT ADMIT TRANSITIONS');
+                    next(error);
+            }
+        }
+        next();
+    });
     mongoose.model('PdoGroup', PdoGroupSchema);
 
 })();

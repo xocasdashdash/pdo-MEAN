@@ -49,6 +49,7 @@ module.exports = (function() {
             prom_array = [];
         prom_array = pdo_group.pdos.map(function(pdo_id) {
             var deferred = q.defer();
+            console.log('PDO Id:'+pdo_id);
             Pdo.update({
                 _id: pdo_id,
                 group_id: null
@@ -61,19 +62,13 @@ module.exports = (function() {
                     deferred.reject(err);
                     return;
                 }
-                if (!pdo) {
-                    var error = new Error();
-                    error.message = 'Pdo not found';
-                    error.code = 404;
-                    deferred.reject(error);
-                    return;
-                }
                 deferred.resolve(pdo);
             });
             return deferred.promise;
         });
 
         q.all(prom_array).then(function(value) {
+            console.log('Todo correcto..');
             next();
         }, function(reason) {
             next(reason);
