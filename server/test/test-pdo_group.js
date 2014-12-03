@@ -72,15 +72,11 @@ describe('Test de grupos de PDOs', function() {
                     done();
                 }).
                 catch (function(reason) {
-                    console.log(reason);
-                    //console.log(reason.stack);
                     done(reason);
                 });
 
             }).
             catch (function(reason) {
-                console.log(reason);
-                //console.log(reason.stack);
                 done(reason);
             });
         });
@@ -144,10 +140,8 @@ describe('Test de grupos de PDOs', function() {
             if (!pdo) {
                 done('PDO NOT FOUND');
             }
-            for (var prop in pdo.toObject()) {
-                //console.log(prop + ':' + pdo.toObject()[prop]);
-            }
             pdo.toObject().should.have.property('group_id');
+            pdo.group_id.toString().should.equal(pdo_group_created._id); 
             done();
         });
 
@@ -186,8 +180,7 @@ describe('Test de grupos de PDOs', function() {
             if (!found_pdo) {
                 done('PDO NOT FOUND');
             }
-            console.log(found_pdo.toObject());
-            expect(found_pdo.group_id).to.be.undefined;
+            expect(found_pdo.toObject().group_id).to.be.null;
             done();
         });
 

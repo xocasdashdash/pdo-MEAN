@@ -2,7 +2,8 @@
 var express = require('express'); // call express
 var mongoose = require('mongoose');
 var q = require('q');
-
+var ee = require('../../../events/emitter.js').ee;
+var logger = require('../../../log/log.js');
 var Pdo = mongoose.model('Pdo'),
     PdoGroup = mongoose.model('PdoGroup');
 
@@ -147,8 +148,8 @@ module.exports = function(router) {
         name: 'add_pdo_to_group',
         path: '/:pdo_group_id/pdo'
     }).put(function(req, res) {
-        console.log('BODY:');
-        console.log(req.body.pdos);
+        logger.debug('BODY:');
+        logger.debug(req.body.pdos);
 
         PdoGroup.findById(req.params.pdo_group_id).exec()
             .then(function(pdo_group) {
@@ -159,12 +160,12 @@ module.exports = function(router) {
                     res.status(404).send(error);
                     return;
                 }
-                console.log('MEtiendo PDO ...'+pdo_group.pdos.length);
+                logger.debug('MEtiendo PDO ...'+pdo_group.pdos.length);
                 pdo_group.addPdo(req.body.pdos);
-                console.log('Guardando grupo...'+pdo_group.pdos.length);
+                logger.debug('Guardando grupo...'+pdo_group.pdos.length);
                 pdo_group.save(function(err, saved_doc) {
                     if (err) {
-                        console.log(err);
+                        logger.debug(err);
 
                         res.send(err);
                         return;
@@ -209,6 +210,7 @@ module.exports = function(router) {
                 }
             }).then(function(pdo_group) {
                 //Incluir aqui llamada para que limpie el campo GROUP_ID del PDO
+                ee.emit('pdo:removed_from_group',req.body.pdo_id);
                 res.send(pdo_group.resource(req.route_gen));
                 return;
             }).reject(function(reason) {

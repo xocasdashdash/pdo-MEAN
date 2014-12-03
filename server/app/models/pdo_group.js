@@ -101,7 +101,6 @@ module.exports =
         if (this.pdos.indexOf(pdo_id) !== -1) {
             return;
         } else {
-            console.log('pdo added');
             this.pdos.push(pdo_id);
         }
     };
