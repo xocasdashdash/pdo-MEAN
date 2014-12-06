@@ -87,7 +87,7 @@ gulp.task('test', function() {
             globals: {
                 should: require('./server/test/config-mocha')
             },
-            timeout: 200000
+            timeout: 2000
         })).pipe(notify({
             message: 'Scripts testeados',
             onLast: true

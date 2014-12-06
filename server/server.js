@@ -12,9 +12,7 @@ var mongoose = require('mongoose');
 var enrouten = require('express-enrouten');
 var moment = require('moment');
 var config = require('./config/config');
-
-
-var dbURI = '';
+var logger = require('./app/log/log.js');
 mongoose.connect(config.db.mongodb); // connect to our database
 
 // CONNECTION EVENTS
@@ -22,8 +20,8 @@ mongoose.connect(config.db.mongodb); // connect to our database
 mongoose.connection.on('connected', function() {
     console.log('Mongoose default connection open to ' + config.db.mongodb);
 });
-require('./app/models/models.js')
-    .initialize();
+require('./app/models/models.js').initialize();
+var events = require('./app/events/events.js');
 
 var Pdo = mongoose.model('Pdo');
 var School = mongoose.model('School');

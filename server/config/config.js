@@ -8,8 +8,9 @@ module.exports = (function(enviroment) {
                 "mongodb": "mongodb://gestor:gestor1234@localhost/mean-pdo"
             },
             "logger": {
-                "api": "logs/api.log",
-                "exception": "logs/exceptions.log"
+                "api": __dirname + "../../../logs/api.dev.log",
+                "exception": __dirname + "../../../logs/exceptions.dev.log",
+                "level": "debug"
             },
             "url": "http://localhost:8081"
         },
@@ -20,8 +21,9 @@ module.exports = (function(enviroment) {
                 "mongodb": "mongodb://localhost/ShopWithMe"
             },
             "logger": {
-                "api": "logs/api.log",
-                "exception": "logs/exceptions.log"
+                "api": __dirname + "../../../logs/api.log",
+                "exception":  __dirname + "../../../logs/exceptions.log",
+                "level": "warn"
             }
         }
     };
