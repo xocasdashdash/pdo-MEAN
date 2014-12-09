@@ -8,34 +8,42 @@ var rename = require('gulp-rename');
 var sh = require('shelljs');
 var jshint = require('gulp-jshint');
 var notify = require('gulp-notify');
-
+var gutil = require('gulp-util');
+var autoprefixer = require('gulp-autoprefixer');
 
 var paths = {
-    sass: ['./scss/**/*.scss'],
-    js: ['./www/js/**/*.js','./www/js/*.js']
+    sass: ['./www/scss/**/*.scss'],
+    js: ['./www/js/**/*.js', './www/js/*.js']
 };
 
 gulp.task('default', ['sass', 'jslint', 'watch']);
 
 gulp.task('sass', function(done) {
-    gulp.src('./scss/ionic.app.scss')
+    gulp.src(paths.sass)
         .pipe(sass())
+        .pipe(autoprefixer({
+            browsers: ['> 1%'],
+            cascade:false
+        }))
+        .pipe(concat('style.css'))
         .pipe(gulp.dest('./www/css/'))
         .pipe(minifyCss({
             keepSpecialComments: 0
         }))
+        .pipe(concat('style.css'))
         .pipe(rename({
             extname: '.min.css'
         }))
         .pipe(gulp.dest('./www/css/'))
-        .on('end', done);
+        .on('end', done)
+        .on('error', gutil.log);
 });
 
 gulp.task('jslint', function() {
     return gulp.src(paths.js)
-        .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'))
-        //.pipe(jshint.reporter('fail'))
+        .pipe(jshint()).on('error', gutil.log)
+    //.pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
+    .pipe(jshint.reporter('jshint-stylish'))
         .pipe(notify({
             message: 'Scripts verificados',
             onLast: true

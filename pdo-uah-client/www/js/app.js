@@ -1,11 +1,39 @@
 /* global angular, cordova, StatusBar */
 'use strict';
 // PDO UAH App
-angular.module('pdo-uah', ['ionic'])
+angular.module('pdo-uah', ['ionic', 'pdouah.controllers'])
 
-.run(function($ionicPlatform) {
+
+.config(['$stateProvider', '$urlRouterProvider',
+    function($stateProvider, $urlRouterProvider) {
+        $stateProvider
+            .state('pdo', {
+                url: '/pdo',
+                abstract: true,
+                templateUrl: 'templates/pdo.html',
+                controller: 'PdoBasicCtrl'
+            })
+            .state('pdo.main', {
+                url: '/main',
+                templateUrl: 'templates/pdo-main.html',
+                controller: 'PdoMainCtrl'
+            })
+            .state('pdo.report', {
+                url: '/report',
+                templateUrl: 'templates/pdo-report.html',
+                controller: 'PdoReportCtrl'
+            })
+            .state('pdo.history', {
+                url: '/history',
+                templateUrl: 'templates/pdo-history.html',
+                controller: 'PdoHistoryCtrl'
+            });
+        $urlRouterProvider.otherwise('/pdo/main');
+    }
+]).run(function($state, $ionicPlatform) {
     $ionicPlatform.ready(function() {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // Hide the accessory bar by default 
+        //(remove this to show the accessory bar above the keyboard
         // for form inputs)
         if (window.cordova && window.cordova.plugins.Keyboard) {
             cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -13,41 +41,8 @@ angular.module('pdo-uah', ['ionic'])
         if (window.StatusBar) {
             StatusBar.styleDefault();
         }
+        console.log($state);
+        console.log($state.current.name);
     });
-})
-    .config(function($stateProvider, $urlRouteProvider) {
-        $stateProvider
-            .state('pdo', {
-                url: '/pdo',
-                abstract: true,
-                template: 'templates/pdo.html'
-            })
-            .state('pdo.main', {
-                url: '/pdo/main',
-                views: {
-                    'pdo-main': {
-                        templateUrl: 'templates/pdo-main.html',
-                        controller: 'PdoMain'
-                    }
-                }
-            })
-            .state('pdo.report', {
-                url: '/pdo/report',
-                views: {
-                    'pdo-report': {
-                        templateUrl: 'templates/pdo-report.html',
-                        controller: 'PdoReport'
-                    }
-                }
-            })
-            .state('pdo.history', {
-                url: '/pdo/history',
-                views: {
-                    'pdo-history': {
-                        templateUrl: 'templates/pdo-history.html',
-                        controller: 'PdoHistory'
-                    }
-                }
-            });
-        $urlRouterProvider.otherwise('/pdo/main');
-    });
+
+});
