@@ -21,23 +21,12 @@ build/Release
 
 # Dependency directory
 # Commenting this out is preferred by some people, see
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
+# https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules
+bower_components
 
 # Users Environment Variables
 .lock-wscript
 
-## generic files to ignore
-*~
-*.lock
-*.DS_Store
-*.swp
-*.out
-
-#Ignorar sublime project
-*sublime-project
-*sublime-workspace
-
-#Ignorar test
-test/
-test2/
+# Built files
+dist
