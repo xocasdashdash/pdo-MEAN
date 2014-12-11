@@ -1,7 +1,7 @@
 /* global angular, cordova, StatusBar */
 'use strict';
 // PDO UAH App
-angular.module('pdo-uah', ['ionic', 'pdouah.controllers'])
+angular.module('pdo-uah', ['ionic', 'pdouah.controllers','pdouah.directives'])
 
 
 .config(['$stateProvider', '$urlRouterProvider',
@@ -41,8 +41,6 @@ angular.module('pdo-uah', ['ionic', 'pdouah.controllers'])
         if (window.StatusBar) {
             StatusBar.styleDefault();
         }
-        console.log($state);
-        console.log($state.current.name);
     });
 
 });
