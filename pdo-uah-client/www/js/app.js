@@ -1,7 +1,7 @@
 /* global angular, cordova, StatusBar */
 'use strict';
 // PDO UAH App
-angular.module('pdo-uah', ['ionic', 'pdouah.controllers','pdouah.directives'])
+angular.module('pdo-uah', ['ionic', 'pdouah.config','ngResource','pdouah.services','pdouah.controllers','pdouah.directives'])
 
 
 .config(['$stateProvider', '$urlRouterProvider',

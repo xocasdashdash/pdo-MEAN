@@ -50,7 +50,7 @@ angular.module('pdouah.directives', [])
                     );
                 });
             }
-        }
+        };
     }).directive('course', function() {
         return {
             template: '<select ng-model="course" ' +

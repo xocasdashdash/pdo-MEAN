@@ -71,7 +71,7 @@ gulp.task('serve', function() {
             'NODE_ENV': 'development',
             'ENVIROMENT': 'dev'
         },
-        ignore: ['server/test/*'],
+        ignore: ['server/test/*', 'node_modules/*'],
         nodeArgs: ['--debug']
 
     });

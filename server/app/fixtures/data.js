@@ -23,7 +23,7 @@ module.exports = {
     }, {
         "schoolname": "Ciencias",
         "url": "www.uah.es/ciencias",
-        "email": "ciecnias@uah.es",
+        "email": "ciencias@uah.es",
         "school_codes": ["107", "102", "110"]
     }, {
         "schoolname": "Derecho",
