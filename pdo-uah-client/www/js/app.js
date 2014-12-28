@@ -30,7 +30,7 @@ angular.module('pdo-uah', ['ionic', 'pdouah.config','ngResource','pdouah.service
             });
         $urlRouterProvider.otherwise('/pdo/main');
     }
-]).run(function($state, $ionicPlatform) {
+]).run( ['$state','$ionicPlatform','configService',function($state, $ionicPlatform) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default 
         //(remove this to show the accessory bar above the keyboard
@@ -43,4 +43,4 @@ angular.module('pdo-uah', ['ionic', 'pdouah.config','ngResource','pdouah.service
         }
     });
 
-});
+}]);

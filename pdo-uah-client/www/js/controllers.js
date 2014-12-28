@@ -11,8 +11,8 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', '$scope',
-    function(Schools, $scope) {
+.controller('PdoReportCtrl', ['Schools', 'Programs','$scope',
+    function(Schools, Programs,$scope) {
         $scope.school = {};
         $scope.programs_bkp = {
             '1': [{
@@ -83,7 +83,7 @@ angular.module('pdouah.controllers', [])
             $scope.schools = data.schools;
         }).
         catch (function(reason) {
-            console.err(reason);
+            console.error(reason);
         });
         $scope.schoolChanged = function(newSchool) {
             //Actualizo el model de las asignaturas
@@ -91,7 +91,7 @@ angular.module('pdouah.controllers', [])
                 $scope.programs = data.programs;
             }).
             catch (function(reason) {
-                console.err(reason);
+                console.error(reason);
             });
             if (!$scope.$$phase) {
                 $scope.$apply(); //this triggers a $digest
@@ -102,13 +102,11 @@ angular.module('pdouah.controllers', [])
                 $scope.courses = [];
                 return;
             }
-            if (typeof $scope.courses_bkp[newProgram._id] !== 'undefined') {
-                $scope.courses = $scope.courses_bkp[newProgram._id];
-                console.log($scope.courses);
-            } else {
-                console.error('No existen clases');
-                $scope.courses = [];
-            }    
+            Programs.load_courses(newProgram).then(function (data) {
+                $scope.courses = data.courses;
+            }).catch(function (reason) {
+                console.error(reason);
+            });                
             if (!$scope.$$phase) {
                 $scope.$apply(); //this triggers a $digest
             }
