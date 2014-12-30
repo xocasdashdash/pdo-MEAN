@@ -25,9 +25,10 @@
         <label class="item item-input item-floating-label">
             <span class="input-label">Teléfono</span>
         </label>
-        <school schools="schools" school-changed="schoolChanged(newSchool)"></school>
-        <program programs="programs" program-changed="programChanged(newProgram)"></program>
-        <course courses="courses"></course>
+        <h5>¿Dónde estudias?</h5>
+        <pretty-select modelo="schools" label-to-show="Centro" callback="schoolChanged(selectedElement)" value-to-show="schoolname"></pretty-select>
+        <pretty-select modelo="programs" label-to-show="Titulación" callback="programChanged(selectedElement)"></pretty-select>
+        <pretty-select modelo="courses" label-to-show="Asignatura"></pretty-select>
     </form>
 </div>
 </ion-content>
