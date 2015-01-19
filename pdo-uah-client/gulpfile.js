@@ -60,7 +60,7 @@ gulp.task('config', function() {
         host = 'IP_DEFINITIVA';
         port = 'PUERTO_DEFINITIVO';
     } else {
-        host = '192.168.1.132';
+        host = '192.168.1.131';
         port = '8081';
     }
     gulp.src('config.json')

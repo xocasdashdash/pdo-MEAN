@@ -1,0 +1,31 @@
+@import 'vars';
+
+	.buffer-top{
+		margin-top: $buffer-top-config;
+	}
+	.buffer-right{
+		margin-right: $buffer-right-config;
+	}
+	.buffer-left{
+		margin-left: $buffer-left-config;
+	}
+	.buffer-bottom{
+		margin-bottom: $buffer-bottom-config 
+	}
+	.center{
+		text-align: center;
+	}
+	.button{
+		width: 40%;
+	}
+	.has-error{
+		border-color: #a94442;
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		background-color: #a94442;
+	}
+	.is-valid{
+		border-color: #3c763d;
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		background-color: #3c763d;
+
+	}

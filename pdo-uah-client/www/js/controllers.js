@@ -11,11 +11,13 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', '$scope',
-    function(Schools, Programs, $scope) {
+.controller('PdoReportCtrl', ['Schools', 'Programs','Pdo', '$scope', '$ionicPopup',
+
+    function(Schools, Programs,Pdo, $scope, $ionicPopup) {
         $scope.schools = [];
         $scope.courses = [];
-        $scope.programs = [];        
+        $scope.programs = [];
+        $scope.pdo = {};
 
         Schools.query().then(function(data) {
             $scope.schools = data.schools;
@@ -52,9 +54,23 @@ angular.module('pdouah.controllers', [])
             });   
 
         };
-        $scope.courseChanged = function (newCourse) {
+        $scope.courseChanged = function(newCourse) {
             console.log(newCourse);
-        }
+        };
+        // A confirm dialog
+        $scope.enviar = function() {
+            var confirmPopup = $ionicPopup.confirm({
+                title: 'Enviar P.do',
+                template: '¿Estás seguro que quieres enviar el P.do tal y como está??'
+            });
+            confirmPopup.then(function(res) {
+                if (res) {                    
+                    Pdo.sendPdo($scope.pdo);
+                } else {
+                    console.log('You are not sure');
+                }
+            });
+        };
 
     }
 ])

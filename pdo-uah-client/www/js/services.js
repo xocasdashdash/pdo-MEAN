@@ -8,23 +8,14 @@ angular.module('pdouah.services', [])
                 $CONSTANTS.port;
             schools = basicUrl + '/api/v1/school';
             pdo = basicUrl + '/api/v1/pdo';
-
-            /*
-            $http.get($CONSTANTS.schema +
-                $CONSTANTS.host + ':' +
-                $CONSTANTS.port + '/api/v1').then(function(resp) {
-                basicUrl = resp.data.url;
-                schools = resp.data.schools;
-                pdo = resp.data.pdo;
-            });
-            */
             configService = {
                 basicUrl: basicUrl,
                 schools: schools,
                 pdo: pdo,
                 put: function(key, value) {
                     if (value !== undefined) {
-                        $window.localStorage.setItem(key, JSON.stringify(value));
+                        $window.localStorage.setItem(key,
+                            JSON.stringify(value));
                         return true;
                     } else {
                         return false;
@@ -32,7 +23,8 @@ angular.module('pdouah.services', [])
                 },
                 get: function(key) {
                     var value = $window.localStorage.getItem(key);
-                    return (value && value.trim().length > 0) ? JSON.parse(value) : false;
+                    return (value && value.trim().length > 0) ?
+                        JSON.parse(value) : false;
                 },
                 delete: function(key) {
                     $window.localStorage.removeItem(key);
@@ -68,17 +60,23 @@ angular.module('pdouah.services', [])
             schools.load_programs = function(school) {
                 var defer,
                     local_programs;
-                if(school === null || typeof school === 'undefined' || typeof school.schoolname ==='undefined'){
-                    return $q.when({programs: [] });
+                if (school === null ||
+                    typeof school === 'undefined' ||
+                    typeof school.schoolname === 'undefined') {
+                    return $q.when({
+                        programs: []
+                    });
                 }
                 local_programs = $configService.get('programs');
-                if (typeof local_programs[school.schoolname] !== 'undefined') {
+                if (typeof local_programs[school.schoolname] !==
+                    'undefined') {
                     return $q.when({
                         programs: local_programs[school.schoolname]
                     });
                 }
                 defer = $q.defer();
-                $http.get($configService.basicUrl + school._links.programs.href).success(function(data) {
+                $http.get($configService.basicUrl +
+                    school._links.programs.href).success(function(data) {
                     if (local_programs === false) {
                         local_programs = {};
                     }
@@ -100,8 +98,12 @@ angular.module('pdouah.services', [])
             var programs = {};
             programs.load_courses = function(program) {
                 var defer, local_courses;
-                if(program === null || typeof program === 'undefined' ||typeof program.code ==='undefined'){
-                    return $q.when({courses: [] });
+                if (program === null ||
+                    typeof program === 'undefined' ||
+                    typeof program.code === 'undefined') {
+                    return $q.when({
+                        courses: []
+                    });
                 }
                 local_courses = $configService.get('courses');
                 if (local_courses === false) {
@@ -113,7 +115,8 @@ angular.module('pdouah.services', [])
                     });
                 }
                 defer = $q.defer();
-                $http.get($configService.basicUrl + program._links.courses.href).success(function(data) {
+                $http.get($configService.basicUrl +
+                    program._links.courses.href).success(function(data) {
                     if (local_courses === false) {
                         local_courses = {};
                     }
@@ -129,4 +132,21 @@ angular.module('pdouah.services', [])
             };
             return programs;
         }
-    ]);
+    ]).factory('Pdo',['$q','$http','configService',
+        function ($q, $http, $configService) {
+            var pdo = {};
+            pdo.sendPdo = function  (pdo) {
+                var defer = $q.defer();
+                $http.post($configService.pdo, pdo).success(
+                function  (data) {
+                    console.log(data);
+                    defer.resolve({
+                        pdo: data
+                    });
+                }).error(function(reason) {
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            return pdo;
+        }]);

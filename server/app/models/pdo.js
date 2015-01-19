@@ -28,6 +28,14 @@ module.exports =
                 message: 'Solamente números y letras'
             })
         },
+        title:{
+            type: String,
+            required: true
+        },
+        text: {
+            type: String,
+            required: true
+        },
         email: {
             type: String,
             required: true,
