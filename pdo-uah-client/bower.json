@@ -2,12 +2,14 @@
   "name": "pdo-uah-client",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.0-beta.13"
+    "ionic": "driftyco/ionic-bower#1.0.0-beta.14"
   },
   "resolutions": {
     "angular": "~1.2.17"
   },
   "dependencies": {
-    "angular-elastic": "~2.4.2"
+    "angular-elastic": "~2.4.2",
+    "angular-jquery-maskedinput": "*",
+    "jquery-maskedinput": "~1.4.0"
   }
 }

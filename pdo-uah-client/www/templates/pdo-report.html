@@ -5,7 +5,7 @@
         <label class="item item-input item-floating-label">
             <span class="input-label">Nombre</span>
             <input type="text" placeholder="Nombre" required data-ng-model="pdo.name" name="name"
-                ng-class="{'has-error': !pdoForm.name.$pristine && pdoForm.name.$invalid, 'is-valid' : !pdoForm.name.$pristine && pdoForm.name.$valid}">
+            ng-class="{'has-error': !pdoForm.name.$pristine && pdoForm.name.$invalid, 'is-valid' : !pdoForm.name.$pristine && pdoForm.name.$valid}">
         </label>
         <label class="item item-input item-floating-label">
             <span class="input-label">Apellidos</span>
@@ -25,12 +25,10 @@
         </label>
         <label class="item item-input item-floating-label">
             <span class="input-label">Teléfono</span>
-            <input type="tel" placeholder="Teléfono" data-ng-model="pdo.phone" ng-minlength="3" name="phone" numbers-only 
+            <input type="tel" placeholder="Teléfono" data-ng-model="pdo.phone" ng-minlength="3" name="phone" numbers-only
             ng-class="{'has-error': !pdoForm.phone.$pristine && pdoForm.phone.$invalid, 'is-valid' : !pdoForm.phone.$pristine && pdoForm.phone.$valid}"
+            mask="999 999 999" data-mask-placeholder="### ### ###"
             >
-        </label>
-        <label class="item item-input item-floating-label">
-            <span class="input-label">Teléfono</span>
         </label>
         <h5>¿Dónde estudias?</h5>
 <pretty-select modelo="schools" label-to-show="Centro" callback="schoolChanged(selectedElement)" value-to-show="schoolname" data-ng-model="pdo.school" required name="school"></pretty-select>
@@ -38,11 +36,14 @@
 <pretty-select modelo="courses" label-to-show="Asignatura" data-ng-model="pdo.course" required name="course"></pretty-select>
 <h5>¿Que ha pasado?</h5>
         <label class="item item-input item-floating-label">
-<span class="input-label">Titulo del P.do</span>
-            <input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title">
+<span class="input-label">Titulo del P.do <span ng-show="pdoForm.title.$touched && pdoForm.title.$error.minlength" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
+<input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title"
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1500,'blur': 0} }" >
         </label>
-        <label class="item item-input">
-<textarea msd-elastic data-ng-model="pdo.text" ng-minlength="50" name="text" ng-required="true"></textarea>
+        <label class="item item-input item-floating-label"><span class="input-label">Descripción del P.do <span ng-show="!pdoForm.text.$pristine && pdoForm.text.$error.minlength" class="red-text">(Faltan {{50 - pdoForm.text.$viewValue.length}} carácteres)</span></span>
+<textarea msd-elastic data-ng-model="pdo.text" ng-minlength="50" name="text" ng-required="true" placeholder="Descripción del P.do"
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1500,'blur': 0} }" >
+></textarea>
         </label>
         <div class="center">
 <button class="button button-positive buffer-top buffer-left buffer-bottom" ng-click="send()" ng-disabled="pdoForm.$invalid">

@@ -1,7 +1,10 @@
 /* global angular, cordova, StatusBar */
 'use strict';
 // PDO UAH App
-angular.module('pdo-uah', ['ionic', 'pdouah.config','ngResource','pdouah.services','pdouah.controllers','pdouah.directives','monospaced.elastic'])
+angular.module('pdo-uah', ['ionic', 'pdouah.config', 'ngResource',
+    'pdouah.services', 'pdouah.controllers', 'pdouah.directives',
+     'monospaced.elastic','angular-jquery-maskedinput'
+])
 
 
 .config(['$stateProvider', '$urlRouterProvider',
@@ -30,17 +33,19 @@ angular.module('pdo-uah', ['ionic', 'pdouah.config','ngResource','pdouah.service
             });
         $urlRouterProvider.otherwise('/pdo/main');
     }
-]).run( ['$state','$ionicPlatform','configService',function($state, $ionicPlatform) {
-    $ionicPlatform.ready(function() {
-        // Hide the accessory bar by default 
-        //(remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if (window.cordova && window.cordova.plugins.Keyboard) {
-            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-        if (window.StatusBar) {
-            StatusBar.styleDefault();
-        }
-    });
+]).run(['$state', '$ionicPlatform', 'configService',
+    function($state, $ionicPlatform) {
+        $ionicPlatform.ready(function() {
+            // Hide the accessory bar by default 
+            //(remove this to show the accessory bar above the keyboard
+            // for form inputs)
+            if (window.cordova && window.cordova.plugins.Keyboard) {
+                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            }
+            if (window.StatusBar) {
+                StatusBar.styleDefault();
+            }
+        });
 
-}]);
+    }
+]);
