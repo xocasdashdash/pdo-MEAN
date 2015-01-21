@@ -139,7 +139,6 @@ angular.module('pdouah.services', [])
                 var defer = $q.defer();
                 $http.post($configService.pdo, pdo).success(
                 function  (data) {
-                    console.log(data);
                     defer.resolve({
                         pdo: data
                     });

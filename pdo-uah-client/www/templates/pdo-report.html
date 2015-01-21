@@ -36,7 +36,7 @@
 <pretty-select modelo="courses" label-to-show="Asignatura" data-ng-model="pdo.course" required name="course"></pretty-select>
 <h5>¿Que ha pasado?</h5>
         <label class="item item-input item-floating-label">
-<span class="input-label">Titulo del P.do <span ng-show="pdoForm.title.$touched && pdoForm.title.$error.minlength" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
+<span class="input-label">Titulo del P.do <span ng-show="!pdoForm.title.$pristine && pdoForm.title.$error.minlength" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
 <input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title"
 ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1500,'blur': 0} }" >
         </label>
