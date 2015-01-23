@@ -11,9 +11,10 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup',
+.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q',
 
-    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup) {
+    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q) {
+        var prom_programs_loaded = $q.defer();
         $scope.schools = [];
         $scope.courses = [];
         $scope.programs = [];
@@ -111,6 +112,30 @@ angular.module('pdouah.controllers', [])
                         $scope.pdo.phone = personalData.phone;
                         $scope.pdo.num_id = personalData.num_id;
                         $scope.pdo.email = personalData.email;
+                        if (personalData.school_id) {
+                            Schools.findById(personalData.school_id).then(function(school) {
+                                $scope.pdo.school = school;
+                                if (personalData.program_id) {
+                                    //Si hay un dato de programa guardado
+                                    Schools.load_programs($scope.pdo.school).then(function(data) {
+                                        $scope.programs = data.programs;
+                                        Programs.findById($scope.pdo.school.schoolname, personalData.program_id).then(function(program) {
+                                            $scope.pdo.program = program;
+                                        }).
+                                        catch (function(reason) {
+                                            console.error('No encontrado:', reason);
+                                        });
+                                    }).
+                                    catch (function(reason) {
+                                        console.error(reason);
+                                    });
+                                }
+                            }).
+                            catch (function(reason) {
+                                console.error('No encontrada:', reason);
+                            });
+                        }
+
                     }
 
                 } else {

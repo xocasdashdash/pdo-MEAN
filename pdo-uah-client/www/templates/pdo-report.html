@@ -38,11 +38,11 @@
         <label class="item item-input item-floating-label">
 <span class="input-label">Titulo del P.do <span ng-show="!pdoForm.title.$pristine && pdoForm.title.$error.minlength" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
 <input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title"
-ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1500,'blur': 0} }" >
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 600,'blur': 0} }" >
         </label>
         <label class="item item-input item-floating-label"><span class="input-label">Descripción del P.do <span ng-show="!pdoForm.text.$pristine && pdoForm.text.$error.minlength" class="red-text">(Faltan {{50 - pdoForm.text.$viewValue.length}} carácteres)</span></span>
 <textarea msd-elastic data-ng-model="pdo.text" ng-minlength="50" name="text" ng-required="true" placeholder="Descripción del P.do"
-ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1500,'blur': 0} }" >
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 600,'blur': 0} }" >
 ></textarea>
         </label>
         <div class="center">

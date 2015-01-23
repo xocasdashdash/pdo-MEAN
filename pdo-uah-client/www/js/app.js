@@ -1,9 +1,9 @@
 /* global angular, cordova, StatusBar */
 'use strict';
 // PDO UAH App
-angular.module('pdo-uah', ['ionic', 'pdouah.config', 'ngResource',
-    'pdouah.services', 'pdouah.controllers', 'pdouah.directives',
-     'monospaced.elastic','angular-jquery-maskedinput'
+angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
+    'pdouah.controllers', 'pdouah.directives', 'monospaced.elastic',
+    'angular-jquery-maskedinput'
 ])
 
 

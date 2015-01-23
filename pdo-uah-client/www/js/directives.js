@@ -12,6 +12,8 @@ angular.module('pdouah.directives', [])
             require: 'ngModel',
             link: function postLink($scope, element, attrs, ngModelCtrl) {
                 var fnChangeCallback;
+                $scope.ngm = ngModelCtrl;
+                $scope.selectedElement = {};
                 $scope.$watch('modelo', function(value) {
                     if (typeof $scope.modelo !== 'undefined') {
                         if ($scope.modelo.length === 0) {
@@ -20,6 +22,11 @@ angular.module('pdouah.directives', [])
                         $scope.callback({
                             selectedElement: $scope.selectedElement
                         });
+                    }
+                });
+                $scope.$watch('ngm.$modelValue',function (value) {
+                    if(value){
+                       $scope.selectedElement = value;
                     }
                 });
                 if (attrs.callback) {

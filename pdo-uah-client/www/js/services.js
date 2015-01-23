@@ -1,3 +1,4 @@
+/* global angular, cordova, StatusBar,_ */
 'use strict';
 angular.module('pdouah.services', [])
     .factory('configService', ['CONSTANTS', '$http', '$window',
@@ -55,6 +56,28 @@ angular.module('pdouah.services', [])
                 }).error(function(reason) {
                     defer.reject(reason);
                 });
+                return defer.promise;
+            };
+            schools.findById = function(schoolId) {
+                var defer = $q.defer(),
+                    school_index = -1,
+                    schools;
+                schools = $configService.get('schools');
+                if (schools.length === 0) {
+                    defer.reject('No schools loaded');
+                    return defer.promise;
+                }
+                for (var i = schools.length - 1; i >= 0 && school_index === -1; i--) {
+                    if (schools[i]._id === schoolId) {
+                        school_index = i;
+                    }
+                }
+
+                if (school_index === -1) {
+                    defer.reject('No schools loaded');
+                    return defer.promise;
+                }
+                defer.resolve(schools[school_index]);
                 return defer.promise;
             };
             schools.load_programs = function(school) {
@@ -130,22 +153,43 @@ angular.module('pdouah.services', [])
                 });
                 return defer.promise;
             };
+            programs.findById = function(schoolName, programId) {
+                var defer = $q.defer(),
+                    program, programs, program_index = -1;
+                programs = $configService.get('programs')[schoolName];
+                if (programs.length === 0) {
+                    defer.reject('No programs loaded');
+                    return defer.promise;
+                }
+                for (var i = programs.length - 1; i >= 0 && program_index === -1; i--) {
+                    if (programs[i]._id === programId) {
+                        program_index = i;
+                    }
+                }
+                if (program_index === -1) {
+                    defer.reject('No programs loaded');
+                    return defer.promise;
+                }
+                defer.resolve(programs[program_index]);
+                return defer.promise;
+            };
             return programs;
         }
-    ]).factory('Pdo',['$q','$http','configService',
-        function ($q, $http, $configService) {
+    ]).factory('Pdo', ['$q', '$http', 'configService',
+        function($q, $http, $configService) {
             var pdo = {};
-            pdo.sendPdo = function  (pdo) {
+            pdo.sendPdo = function(pdo) {
                 var defer = $q.defer();
                 $http.post($configService.pdo, pdo).success(
-                function  (data) {
-                    defer.resolve({
-                        pdo: data
-                    });
-                }).error(function(reason) {
+                    function(data) {
+                        defer.resolve({
+                            pdo: data
+                        });
+                    }).error(function(reason) {
                     defer.reject(reason);
                 });
                 return defer.promise;
             };
             return pdo;
-        }]);
+        }
+    ]);
