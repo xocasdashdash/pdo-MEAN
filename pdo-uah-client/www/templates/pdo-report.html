@@ -32,9 +32,9 @@
         </label>
         <h5>¿Dónde estudias?</h5>
 <pretty-select modelo="schools" label-to-show="Centro" callback="schoolChanged(selectedElement)" value-to-show="schoolname" data-ng-model="pdo.school" required name="school"></pretty-select>
-<pretty-select modelo="programs" label-to-show="Titulación" callback="programChanged(selectedElement)" data-ng-model="pdo.program" required name="program"></pretty-select>
-<pretty-select modelo="courses" label-to-show="Asignatura" data-ng-model="pdo.course" required name="course"></pretty-select>
-<h5>¿Que ha pasado?</h5>
+<pretty-select href="#/pdo/report/#pdo-program" modelo="programs" label-to-show="Titulación" callback="programChanged(selectedElement)" data-ng-model="pdo.program" required name="program"></pretty-select>
+<pretty-select href="#/pdo/report/#pdo-course" modelo="courses" label-to-show="Asignatura" data-ng-model="pdo.course" required name="course"></pretty-select>
+<h5 >¿Que ha pasado?</h5>
         <label class="item item-input item-floating-label">
 <span class="input-label">Titulo del P.do <span ng-show="!pdoForm.title.$pristine && pdoForm.title.$error.minlength" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
 <input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title"

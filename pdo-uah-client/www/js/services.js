@@ -29,6 +29,17 @@ angular.module('pdouah.services', [])
                 },
                 delete: function(key) {
                     $window.localStorage.removeItem(key);
+                },
+                pushPdo: function(newPdo){
+                    var currentPdos = this.get('storedPdos');
+                    if(currentPdos !== false){
+                        currentPdos.push(newPdo);
+                        return this.put('storedPdos', currentPdos);
+                    }else{
+                        var newPdoStorage = [];
+                        newPdoStorage.push(newPdo);
+                        return this.put('storedPdos', newPdoStorage);
+                    }
                 }
             };
             return configService;

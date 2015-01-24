@@ -11,9 +11,9 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q',
+.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q', '$location','$ionicScrollDelegate',
 
-    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q) {
+    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q,$location, $ionicScrollDelegate) {
         var prom_programs_loaded = $q.defer();
         $scope.schools = [];
         $scope.courses = [];
@@ -82,12 +82,10 @@ angular.module('pdouah.controllers', [])
                                 personalData.num_id = $scope.pdo.num_id;
                                 personalData.email = $scope.pdo.email;
                                 configService.put('personalData', personalData);
-
                             } else {
                                 console.log('You are not sure');
                             }
                         });
-                        console.log('Datos enviados');
                         console.log('Datos:', data);
 
                     }, function(reason) {
@@ -115,12 +113,16 @@ angular.module('pdouah.controllers', [])
                         if (personalData.school_id) {
                             Schools.findById(personalData.school_id).then(function(school) {
                                 $scope.pdo.school = school;
+
                                 if (personalData.program_id) {
                                     //Si hay un dato de programa guardado
                                     Schools.load_programs($scope.pdo.school).then(function(data) {
                                         $scope.programs = data.programs;
                                         Programs.findById($scope.pdo.school.schoolname, personalData.program_id).then(function(program) {
                                             $scope.pdo.program = program;
+                                            $location.hash('pdo-course');
+                                            $ionicScrollDelegate.anchorScroll();
+
                                         }).
                                         catch (function(reason) {
                                             console.error('No encontrado:', reason);
@@ -129,6 +131,9 @@ angular.module('pdouah.controllers', [])
                                     catch (function(reason) {
                                         console.error(reason);
                                     });
+                                } else {
+                                    $location.hash('pdo-program');
+                                    $ionicScrollDelegate.anchorScroll();
                                 }
                             }).
                             catch (function(reason) {
