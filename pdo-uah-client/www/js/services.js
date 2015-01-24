@@ -30,15 +30,16 @@ angular.module('pdouah.services', [])
                 delete: function(key) {
                     $window.localStorage.removeItem(key);
                 },
-                pushPdo: function(newPdo){
-                    var currentPdos = this.get('storedPdos');
-                    if(currentPdos !== false){
-                        currentPdos.push(newPdo);
-                        return this.put('storedPdos', currentPdos);
+                push: function(key, newElement){
+                    var currentStoredElements = this.get(key);
+                    if(currentStoredElements !== false && 
+                        currentStoredElements.constructor === Array){
+                        currentStoredElements.push(newElement);
+                        return this.put(key, currentStoredElements);
                     }else{
-                        var newPdoStorage = [];
-                        newPdoStorage.push(newPdo);
-                        return this.put('storedPdos', newPdoStorage);
+                        var newStoredElements = [];
+                        newStoredElements.push(newElement);
+                        return this.put(key, newStoredElements);
                     }
                 }
             };

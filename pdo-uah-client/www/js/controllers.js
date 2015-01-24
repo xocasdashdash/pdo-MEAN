@@ -11,9 +11,9 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q', '$location','$ionicScrollDelegate',
+.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q', '$location', '$ionicScrollDelegate',
 
-    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q,$location, $ionicScrollDelegate) {
+    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q, $location, $ionicScrollDelegate) {
         var prom_programs_loaded = $q.defer();
         $scope.schools = [];
         $scope.courses = [];
@@ -58,6 +58,10 @@ angular.module('pdouah.controllers', [])
         $scope.courseChanged = function(newCourse) {
             console.log(newCourse);
         };
+        $scope.edit = function() {
+            $('.personal-data-edit').show();
+            $('.personal-data.edit').hide();
+        }
         // A confirm dialog
         $scope.send = function() {
             var confirmPopup = $ionicPopup.confirm({
@@ -67,27 +71,28 @@ angular.module('pdouah.controllers', [])
             confirmPopup.then(function(res) {
                 if (res) {
                     Pdo.sendPdo($scope.pdo).then(function(data) {
-                        var confirmPopupSaveData = $ionicPopup.confirm({
-                            title: 'P.do enviado!',
-                            template: '¿Quieres guardar tus datos para un proximo pdo?'
-                        });
-                        confirmPopupSaveData.then(function(res) {
-                            if (res) {
-                                var personalData = {};
-                                personalData.name = $scope.pdo.name;
-                                personalData.surname = $scope.pdo.surname;
-                                personalData.phone = $scope.pdo.phone;
-                                personalData.program_id = $scope.pdo.program._id;
-                                personalData.school_id = $scope.pdo.school._id;
-                                personalData.num_id = $scope.pdo.num_id;
-                                personalData.email = $scope.pdo.email;
-                                configService.put('personalData', personalData);
-                            } else {
-                                console.log('You are not sure');
-                            }
-                        });
-                        console.log('Datos:', data);
-
+                        if (!configService.get('personalData')) {
+                            var confirmPopupSaveData = $ionicPopup.confirm({
+                                title: 'P.do enviado!',
+                                template: '¿Quieres guardar tus datos para un proximo pdo?'
+                            });
+                            confirmPopupSaveData.then(function(res) {
+                                if (res) {
+                                    var personalData = {};
+                                    personalData.name = $scope.pdo.name;
+                                    personalData.surname = $scope.pdo.surname;
+                                    personalData.phone = $scope.pdo.phone;
+                                    personalData.program_id = $scope.pdo.program._id;
+                                    personalData.school_id = $scope.pdo.school._id;
+                                    personalData.num_id = $scope.pdo.num_id;
+                                    personalData.email = $scope.pdo.email;
+                                    configService.put('personalData', personalData);
+                                } else {
+                                    console.log('You are not sure');
+                                }
+                            });
+                        }
+                        configService.push('pdoStore', data.pdo);
                     }, function(reason) {
                         console.log('Razon:', reason);
                     });
@@ -139,6 +144,13 @@ angular.module('pdouah.controllers', [])
                             catch (function(reason) {
                                 console.error('No encontrada:', reason);
                             });
+                        }
+                        $('.personal-data-edit').hide();
+                        if (!personalData.school_id) {
+                            $('.personal-data-edit.school').show();
+                        }
+                        if (!personalData.program_id) {
+                            $('.personal-data-edit.program').show();
                         }
 
                     }
