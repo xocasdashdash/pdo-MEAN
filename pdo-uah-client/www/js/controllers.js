@@ -11,9 +11,9 @@ angular.module('pdouah.controllers', [])
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q', 
+.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q','$state',
 
-    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q) {
+    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q,$state) {
         var prom_programs_loaded = $q.defer();
         $scope.schools = [];
         $scope.courses = [];
@@ -61,7 +61,7 @@ angular.module('pdouah.controllers', [])
         $scope.edit = function() {
             $('.personal-data-edit').show();
             $('.personal-data.edit').hide();
-        }
+        };
         // A confirm dialog
         $scope.send = function() {
             var confirmPopup = $ionicPopup.confirm({
@@ -91,8 +91,19 @@ angular.module('pdouah.controllers', [])
                                     console.log('You are not sure');
                                 }
                             });
+                        } else {
+                            var personalData = {};
+                            personalData.name = $scope.pdo.name;
+                            personalData.surname = $scope.pdo.surname;
+                            personalData.phone = $scope.pdo.phone;
+                            personalData.program_id = $scope.pdo.program._id;
+                            personalData.school_id = $scope.pdo.school._id;
+                            personalData.num_id = $scope.pdo.num_id;
+                            personalData.email = $scope.pdo.email;
+                            configService.put('personalData', personalData);
                         }
                         configService.push('pdoStore', data.pdo);
+                        $state.go('pdo.history',{pdoId: data.pdo._id});
                     }, function(reason) {
                         console.log('Razon:', reason);
                     });
@@ -113,7 +124,7 @@ angular.module('pdouah.controllers', [])
                         $scope.pdo.name = personalData.name;
                         $scope.pdo.surname = personalData.surname;
                         $scope.pdo.phone = personalData.phone;
-                        $scope.pdo.num_id = personalData.num_id;
+                        $scope.pdo.num_id = parseInt(personalData.num_id, 10);
                         $scope.pdo.email = personalData.email;
                         if (personalData.school_id) {
                             Schools.findById(personalData.school_id).then(function(school) {
@@ -134,8 +145,7 @@ angular.module('pdouah.controllers', [])
                                     catch (function(reason) {
                                         console.error(reason);
                                     });
-                                } else {
-                                }
+                                } else {}
                             }).
                             catch (function(reason) {
                                 console.error('No encontrada:', reason);
@@ -148,20 +158,21 @@ angular.module('pdouah.controllers', [])
                         if (!personalData.program_id) {
                             $('.personal-data-edit.program').show();
                         }
-
                     }
-
                 } else {
                     console.log('You are not sure');
                 }
             });
-        }else{
+        } else {
             $scope.edit();
         }
 
     }
 ])
 //History Ctrl
-.controller('PdoHistoryCtrl', function($scope) {})
+.controller('PdoHistoryCtrl',['$scope','$stateParams', function($scope,$stateParams) {
+    console.log('Parametros:',$stateParams);
+
+}])
 //Basic Ctrl
 .controller('PdoBasicCtrl', function($scope) {});

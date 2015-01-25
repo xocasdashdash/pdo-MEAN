@@ -27,7 +27,7 @@ angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
                 controller: 'PdoReportCtrl'
             })
             .state('pdo.history', {
-                url: '/history',
+                url: '/history/:pdoId',
                 templateUrl: 'templates/pdo-history.html',
                 controller: 'PdoHistoryCtrl'
             });
