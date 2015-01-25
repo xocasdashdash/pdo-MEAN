@@ -31,7 +31,7 @@ module.exports = function(router) {
     }).get(function(req, res) {
         var from = req.query.createdOnBefore,
             limit = req.query.limit;
-        console.log(from, limit);
+        console.log('Peticion recibida!');
         School.find({
             created_on: {
                 $lte: from

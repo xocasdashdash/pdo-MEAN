@@ -61,7 +61,7 @@ module.exports = function(router) {
     }).get(function(req, res) {
         Course.find({
             program: req.params.program_id
-        }, function(err, courses) {
+        }).sort('name').exec(function(err, courses) {
             if (err) {
                 res.send(err);
             }

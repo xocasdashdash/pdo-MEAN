@@ -13,6 +13,7 @@ var enrouten = require('express-enrouten');
 var moment = require('moment');
 var config = require('./config/config');
 var logger = require('./app/log/log.js');
+var cors = require('cors');
 mongoose.connect(config.db.mongodb); // connect to our database
 
 // CONNECTION EVENTS
@@ -21,6 +22,7 @@ mongoose.connection.on('connected', function() {
     console.log('Mongoose default connection open to ' + config.db.mongodb);
 });
 require('./app/models/models.js').initialize();
+
 var events = require('./app/events/events.js');
 
 var Pdo = mongoose.model('Pdo');
@@ -39,12 +41,14 @@ app.use(function(req, res, next) {
 
 app.use(function(req, res, next) {
     req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
-    req.query.limit = req.query.limit ? req.query.limit : 2;
+    req.query.limit = req.query.limit ? req.query.limit : 10;
     next();
 });
 
 var port = process.env.PORT || 8081; // set our port
 
+//Enable CORS for all routes
+app.use(cors());
 //All the Routes are in the controllers directory
 app.use(enrouten({
     directory: 'app/controllers'

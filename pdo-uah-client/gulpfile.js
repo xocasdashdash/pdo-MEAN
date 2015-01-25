@@ -10,20 +10,21 @@ var jshint = require('gulp-jshint');
 var notify = require('gulp-notify');
 var gutil = require('gulp-util');
 var autoprefixer = require('gulp-autoprefixer');
+var ngConstant = require('gulp-ng-constant');
 
 var paths = {
     sass: ['./www/scss/**/*.scss'],
-    js: ['./www/js/**/*.js', './www/js/*.js']
+    js: ['./www/js/**/*.js', './www/js/*.js', 'config.json']
 };
 
-gulp.task('default', ['sass', 'jslint', 'watch']);
+gulp.task('default', ['sass', 'jslint', 'config', 'watch']);
 
 gulp.task('sass', function(done) {
     gulp.src(paths.sass)
         .pipe(sass())
         .pipe(autoprefixer({
             browsers: ['> 1%'],
-            cascade:false
+            cascade: false
         }))
         .pipe(concat('style.css'))
         .pipe(gulp.dest('./www/css/'))
@@ -50,9 +51,36 @@ gulp.task('jslint', function() {
         }));
 });
 
+gulp.task('config', function() {
+    var env = process.env.NODE_ENV,
+        host, port, route;
+    
+    schema = 'http://';
+    if (env === 'prod') {
+        host = 'IP_DEFINITIVA';
+        port = 'PUERTO_DEFINITIVO';
+    } else {
+        host = '192.168.1.131';
+        port = '8081';
+    }
+    gulp.src('config.json')
+        .pipe(ngConstant({
+            name: 'pdouah.config',
+            constants: {
+                CONSTANTS: {
+                    host: host,
+                    port: port,
+                    schema: schema
+                }
+            }
+        }))
+    // Writes config.js to dist/ folder
+    .pipe(gulp.dest('www/js'));
+});
+
 gulp.task('watch', function() {
     gulp.watch(paths.sass, ['sass']);
-    gulp.watch(paths.js, ['jslint']);
+    gulp.watch(paths.js, ['jslint', 'config']);
 });
 
 gulp.task('install', ['git-check'], function() {

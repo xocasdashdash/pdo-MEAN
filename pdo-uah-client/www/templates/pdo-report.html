@@ -1,32 +1,60 @@
 <ion-view name="pdo-report">
 <ion-content class="">
 <div>
-    <form novalidate>
-        <label class="item item-input item-floating-label">
+    <form name="pdoForm" novalidate>
+        <label class="item item-input item-floating-label personal-data-edit">
             <span class="input-label">Nombre</span>
-            <input type="text" placeholder="Nombre" required data-ng-model="pdo.name">
+            <input type="text" placeholder="Nombre" required data-ng-model="pdo.name" name="name"
+            ng-class="{'has-error': !pdoForm.name.$pristine && pdoForm.name.$invalid, 'is-valid' : !pdoForm.name.$pristine && pdoForm.name.$valid}">
         </label>
-        <label class="item item-input item-floating-label">
+        <label class="item item-input item-floating-label personal-data-edit">
             <span class="input-label">Apellidos</span>
-            <input type="text" placeholder="Apellidos" required data-ng-model="pdo.surname">
+            <input type="text" placeholder="Apellidos" required data-ng-model="pdo.surname" name="surname"
+            ng-class="{'has-error': !pdoForm.surname.$pristine && pdoForm.surname.$invalid, 'is-valid' : !pdoForm.surname.$pristine && pdoForm.surname.$valid}"
+            >
         </label>
-        <label class="item item-input item-floating-label">
+        <label class="item item-input item-floating-label personal-data-edit">
             <span class="input-label">Nº CARNET UAH</span>
-            <input type="text" placeholder="Nº CARNET UAH" required data-ng-model="pdo.num_id">
+            <input type="number" placeholder="Nº CARNET UAH" required data-ng-model="pdo.num_id" name="uahid" numbers-only
+            ng-class="{'has-error': !pdoForm.uahid.$pristine && pdoForm.uahid.$invalid, 'is-valid' : !pdoForm.uahid.$pristine && pdoForm.uahid.$valid}"
+            >
         </label>
-        <label class="item item-input item-floating-label">
+        <label class="item item-input item-floating-label personal-data-edit">
             <span class="input-label">Email</span>
-            <input type="email" placeholder="Email" required data-ng-model="pdo.email">
+            <input type="email" placeholder="Email" required data-ng-model="pdo.email" name="email" ng-class="{'has-error': !pdoForm.email.$pristine && pdoForm.email.$invalid, 'is-valid' : !pdoForm.email.$pristine && pdoForm.email.$valid}">
         </label>
-        <label class="item item-input item-floating-label">
+        <label class="item item-input item-floating-label personal-data-edit">
             <span class="input-label">Teléfono</span>
-            <input type="tel" placeholder="Teléfono" data-ng-model="pdo.phone">
+            <input type="tel" placeholder="Teléfono" data-ng-model="pdo.phone" ng-minlength="3" name="phone" numbers-only
+            ng-class="{'has-error': !pdoForm.phone.$pristine && pdoForm.phone.$invalid, 'is-valid' : !pdoForm.phone.$pristine && pdoForm.phone.$valid}"
+            mask="999 999 999" data-mask-placeholder="### ### ###"
+            >
         </label>
+        <div class="center">
+            <button class="button button-positive buffer-top buffer-left buffer-bottom personal-data edit" ng-click="edit()">
+            Editar mis datos!
+            </button>
+        </div>
+        <h5>¿Que estudias?</h5>
+<pretty-select class="personal-data-edit school" modelo="schools" label-to-show="Centro" callback="schoolChanged(selectedElement)" value-to-show="schoolname" data-ng-model="pdo.school" required name="school"></pretty-select>
+<pretty-select class="personal-data-edit program" modelo="programs" label-to-show="Titulación" callback="programChanged(selectedElement)" data-ng-model="pdo.program" required name="program"></pretty-select>
+<pretty-select modelo="courses" label-to-show="Asignatura" data-ng-model="pdo.course" required name="course"></pretty-select>
+<h5 >¿Que ha pasado?</h5>
         <label class="item item-input item-floating-label">
-            <span class="input-label">Teléfono</span>
+<span class="input-label">Titulo del P.do <span ng-show="!pdoForm.title.$pristine && pdoForm.title.$viewValue.length < 10" class="red-text">(Faltan {{10 - pdoForm.title.$viewValue.length}} carácteres)</span></span>
+<input type="text" placeholder="Titulo del P.do" required data-ng-model="pdo.title" ng-minlength="10" ng-required="true" name="title"
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200,'blur': 0} }" >
         </label>
-        <school></school>
-
+        <label class="item item-input item-floating-label"><span class="input-label">Descripción del P.do <span ng-show="!pdoForm.text.$pristine && pdoForm.text.$error.minlength && pdoForm.text.$viewValue.length < 50" class="red-text">(Faltan {{50 - pdoForm.text.$viewValue.length}} carácteres)</span></span>
+<textarea msd-elastic data-ng-model="pdo.text" ng-minlength="50" name="text" ng-required="true" placeholder="Descripción del P.do"
+ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200,'blur': 0} }" >
+></textarea>
+        </label>
+        <div class="center">
+<button class="button button-positive buffer-top buffer-left buffer-bottom" ng-click="send()" ng-disabled="pdoForm.$invalid">
+Reportar!
+</button>
+        </div>
     </form>
 </div>
 </ion-content>

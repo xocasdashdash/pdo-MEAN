@@ -1,0 +1,9 @@
+<div class="item item-input item-select">
+    <div class="input-label">
+        {{labelToShow}}
+    </div>
+    <select ng-model="selectedElement"
+        ng-options="item as item[valueToShow] for item in modelo track by item._id">
+        <option value="">Elige una...</option>
+    </select>
+</div>

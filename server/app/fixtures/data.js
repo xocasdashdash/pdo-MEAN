@@ -23,7 +23,7 @@ module.exports = {
     }, {
         "schoolname": "Ciencias",
         "url": "www.uah.es/ciencias",
-        "email": "ciecnias@uah.es",
+        "email": "ciencias@uah.es",
         "school_codes": ["107", "102", "110"]
     }, {
         "schoolname": "Derecho",
@@ -3028,7 +3028,7 @@ module.exports = {
             "name": "SISTEMAS ELECTRÓNICOS DIGITALES",
             "code": "350014"
         }, {
-            "name": " TEORÍA DE LA COMUNICACIÓN",
+            "name": "TEORÍA DE LA COMUNICACIÓN",
             "code": "350019"
         }, {
             "name": "ARQUITECTURA DE REDES II",

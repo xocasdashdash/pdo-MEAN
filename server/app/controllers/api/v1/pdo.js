@@ -26,15 +26,18 @@ module.exports = function(router) {
         pdo.email = req.body.email;
         pdo.phone = req.body.phone;
         pdo.num_id = req.body.num_id;
+        pdo.title = req.body.title;
+        pdo.text = req.body.text;
 
         promise_array.push(deferred_school.promise);
         School.findOne({
-            schoolname: req.body.school_name
+            schoolname: req.body.school.schoolname
         }, function(err, school) {
             if (err) {
                 deferred_school.reject(err);
             }
             if (!school) {
+                console.log(req.body);
                 deferred_school.reject(
                     'No school found with[' + req.body.school_name + ']');
             }
@@ -44,7 +47,7 @@ module.exports = function(router) {
 
         promise_array.push(deferred_program.promise);
         Program.findOne({
-            code: req.body.program_code
+            code: req.body.program.code
         }, function(err, program) {
             if (err) {
                 deferred_program.reject(err);
@@ -58,7 +61,7 @@ module.exports = function(router) {
 
         promise_array.push(deferred_course.promise);
         Course.findOne({
-            code: req.body.course_code
+            code: req.body.course.code
         }, function(err, course) {
             if (err) {
                 deferred_course.reject(err);
@@ -74,12 +77,13 @@ module.exports = function(router) {
                 if (err) {
                     res.send(err);
                 }
+                //Enviar e-mail a la persona responsable del centro
+                //Enviar notificación al movil por el sistema de google/apple
                 res.json(pdo);
             });
         }).fail(function(reason) {
 
             console.log('Promesa rechazada');
-            console.log(reason);
             var err = new Error();
             err.message = reason;
             res.send(err);

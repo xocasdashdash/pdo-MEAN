@@ -1,50 +1,73 @@
 'use strict';
 angular.module('pdouah.directives', [])
-    .directive('school', function() {
+    .directive('prettySelect', function() {
         return {
-            templateUrl: 'templates/directives/school.tpl.html',
+            templateUrl: 'templates/directives/prettySelect.html',
             restrict: 'E',
-            controller: function($scope) {
-            	//Insertar llamada a servicio que pilla las escuelas
-                $scope.schools = [{
-                    id: '1',
-                    nombre: 'a'
-                }, {
-                    id: '2',
-                    nombre: 'b'
-                }, {
-                    id: '3',
-                    nombre: 'c'
-                }, {
-                    id: '4',
-                    nombre: 'd'
-                }, {
-                    id: '5',
-                    nombre: 'e'
-                }, {
-                    id: '6',
-                    nombre: 'f'
-                }];
-                $scope.prueba = 'hola';
-                $scope.colors = [{
-                    name: 'black',
-                    shade: 'dark'
-                }, {
-                    name: 'white',
-                    shade: 'light'
-                }, {
-                    name: 'red',
-                    shade: 'dark'
-                }, {
-                    name: 'blue',
-                    shade: 'dark'
-                }, {
-                    name: 'yellow',
-                    shade: 'light'
-                }];
+            scope: {
+                modelo: '=',
+                labelToShow: '@',
+                callback: '&'
             },
-            link: function postLink(scope) {
-                console.log('llamada!!!');
+            require: 'ngModel',
+            link: function postLink($scope, element, attrs, ngModelCtrl) {
+                var fnChangeCallback;
+                $scope.ngm = ngModelCtrl;
+                $scope.selectedElement = {};
+                $scope.$watch('ngm.$modelValue', function(value) {
+                    if (value) {
+                        $scope.selectedElement = value;
+                    }
+                });
+                $scope.$watch('modelo', function(value) {
+                    if (typeof $scope.modelo !== 'undefined') {
+                        if ($scope.modelo.length === 0) {
+                            $scope.selectedElement = null;
+                        }
+                        $scope.callback({
+                            selectedElement: $scope.selectedElement
+                        });
+                    }
+                });
+                if (attrs.callback) {
+                    fnChangeCallback = function(evt) {
+                        ngModelCtrl.$setViewValue($scope.selectedElement);
+                        $scope.callback({
+                            selectedElement: $scope.selectedElement
+                        });
+                        $scope.$apply();
+                    };
+
+                } else {
+                    fnChangeCallback = function(evt) {
+                        ngModelCtrl.$setViewValue($scope.selectedElement);
+                        $scope.$apply();
+                    };
+                }
+                element.on('change', fnChangeCallback);
+                $scope.valueToShow = attrs.valueToShow || 'name';
+            }
+        };
+    }).directive('numbersOnly', function() {
+        return {
+            require: 'ngModel',
+            link: function(scope, element, attrs, modelCtrl) {
+                var regexNumero = /[^0-9+.]/g;
+                modelCtrl.$parsers.push(function(inputValue) {
+                    // this next if is necessary for when using ng-required on your input. 
+                    // In such cases, when a letter is typed first, this parser will be called
+                    // again, and the 2nd time, the value will be undefined
+                    if (inputValue === undefined) {
+                        return '';
+                    }
+                    var transformedInput = inputValue.replace(regexNumero, '');
+                    if (transformedInput !== inputValue) {
+                        modelCtrl.$setViewValue(transformedInput);
+                        modelCtrl.$render();
+                    }
+
+                    return transformedInput;
+                });
             }
         };
     });
