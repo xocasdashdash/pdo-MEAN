@@ -1,3 +1,24 @@
+.pdo-element {
+  height: 50px;
+  margin: 10px 0; }
+  .pdo-element * {
+    font-size: 25px; }
+
+.pdo-action {
+  font-size: 25px; }
+
+a {
+  text-decoration: none;
+  color: black; }
+
+.pdo-title, .pdo-action {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%); }
+
+
 .center {
   display: -webkit-box;
   display: -webkit-flex;
@@ -38,7 +59,7 @@
 .center {
   text-align: center; }
 
-.button {
+.pdo-report.button {
   width: 40%; }
 
 .has-error {

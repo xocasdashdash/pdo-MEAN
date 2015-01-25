@@ -1,5 +1,11 @@
 <ion-view name="pdo-report">
-<ion-content class="">
+<ion-header-bar align-title="center" class="bar-positive">
+  <div class="buttons">
+    <button class="button" ui-sref="pdo.main()"><i class="icon ion-reply"></i></button>
+  </div>
+  <h1 class="title">{{viewTitle}}</h1>
+</ion-header-bar>
+<ion-content class="has-header" >
 <div>
     <form name="pdoForm" novalidate>
         <label class="item item-input item-floating-label personal-data-edit">
@@ -31,7 +37,7 @@
             >
         </label>
         <div class="center">
-            <button class="button button-positive buffer-top buffer-left buffer-bottom personal-data edit" ng-click="edit()">
+            <button class="pdo-report button button-positive buffer-top buffer-left buffer-bottom personal-data edit" ng-click="edit()">
             Editar mis datos!
             </button>
         </div>
@@ -51,7 +57,7 @@ ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200,'blur': 
 ></textarea>
         </label>
         <div class="center">
-<button class="button button-positive buffer-top buffer-left buffer-bottom" ng-click="send()" ng-disabled="pdoForm.$invalid">
+<button class="pdo-report button button-positive buffer-top buffer-left buffer-bottom" ng-click="send()" ng-disabled="pdoForm.$invalid">
 Reportar!
 </button>
         </div>

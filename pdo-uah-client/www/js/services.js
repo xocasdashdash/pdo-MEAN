@@ -30,13 +30,13 @@ angular.module('pdouah.services', [])
                 delete: function(key) {
                     $window.localStorage.removeItem(key);
                 },
-                push: function(key, newElement){
+                push: function(key, newElement) {
                     var currentStoredElements = this.get(key);
-                    if(currentStoredElements !== false && 
-                        currentStoredElements.constructor === Array){
+                    if (currentStoredElements !== false &&
+                        currentStoredElements.constructor === Array) {
                         currentStoredElements.push(newElement);
                         return this.put(key, currentStoredElements);
-                    }else{
+                    } else {
                         var newStoredElements = [];
                         newStoredElements.push(newElement);
                         return this.put(key, newStoredElements);
@@ -192,6 +192,7 @@ angular.module('pdouah.services', [])
             var pdo = {};
             pdo.sendPdo = function(pdo) {
                 var defer = $q.defer();
+                pdo.postedAt = new Date();
                 $http.post($configService.pdo, pdo).success(
                     function(data) {
                         defer.resolve({
@@ -200,6 +201,37 @@ angular.module('pdouah.services', [])
                     }).error(function(reason) {
                     defer.reject(reason);
                 });
+                return defer.promise;
+            };
+            pdo.getStoredPdos = function() {
+                var defer = $q.defer(),
+                    storedPdos;
+                storedPdos = $configService.get('pdoStore');
+                if (storedPdos) {
+                    defer.resolve(storedPdos);
+                } else {
+                    defer.reject('No encontrados');
+
+                }
+                return defer.promise;
+            };
+            pdo.getById = function (pdoId) {
+                var storedPdos, defer, pdo = false;
+                defer = $q.defer();
+                storedPdos = $configService.get('pdoStore');
+                if(storedPdos){
+                    for (var i = storedPdos.length - 1; i >= 0 && pdo === false; i--) {
+                        if(storedPdos[i]._id === pdoId){
+                            pdo = storedPdos[i];
+                            defer.resolve(pdo);
+                        }
+                    }
+                    if(pdo === false){
+                        defer.reject('No encontrado');
+                    }
+                }else{
+                    defer.reject('No encontrados');
+                }
                 return defer.promise;
             };
             return pdo;

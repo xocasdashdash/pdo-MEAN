@@ -1,4 +1,4 @@
-@import 'vars';
+@import './vars.report';
 
 	.buffer-top{
 		margin-top: $buffer-top-config;
@@ -15,7 +15,7 @@
 	.center{
 		text-align: center;
 	}
-	.button{
+	.pdo-report.button{
 		width: 40%;
 	}
 	.has-error{
