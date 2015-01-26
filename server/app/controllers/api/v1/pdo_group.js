@@ -162,11 +162,10 @@ module.exports = function(router) {
                 }
                 logger.debug('MEtiendo PDO ...'+pdo_group.pdos.length);
                 pdo_group.addPdo(req.body.pdos);
-                logger.debug('Guardando grupo...'+pdo_group.pdos.length);
+                logger.debug('Guardando grupo...' +pdo_group.pdos.length);
                 pdo_group.save(function(err, saved_doc) {
                     if (err) {
                         logger.debug(err);
-
                         res.send(err);
                         return;
                     }
@@ -177,6 +176,7 @@ module.exports = function(router) {
             })
             .reject(function(reason) {
                 res.send(reason);
+                return;
             });
     });
 
