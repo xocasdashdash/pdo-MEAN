@@ -194,10 +194,22 @@ angular.module('pdouah.controllers', [])
     console.log('state:', $state);
 })
 //Controller de la vista detalle
-.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Pdo', '$state',
-    function($scope, $stateParams, Pdo, $state) {
-        console.log('cargado detalle:estado', $stateParams);
+.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state',
+    function($scope, $stateParams, School, Program, Pdo, $state) {
         $scope.viewTitle = $state.current.data.viewTitle;
+        $scope.oneAtATime = true;
+        $scope.status = {};
+        Pdo.getComments($stateParams.pdoId).then(function(pdo_comments) {
+            $scope.pdo_comments = pdo_comments.map(function(e, i) {
+                e.isOpen = false;
+                console.log(e);
+                return e;
+            });
+        }).
+        catch (function(reason) {
+            $scope.pdo_comments = [];
+            console.error(reason);
+        });
         Pdo.getById($stateParams.pdoId).then(function(pdo) {
             $scope.pdo = pdo;
         }).

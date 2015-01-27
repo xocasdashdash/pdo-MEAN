@@ -3,7 +3,7 @@
 // PDO UAH App
 angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
     'pdouah.controllers', 'pdouah.directives', 'monospaced.elastic',
-    'angular-jquery-maskedinput'
+    'angular-jquery-maskedinput', 'ui.bootstrap'
 ])
 
 

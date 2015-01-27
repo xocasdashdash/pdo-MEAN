@@ -1,22 +1,9 @@
-.pdo-element {
-  height: 50px;
-  margin: 10px 0; }
-  .pdo-element * {
-    font-size: 25px; }
+.pdo-comments .panel-title {
+  width: 300px; }
 
-.pdo-action {
-  font-size: 25px; }
-
-a {
-  text-decoration: none;
-  color: black; }
-
-.pdo-title, .pdo-action {
-  position: relative;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%); }
+div.row {
+  margin-right: 0px !important;
+  margin-left: 0px !important; }
 
 
 .center {
@@ -43,6 +30,27 @@ a {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center; }
+
+.pdo-element {
+  height: 50px;
+  margin: 10px 0; }
+  .pdo-element * {
+    font-size: 25px; }
+
+.pdo-action {
+  font-size: 25px; }
+
+a {
+  text-decoration: none;
+  color: black; }
+
+.pdo-title, .pdo-action {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%); }
+
 
 .buffer-top {
   margin-top: 10px; }

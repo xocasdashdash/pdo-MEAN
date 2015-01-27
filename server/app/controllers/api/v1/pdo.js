@@ -93,6 +93,28 @@ module.exports = function(router) {
     });
 
     router({
+        name: 'get_pdo',
+        path: '/:pdo_id'
+    }).get(function(req,res){
+        var pdo;
+        Pdo.findById(req.params.pdo_id,
+            function(err, pdo) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                if (!pdo) {
+                    var error = new Error();
+                    error.message = 'Pdo not found';
+                    error.code = 404;
+                    res.status(404).send(error);
+                    return;
+                }
+                res.send(pdo.resource(req.route_gen));
+                return;
+            });
+    });
+    router({
         name: 'add_comment_pdo',
         path: '/:pdo_id/comment',
     }).post(function(req, res) {
@@ -144,16 +166,13 @@ module.exports = function(router) {
                     promPdoComments.reject(error);
                     return;
                 }
-                console.log('Comprobando comentarios');
                 if (pdo.comments.length === 0) {
                     console.log('Sin comentarios');
                     var error_no_comments = new Error();
                     error_no_comments.message = 'No comments found';
                     error_no_comments.code = 404;
                     promPdoComments.reject(error_no_comments);
-                    return;
                 }
-                console.log('Comentarios cargados!');
 
                 promPdoComments.resolve(
                     pdo.comments
@@ -164,11 +183,9 @@ module.exports = function(router) {
                     PdoGroup.findById(pdo.pdo_group, function(err, pdo_group) {
                         if (err) {
                             promPdoGroupComments.reject(err);
-                            return;
                         }
                         if (!pdo_group) {
                             promPdoGroupComments.resolve();
-                            return;
                         }
                         promPdoGroupComments.resolve(
                             pdo_group.comments
@@ -179,25 +196,28 @@ module.exports = function(router) {
                 }
                 q.all(promise_array).spread(function(pdo_comments, pdo_group_comments) {
                     var respuesta = [];
-                    console.log('pdo_comments', pdo_comments);
-                    console.log('pdo_group_comments', pdo_group_comments);
 
                     function compare(a, b) {
-                        if (a.date_created > b.date_created)
+                        if (a.date_created > b.date_created){
                             return -1;
-                        if (a.date_created < b.date_created)
+                        }
+                        if (a.date_created < b.date_created){
                             return 1;
+                        }
                         return 0;
                     }
                     respuesta = respuesta.concat(pdo_comments);
                     respuesta = respuesta.concat(pdo_group_comments);
-                    res.send(respuesta.sort(compare));
+                    respuesta = respuesta.sort(compare);
+                    res.send(respuesta);             
+                    //res.json({ user: 'tobi' });
                     return;
                 }).fail(function(reason) {
                     console.log('Promesa rechazada');
                     var err = new Error();
                     err.message = reason;
-                    res.send(err);
+                    err.code = 400;
+                    res.status(err.code).send(err);
                     return;
                 });
 

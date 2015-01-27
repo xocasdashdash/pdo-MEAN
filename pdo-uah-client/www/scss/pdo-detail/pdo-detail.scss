@@ -1,0 +1,11 @@
+@import './vars.detail';
+
+.pdo-comments{
+	.panel-title{
+		width: $pdo-comment-width;
+	}
+}
+div.row{
+	margin-right: 0px !important; 
+	margin-left:  0px !important; 
+}
