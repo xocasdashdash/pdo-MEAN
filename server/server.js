@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
-	//Modifico el enrutador para que sea más facil de cargar
+    //Modifico el enrutador para que sea más facil de cargar
     req.route_gen = req.app.locals.enrouten;
     next();
 });
@@ -52,7 +52,6 @@ app.use(enrouten({
 
 // START THE SERVER
 // =============================================================================
-app.listen(config.port);//,config.url);
-console.log(Math.round(new Date()
-    .getTime() / 1000));
-console.log('Magic happens on port ' + config.port);
+app.listen(config.port, config.host, function() {
+    console.log((new Date()) + ' Server is listening on port 8080');
+});
