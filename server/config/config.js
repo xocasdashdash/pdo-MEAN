@@ -3,7 +3,6 @@ module.exports = (function(enviroment) {
     var config = {
         dev: {
             "db": {
-                //"mongodb": "mongodb://testUser:testpassword@ds045077.mongolab.com:45077/shopwithmetest"
                 // Localhost
                 "mongodb": "mongodb://gestor:gestor1234@localhost/mean-pdo"
             },
@@ -12,21 +11,30 @@ module.exports = (function(enviroment) {
                 "exception": __dirname + "../../../logs/exceptions.dev.log",
                 "level": "debug"
             },
-            "url": "http://localhost:8081"
+            "host": "http://localhost",
+            "port": "8081"
         },
         prod: {
             "db": {
-                //"mongodb": "mongodb://testUser:testpassword@ds045077.mongolab.com:45077/shopwithmetest"
-                // Localhost
-                "mongodb": "mongodb://localhost/ShopWithMe"
+                // MongoLab
+                "mongodb": "mongodb://%%USER%%:%%PASSWORD%%@ds039211.mongolab.com:39211/pdo"
+
             },
             "logger": {
                 "api": __dirname + "../../../logs/api.log",
-                "exception":  __dirname + "../../../logs/exceptions.log",
+                "exception": __dirname + "../../../logs/exceptions.log",
                 "level": "warn"
-            }
+            },
+            "host": "http://pdo-xocasdasdash.rhcloud.com",
+            "port": "3000"
         }
     };
+    for (var propName in config) {
+        config[propName].url = config[propName].host + ":" + config[propName].port;
+    }
+    if (enviroment === "prod") {
+        config[enviroment].db.mongodb = "mongodb://pdo-db:" + proccess.env.MONGO_PASWORD + "@ds039211.mongolab.com:39211/pdo";
+    }
     return (function(env) {
         if (config.hasOwnProperty(env)) {
             return config[env];

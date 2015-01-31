@@ -1,0 +1,2 @@
+export ENVIROMENT=prod
+export MONGO_PASSWORD=%%%%
