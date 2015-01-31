@@ -42,9 +42,6 @@ app.use(function(req, res, next) {
     req.query.limit = req.query.limit ? req.query.limit : 10;
     next();
 });
-
-var port = process.env.PORT || 8081; // set our port
-
 //Enable CORS for all routes
 app.use(cors());
 //All the Routes are in the controllers directory
@@ -55,7 +52,7 @@ app.use(enrouten({
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
+app.listen(config.port,config.url);
 console.log(Math.round(new Date()
     .getTime() / 1000));
-console.log('Magic happens on porat ' + port);
+console.log('Magic happens on port ' + config.port);
