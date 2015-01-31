@@ -52,7 +52,7 @@ app.use(enrouten({
 
 // START THE SERVER
 // =============================================================================
-app.listen(config.port,config.url);
+app.listen(config.port);//,config.url);
 console.log(Math.round(new Date()
     .getTime() / 1000));
 console.log('Magic happens on port ' + config.port);
