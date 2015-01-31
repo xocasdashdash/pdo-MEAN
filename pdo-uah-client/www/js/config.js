@@ -1,8 +1,8 @@
 angular.module("pdouah.config", [])
 
 .constant("CONSTANTS", {
-	"host": "192.168.1.131",
-	"port": "8081",
+	"host": "pdo-xocasdasdash.rhcloud.com",
+	"port": "80",
 	"schema": "http://"
 })
 
