@@ -34,7 +34,7 @@ module.exports = (function(enviroment) {
     }
     if (enviroment === "prod") {
         console.log('Cargando entorno de producción[OPENSHIFT]');
-        config[enviroment].db.mongodb = "mongodb://pdo-db:" + process.env.MONGO_PASWORD + "@ds039211.mongolab.com:39211/pdo";
+        config[enviroment].db.mongodb = "mongodb://pdo-db:" + process.env.MONGO_PASSWORD + "@ds039211.mongolab.com:39211/pdo";
         config[enviroment].port = process.env.OPENSHIFT_NODEJS_PORT;
         config[enviroment].host = process.env.OPENSHIFT_NODEJS_IP;
         config[enviroment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
