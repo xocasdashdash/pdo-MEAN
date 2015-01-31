@@ -40,7 +40,7 @@ module.exports = (function(enviroment) {
         config[enviroment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
         config[enviroment].logger.exception = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/exception.log";
     }else{
-        console.log('Cargando entorno de desarollo');   
+        console.log('Cargando entorno de desarollo:',enviroment);   
     }
     return (function(env) {
         if (config.hasOwnProperty(env)) {
