@@ -21,6 +21,23 @@ mongoose.connect(config.db.mongodb); // connect to our database
 mongoose.connection.on('connected', function() {
     console.log('Mongoose default connection open to ' + config.db.mongodb);
 });
+// If the connection throws an error
+mongoose.connection.on('error', function(err) {
+    console.log('Mongoose default connection error: ' + err);
+});
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function() {
+    console.log('Mongoose default connection disconnected');
+});
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', function() {
+    mongoose.connection.close(function() {
+        console.log('Mongoose default connection disconnected through app termination');
+        process.exit(0);
+    });
+});
+
+
 require('./app/models/models.js').initialize();
 
 var events = require('./app/events/events.js');
@@ -32,7 +49,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
-	//Modifico el enrutador para que sea más facil de cargar
+    //Modifico el enrutador para que sea más facil de cargar
     req.route_gen = req.app.locals.enrouten;
     next();
 });
@@ -52,7 +69,6 @@ app.use(enrouten({
 
 // START THE SERVER
 // =============================================================================
-app.listen(config.port,config.url);
-console.log(Math.round(new Date()
-    .getTime() / 1000));
-console.log('Magic happens on port ' + config.port);
+app.listen(config.port, config.host, function() {
+    console.log((new Date()) + ' Server is listening on port 8080');
+});
