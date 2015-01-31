@@ -25,16 +25,14 @@ require('./app/models/models.js').initialize();
 
 var events = require('./app/events/events.js');
 
-var Pdo = mongoose.model('Pdo');
-var School = mongoose.model('School');
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
-
 app.use(function(req, res, next) {
+	//Modifico el enrutador para que sea más facil de cargar
     req.route_gen = req.app.locals.enrouten;
     next();
 });

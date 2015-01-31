@@ -51,11 +51,13 @@ describe('Test de grupos de PDOs', function() {
                     pdo.num_id = '123456789A';
                     pdo.email = 'email@email.com';
                     pdo.phone = '654654654';
-                    pdo.school_name = school.schoolname;
-                    pdo.program_code = program.code;
-                    pdo.course_code = course.code;
+                    pdo.school = school;
+                    pdo.program = program;
+                    pdo.course = course;
+                    pdo.title = "TITULO DEL PDO ";
+                    pdo.text = "TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO ";
                     prom_array.push(
-                        request(config.url)
+                        request(url)
                         .post('/api/v1/pdo').send(pdo)
                         .expect('Content-Type', /json/).expect(200)
                     );
@@ -89,7 +91,7 @@ describe('Test de grupos de PDOs', function() {
         pdo_group.pdos = JSON.stringify(created_pdo.map(function(pdo) {
             return pdo._id;
         }));
-        prom = request(config.url)
+        prom = request(url)
             .post('/api/v1/pdo_group').send(pdo_group)
             .expect('Content-Type', /json/)
             .expect(200);
@@ -113,7 +115,7 @@ describe('Test de grupos de PDOs', function() {
     it('should add a pdo to a group', function(done) {
         var prom, payload = {};
         payload.pdos = pdo_to_add_later._id;
-        prom = request(config.url)
+        prom = request(url)
             .put('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo')
             .send(payload)
             .expect('Content-Type', /json/)
@@ -150,7 +152,7 @@ describe('Test de grupos de PDOs', function() {
         var prom, payload = {};
         payload.pdo_id = pdo_to_add_later._id;
 
-        prom = request(config.url)
+        prom = request(url)
             .delete('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo')
             .send(payload)
             .expect('Content-Type', /json/)
