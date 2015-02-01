@@ -3,9 +3,8 @@
 // PDO UAH App
 angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
     'pdouah.controllers', 'pdouah.directives', 'monospaced.elastic',
-    'angular-jquery-maskedinput', 'ui.bootstrap'
+    'angular-jquery-maskedinput', 'ui.bootstrap','ngCordova'
 ])
-
 
 .config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {

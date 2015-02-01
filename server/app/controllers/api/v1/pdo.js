@@ -30,7 +30,9 @@ module.exports = function(router) {
         pdo.num_id = req.body.num_id;
         pdo.title = req.body.title;
         pdo.text = req.body.text;
-
+        pdo.posted_at = req.body.postedAt;
+        pdo.deviceUUID = req.body.deviceUUID;
+        console.log(req.body);
         promise_array.push(deferred_school.promise);
         School.findOne({
             schoolname: req.body.school.schoolname
@@ -84,10 +86,8 @@ module.exports = function(router) {
                 res.json(pdo);
             });
         }).fail(function(reason) {
-
-            console.log('Promesa rechazada');
-            var err = new Error();
-            err.message = reason;
+            console.log('Promesa rechazada', reason);
+            var err = new Error(reason);
             res.send(err);
         });
     });
@@ -95,7 +95,7 @@ module.exports = function(router) {
     router({
         name: 'get_pdo',
         path: '/:pdo_id'
-    }).get(function(req,res){
+    }).get(function(req, res) {
         var pdo;
         Pdo.findById(req.params.pdo_id,
             function(err, pdo) {
@@ -151,6 +151,28 @@ module.exports = function(router) {
             promPdoGroupComments = q.defer();
         promise_array[0] = promPdoComments.promise;
         promise_array[1] = promPdoGroupComments.promise;
+        q.all(promise_array).spread(function(pdo_comments, pdo_group_comments) {
+            var respuesta = [];
+
+            function compare(a, b) {
+                if (a.date_created > b.date_created) {
+                    return -1;
+                }
+                if (a.date_created < b.date_created) {
+                    return 1;
+                }
+                return 0;
+            }
+            respuesta = respuesta.concat(pdo_comments);
+            respuesta = respuesta.concat(pdo_group_comments);
+            respuesta = respuesta.sort(compare);
+            res.send(respuesta);
+            return;
+        }).fail(function(reason) {
+            console.log('Promesa rechazada');
+            res.status(reason.code ? reason.code : 400).send(reason);
+            return;
+        });
         Pdo.findById(req.params.pdo_id,
             function(err, pdo) {
                 console.log('Buscando pdo', req.params.pdo_id);
@@ -158,7 +180,6 @@ module.exports = function(router) {
                     res.send(err);
                     return;
                 }
-                console.log('sin errores');
                 if (!pdo) {
                     var error = new Error();
                     error.message = 'Pdo not found';
@@ -167,25 +188,22 @@ module.exports = function(router) {
                     return;
                 }
                 if (pdo.comments.length === 0) {
-                    console.log('Sin comentarios');
-                    var error_no_comments = new Error();
-                    error_no_comments.message = 'No comments found';
-                    error_no_comments.code = 404;
-                    promPdoComments.reject(error_no_comments);
+                    promPdoComments.resolve([]);
+                } else {
+                    promPdoComments.resolve(
+                        pdo.comments
+                    );
                 }
-
-                promPdoComments.resolve(
-                    pdo.comments
-                );
-                //res.send(pdo.resource(req.route_gen));
                 if (pdo.pdo_group) {
                     console.log('has group');
                     PdoGroup.findById(pdo.pdo_group, function(err, pdo_group) {
                         if (err) {
                             promPdoGroupComments.reject(err);
+                            return;
                         }
                         if (!pdo_group) {
-                            promPdoGroupComments.resolve();
+                            promPdoGroupComments.resolve([]);
+                            return;
                         }
                         promPdoGroupComments.resolve(
                             pdo_group.comments
@@ -194,32 +212,7 @@ module.exports = function(router) {
                 } else {
                     promPdoGroupComments.resolve([]);
                 }
-                q.all(promise_array).spread(function(pdo_comments, pdo_group_comments) {
-                    var respuesta = [];
 
-                    function compare(a, b) {
-                        if (a.date_created > b.date_created){
-                            return -1;
-                        }
-                        if (a.date_created < b.date_created){
-                            return 1;
-                        }
-                        return 0;
-                    }
-                    respuesta = respuesta.concat(pdo_comments);
-                    respuesta = respuesta.concat(pdo_group_comments);
-                    respuesta = respuesta.sort(compare);
-                    res.send(respuesta);             
-                    //res.json({ user: 'tobi' });
-                    return;
-                }).fail(function(reason) {
-                    console.log('Promesa rechazada');
-                    var err = new Error();
-                    err.message = reason;
-                    err.code = 400;
-                    res.status(err.code).send(err);
-                    return;
-                });
 
             });
     });

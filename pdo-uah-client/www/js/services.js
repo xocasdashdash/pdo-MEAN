@@ -1,8 +1,8 @@
-/* global angular, cordova, StatusBar,_ */
+/* global angular, cordova, StatusBar, device  */
 'use strict';
 angular.module('pdouah.services', [])
-    .factory('configService', ['CONSTANTS', '$http', '$window',
-        function($CONSTANTS, $http, $window) {
+    .factory('configService', ['CONSTANTS', '$http', '$window', '$ionicPlatform','$cordovaDevice',
+        function($CONSTANTS, $http, $window, $ionicPlatform,$cordovaDevice) {
             var basicUrl, schools, pdo, configService;
             basicUrl = $CONSTANTS.schema +
                 $CONSTANTS.host + ':' +
@@ -43,6 +43,16 @@ angular.module('pdouah.services', [])
                     }
                 }
             };
+            $ionicPlatform.ready(function(argument) {
+                if ($cordovaDevice.getUUID()) {
+                    if (typeof configService === undefined) {
+                        configService = {};
+                    }
+                    configService.uuid = $cordovaDevice.getUUID();
+                } else {
+                    configService.uuid = 'No uuid';
+                }
+            });
             return configService;
         }
     ]).factory('Schools', ['$q', '$http', 'configService',
@@ -212,87 +222,86 @@ angular.module('pdouah.services', [])
             };
             return courses;
         }
-    ])
-
-.factory('Pdo', ['$q', '$http', 'configService', 'Schools', 'Programs', 'Courses',
-    function($q, $http, configService, Schools, Programs, Courses) {
-        var pdo = {};
-        pdo.sendPdo = function(pdo) {
-            var defer = $q.defer();
-            pdo.postedAt = new Date();
-            $http.post(configService.pdo, pdo).success(
-                function(data) {
-                    defer.resolve({
-                        pdo: data
-                    });
-                }).error(function(reason) {
-                defer.reject(reason);
-            });
-            return defer.promise;
-        };
-        pdo.getStoredPdos = function() {
-            var defer = $q.defer(),
-                storedPdos;
-            storedPdos = configService.get('pdoStore');
-            if (storedPdos) {
-                defer.resolve(storedPdos);
-            } else {
-                defer.reject('No encontrados');
-
-            }
-            return defer.promise;
-        };
-        pdo.getById = function(pdoId) {
-            var storedPdos, defer, pdo = false,
-                load_pdo;
-            defer = $q.defer();
-            storedPdos = configService.get('pdoStore');
-            load_pdo = function(pdo) {
-                Schools.findById(pdo.school).then(function(school) {
-                    pdo.school = school;
-                    return Programs.findById(pdo.school.schoolname, pdo.program);
-                }).then(function(program) {
-                    pdo.program = program;
-                    return Courses.findById(pdo.program.code, pdo.course);
-                }).then(function(course) {
-                    pdo.course = course;
-                    defer.resolve(pdo);
-                }).catch(function(reason) {
+    ]).factory('Pdo', ['$q', '$http', 'configService', 'Schools', 'Programs', 'Courses',
+        function($q, $http, configService, Schools, Programs, Courses) {
+            var pdo = {};
+            pdo.sendPdo = function(pdo) {
+                var defer = $q.defer();
+                pdo.postedAt = new Date();
+                pdo.deviceUUID = configService.uuid;
+                $http.post(configService.pdo, pdo).success(
+                    function(data) {
+                        defer.resolve({
+                            pdo: data
+                        });
+                    }).error(function(reason) {
                     defer.reject(reason);
                 });
+                return defer.promise;
             };
-            if (storedPdos) {
-                for (var i = storedPdos.length - 1; i >= 0 && pdo === false; i--) {
-                    if (storedPdos[i]._id === pdoId) {
-                        pdo = storedPdos[i];
-                    }
+            pdo.getStoredPdos = function() {
+                var defer = $q.defer(),
+                    storedPdos;
+                storedPdos = configService.get('pdoStore');
+                if (storedPdos) {
+                    defer.resolve(storedPdos);
+                } else {
+                    defer.reject('No encontrados');
+
                 }
-                if (pdo === false) {
-                    $http.get(configService.pdo + '/' + pdoId).success(function(pdo) {
-                        load_pdo(pdo);
-                    }).error(function(reason) {
+                return defer.promise;
+            };
+            pdo.getById = function(pdoId) {
+                var storedPdos, defer, pdo = false,
+                    load_pdo;
+                defer = $q.defer();
+                storedPdos = configService.get('pdoStore');
+                load_pdo = function(pdo) {
+                    Schools.findById(pdo.school).then(function(school) {
+                        pdo.school = school;
+                        return Programs.findById(pdo.school.schoolname, pdo.program);
+                    }).then(function(program) {
+                        pdo.program = program;
+                        return Courses.findById(pdo.program.code, pdo.course);
+                    }).then(function(course) {
+                        pdo.course = course;
+                        defer.resolve(pdo);
+                    }).
+                    catch (function(reason) {
                         defer.reject(reason);
                     });
+                };
+                if (storedPdos) {
+                    for (var i = storedPdos.length - 1; i >= 0 && pdo === false; i--) {
+                        if (storedPdos[i]._id === pdoId) {
+                            pdo = storedPdos[i];
+                        }
+                    }
+                    if (pdo === false) {
+                        $http.get(configService.pdo + '/' + pdoId).success(function(pdo) {
+                            load_pdo(pdo);
+                        }).error(function(reason) {
+                            defer.reject(reason);
+                        });
+                    } else {
+                        load_pdo(pdo);
+                    }
                 } else {
-                    load_pdo(pdo);
+                    defer.reject('No encontrados');
                 }
-            } else {
-                defer.reject('No encontrados');
-            }
-            return defer.promise;
-        };
-        pdo.getComments = function(pdoId) {
-            var defer = $q.defer(),
-                comments;
-            $http.get(configService.pdo + '/' + pdoId + '/comment').success(function(pdo_comments) {
-                console.log('PDO COMMENT', pdo_comments);
-                defer.resolve(pdo_comments);
-            }).error(function(reason) {
-                console.error('reason:', reason);
-                defer.reject(reason);
-            });
-            return defer.promise;
-        };
-        return pdo;
-    }
-]);
+                return defer.promise;
+            };
+            pdo.getComments = function(pdoId) {
+                var defer = $q.defer(),
+                    comments;
+                $http.get(configService.pdo + '/' + pdoId + '/comment').success(function(pdo_comments) {
+                    defer.resolve(pdo_comments);
+                }).error(function(reason) {
+                    console.error('reason:', reason);
+                    defer.reject(reason);
+                });
+                return defer.promise;
+            };
+            return pdo;
+        }
+    ]);

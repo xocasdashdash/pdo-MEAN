@@ -98,7 +98,11 @@ module.exports =
         },
         comments: {
             type: [CommentsSchema]
-        }
+        },
+        deviceUUID: {
+            type: String
+        },
+        
     });
     PdoSchema.plugin(denormalize, {
         schoolname: {

@@ -103,7 +103,7 @@ angular.module('pdouah.controllers', [])
                             configService.put('personalData', personalData);
                         }
                         configService.push('pdoStore', data.pdo);
-                        $state.go('pdo.history', {
+                        $state.go('pdo.history.detail', {
                             pdoId: data.pdo._id
                         });
                     }, function(reason) {
@@ -174,8 +174,6 @@ angular.module('pdouah.controllers', [])
 //History Ctrl
 .controller('PdoHistoryListCtrl', ['$scope', '$stateParams', 'Pdo', '$state',
     function($scope, $stateParams, Pdo, $state) {
-        console.log('cargado controlador basico');
-        console.log('Parametros:', $stateParams);
         $scope.storedPdos = [];
         $scope.viewTitle = $state.current.data.viewTitle;
         Pdo.getStoredPdos().then(
@@ -190,24 +188,27 @@ angular.module('pdouah.controllers', [])
 ])
 //Controller Basico
 .controller('PdoHistoryCtrl', function($scope, $state) {
-    console.log('cargado historico basico!');
-    console.log('state:', $state);
+    //console.log('cargado historico basico!');
+    //console.log('state:', $state);
 })
 //Controller de la vista detalle
-.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state',
-    function($scope, $stateParams, School, Program, Pdo, $state) {
+.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state','configService',
+    function($scope, $stateParams, School, Program, Pdo, $state, configService) {
         $scope.viewTitle = $state.current.data.viewTitle;
         $scope.oneAtATime = true;
         $scope.status = {};
+        $scope.commentResolved = false;
+        $scope.config = configService;
         Pdo.getComments($stateParams.pdoId).then(function(pdo_comments) {
             $scope.pdo_comments = pdo_comments.map(function(e, i) {
                 e.isOpen = false;
-                console.log(e);
                 return e;
             });
+            $scope.commentResolved = true;
         }).
         catch (function(reason) {
             $scope.pdo_comments = [];
+            $scope.commentResolved = true;
             console.error(reason);
         });
         Pdo.getById($stateParams.pdoId).then(function(pdo) {
@@ -219,7 +220,4 @@ angular.module('pdouah.controllers', [])
     }
 ])
 //Basic Ctrl
-.controller('PdoBasicCtrl', function($scope) {
-    console.log('cargado basico');
-
-});
+.controller('PdoBasicCtrl', function($scope) {});

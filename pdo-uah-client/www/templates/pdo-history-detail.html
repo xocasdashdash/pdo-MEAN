@@ -30,7 +30,10 @@
     <div class="col col-25">Texto:</div>
     <div class="col col-75">{{pdo.text}}</div>
 </div>
-<div class="row" ng-hide="pdo_comments.length">
+<div class="row center separator">
+    Comentarios
+</div>
+<div class="row center" ng-hide="pdo_comments.length && commentResolved">
     [Sin comentarios]
 </div>
 <div class="row center pdo-comments">
