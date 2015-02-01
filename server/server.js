@@ -57,7 +57,6 @@ app.use(enrouten({
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log(Math.round(new Date()
-    .getTime() / 1000));
-console.log('Magic happens on porat ' + port);
+app.listen(config.port, config.host, function() {
+    console.log((new Date()) + ' Server is listening on port: '+config.port + ',host:' + config.host);    
+});

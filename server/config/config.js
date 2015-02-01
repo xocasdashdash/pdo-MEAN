@@ -12,7 +12,8 @@ module.exports = (function(enviroment) {
                 "exception": __dirname + "../../../logs/exceptions.dev.log",
                 "level": "debug"
             },
-            "url": "http://localhost:8081"
+            "host": "localhost",
+            "port": "8081"
         },
         prod: {
             "db": {
