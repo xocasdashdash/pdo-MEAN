@@ -7,18 +7,19 @@ angular.module('pdouah.controllers', [])
         $state.go('pdo.report');
     };
     $scope.goToHistory = function() {
-        $state.go('pdo.history');
+        $state.go('pdo.history.list');
     };
 })
 //PDO Report Ctrl
-.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q','$state',
+.controller('PdoReportCtrl', ['Schools', 'Programs', 'Pdo', 'configService', '$scope', '$ionicPopup', '$q', '$state',
 
-    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q,$state) {
+    function(Schools, Programs, Pdo, configService, $scope, $ionicPopup, $q, $state) {
         var prom_programs_loaded = $q.defer();
         $scope.schools = [];
         $scope.courses = [];
         $scope.programs = [];
         $scope.pdo = {};
+        $scope.viewTitle = $state.current.data.viewTitle;
 
         Schools.query().then(function(data) {
             $scope.schools = data.schools;
@@ -37,7 +38,6 @@ angular.module('pdouah.controllers', [])
             catch (function(reason) {
                 console.error(reason);
             });
-
         };
         $scope.programChanged = function(newProgram) {
             if (typeof newProgram === 'undefined') {
@@ -103,7 +103,9 @@ angular.module('pdouah.controllers', [])
                             configService.put('personalData', personalData);
                         }
                         configService.push('pdoStore', data.pdo);
-                        $state.go('pdo.history',{pdoId: data.pdo._id});
+                        $state.go('pdo.history.detail', {
+                            pdoId: data.pdo._id
+                        });
                     }, function(reason) {
                         console.log('Razon:', reason);
                     });
@@ -170,9 +172,52 @@ angular.module('pdouah.controllers', [])
     }
 ])
 //History Ctrl
-.controller('PdoHistoryCtrl',['$scope','$stateParams', function($scope,$stateParams) {
-    console.log('Parametros:',$stateParams);
+.controller('PdoHistoryListCtrl', ['$scope', '$stateParams', 'Pdo', '$state',
+    function($scope, $stateParams, Pdo, $state) {
+        $scope.storedPdos = [];
+        $scope.viewTitle = $state.current.data.viewTitle;
+        Pdo.getStoredPdos().then(
+            function(pdos) {
+                $scope.storedPdos = pdos;
+            }).
+        catch (function(reason) {
+            console.error('PdoNotFound', reason);
+        });
 
-}])
+    }
+])
+//Controller Basico
+.controller('PdoHistoryCtrl', function($scope, $state) {
+    //console.log('cargado historico basico!');
+    //console.log('state:', $state);
+})
+//Controller de la vista detalle
+.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state','configService',
+    function($scope, $stateParams, School, Program, Pdo, $state, configService) {
+        $scope.viewTitle = $state.current.data.viewTitle;
+        $scope.oneAtATime = true;
+        $scope.status = {};
+        $scope.commentResolved = false;
+        $scope.config = configService;
+        Pdo.getComments($stateParams.pdoId).then(function(pdo_comments) {
+            $scope.pdo_comments = pdo_comments.map(function(e, i) {
+                e.isOpen = false;
+                return e;
+            });
+            $scope.commentResolved = true;
+        }).
+        catch (function(reason) {
+            $scope.pdo_comments = [];
+            $scope.commentResolved = true;
+            console.error(reason);
+        });
+        Pdo.getById($stateParams.pdoId).then(function(pdo) {
+            $scope.pdo = pdo;
+        }).
+        catch (function(reason) {
+            console.error('Error', reason);
+        });
+    }
+])
 //Basic Ctrl
 .controller('PdoBasicCtrl', function($scope) {});

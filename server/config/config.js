@@ -1,4 +1,5 @@
 'use strict';
+var os = require('os');
 module.exports = (function(enviroment) {
     var config = {
         dev: {
@@ -11,7 +12,7 @@ module.exports = (function(enviroment) {
                 "exception": __dirname + "../../../logs/exceptions.dev.log",
                 "level": "debug"
             },
-            "host": "http://localhost",
+            "host": "xokas-desktop.local",
             "port": "8081"
         },
         prod: {
@@ -39,12 +40,13 @@ module.exports = (function(enviroment) {
         config[enviroment].host = process.env.OPENSHIFT_NODEJS_IP;
         config[enviroment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
         config[enviroment].logger.exception = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/exception.log";
-    }else{
-        console.log('Cargando entorno de desarollo:',enviroment);   
+    } else {
+        console.log('Cargando entorno de desarollo:', enviroment);
+        config.dev.host = os.hostname() + '.local';
     }
     return (function(env) {
         if (config.hasOwnProperty(env)) {
-            console.log('Env:',env);
+            console.log('Env:', env);
             return config[env];
         } else {
             return config.dev;

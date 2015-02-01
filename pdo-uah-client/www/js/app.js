@@ -3,9 +3,8 @@
 // PDO UAH App
 angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
     'pdouah.controllers', 'pdouah.directives', 'monospaced.elastic',
-    'angular-jquery-maskedinput'
+    'angular-jquery-maskedinput', 'ui.bootstrap','ngCordova'
 ])
-
 
 .config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
@@ -19,17 +18,38 @@ angular.module('pdo-uah', ['ionic', 'pdouah.config', 'pdouah.services',
             .state('pdo.main', {
                 url: '/main',
                 templateUrl: 'templates/pdo-main.html',
-                controller: 'PdoMainCtrl'
+                controller: 'PdoMainCtrl',
+                data:{
+                    viewTitle: 'Elige tu pokémon!'
+                }
             })
             .state('pdo.report', {
                 url: '/report',
                 templateUrl: 'templates/pdo-report.html',
-                controller: 'PdoReportCtrl'
+                controller: 'PdoReportCtrl',
+                data:{
+                    viewTitle: 'Reportar!'
+                }
             })
             .state('pdo.history', {
-                url: '/history/:pdoId',
+                url: '/history',
                 templateUrl: 'templates/pdo-history.html',
-                controller: 'PdoHistoryCtrl'
+                controller: 'PdoHistoryCtrl'                
+            })
+            .state('pdo.history.list',{
+                url: '/list',
+                templateUrl: 'templates/pdo-history-list.html',
+                controller: 'PdoHistoryListCtrl',
+                data:{
+                    viewTitle: 'Listado de PDos'
+                }
+            }).state('pdo.history.detail',{
+                url: '/:pdoId/detail',
+                templateUrl: 'templates/pdo-history-detail.html',
+                controller: 'PdoHistoryDetailCtrl',
+                data:{
+                    viewTitle: 'Detalle de PDo'
+                }
             });
         $urlRouterProvider.otherwise('/pdo/main');
     }

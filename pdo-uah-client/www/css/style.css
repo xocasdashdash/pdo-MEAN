@@ -1,3 +1,69 @@
+.pdo-comments .panel-title {
+  width: 300px; }
+
+div.row {
+  margin-right: 0px !important;
+  margin-left: 0px !important; }
+
+.separator {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 15px;
+  border-top: 1px solid #ccc;
+  margin-top: 5px; }
+
+
+.pdo-element {
+  height: 50px;
+  margin: 15px 0;
+  border-bottom: 1px solid #ccc; }
+  .pdo-element * {
+    font-size: 25px; }
+
+.pdo-action {
+  font-size: 25px; }
+
+a {
+  text-decoration: none;
+  color: black; }
+
+.pdo-title, .pdo-action {
+  /*
+	position: relative;
+    top: 50%; 
+    transform: translateY(-50%);
+    */
+  overflow: hidden; }
+
+
+.buffer-top {
+  margin-top: 10px; }
+
+.buffer-right {
+  margin-right: 10px; }
+
+.buffer-left {
+  margin-left: 10px; }
+
+.buffer-bottom {
+  margin-bottom: 10px; }
+
+.center {
+  text-align: center; }
+
+.pdo-report.button {
+  width: 40%; }
+
+.has-error {
+  border-color: #a94442;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  background-color: #a94442; }
+
+.is-valid {
+  border-color: #3c763d;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  background-color: #3c763d; }
+
+
 .center {
   display: -webkit-box;
   display: -webkit-flex;
@@ -23,31 +89,5 @@
   -ms-flex-align: center;
   align-items: center; }
 
-.buffer-top {
-  margin-top: 10px; }
-
-.buffer-right {
-  margin-right: 10px; }
-
-.buffer-left {
-  margin-left: 10px; }
-
-.buffer-bottom {
-  margin-bottom: 10px; }
-
-.center {
-  text-align: center; }
-
-.button {
-  width: 40%; }
-
-.has-error {
-  border-color: #a94442;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  background-color: #a94442; }
-
-.is-valid {
-  border-color: #3c763d;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  background-color: #3c763d; }
-
+.main-content button {
+  width: 300px; }

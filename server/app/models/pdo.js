@@ -11,6 +11,24 @@ var Schema = mongoose.Schema;
 
 module.exports =
     (function() {
+    var CommentsSchema = new Schema({
+        author: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        },
+        title: {
+            type: String,
+            required: true
+        },
+        text: {
+            type: String,
+            required: true
+        },
+        date_created: {
+            type: Date,
+            default: Date.now()
+        }
+    });
     var PdoSchema = new Schema({
         name: {
             type: String,
@@ -28,7 +46,7 @@ module.exports =
                 message: 'Solamente números y letras'
             })
         },
-        title:{
+        title: {
             type: String,
             required: true
         },
@@ -73,8 +91,18 @@ module.exports =
         },
         group_id: {
             type: mongoose.Schema.ObjectId,
-            ref: 'Group'
-        }
+            ref: 'PdoGroup'
+        },
+        posted_at: {
+            type: Date
+        },
+        comments: {
+            type: [CommentsSchema]
+        },
+        deviceUUID: {
+            type: String
+        },
+        
     });
     PdoSchema.plugin(denormalize, {
         schoolname: {
@@ -92,26 +120,28 @@ module.exports =
         var res = new hal.Resource(this.toObject(), route_gen.path('get_pdo', {
             pdo_id: this._id
         }));
+        if (this.group_id) {
+            res.link('group', route_gen.path('get_group', {
+                group_id: this.group_id
+            }));
+        }
 
-        res.link('group', route_gen.path('get_group', {
-            group_id: this.group_id
-        }));
-
-        res.link('comment', route_gen.path('comment_pdo', {
+        res.link('comment', route_gen.path('add_comment_pdo', {
             pdo_id: this._id
         }));
 
-        res.link('comment_group',route_gen.path('comment_group_pdo',{
+        /*res.link('comment_group', route_gen.path('comment_group_pdo', {
             group_id: this.group_id
-        }));
+        }));*
 
         res.link('delete', route_gen.path('delete_pdo', {
             course_id: this._id
-        }));
-
+        }));*/
 
         return res.toJSON();
 
     };
+
     mongoose.model('Pdo', PdoSchema);
+    mongoose.model('PdoComment',CommentsSchema);
 })();

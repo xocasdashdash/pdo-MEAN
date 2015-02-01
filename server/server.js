@@ -24,7 +24,7 @@ mongoose.connection.on('connected', function() {
 // If the connection throws an error
 mongoose.connection.on('error', function(err) {
     console.log('Mongoose default connection error: ' + err);
-    console.log('MongoURL:',  config.db.mongodb);
+    console.log('MongoURL:', config.db.mongodb);
 });
 // When the connection is disconnected
 mongoose.connection.on('disconnected', function() {
@@ -71,5 +71,5 @@ app.use(enrouten({
 // START THE SERVER
 // =============================================================================
 app.listen(config.port, config.host, function() {
-    console.log((new Date()) + ' Server is listening on port 8080');
+    console.log((new Date()) + ' Server is listening on port: ' + config.port + ',host:' + config.host);
 });

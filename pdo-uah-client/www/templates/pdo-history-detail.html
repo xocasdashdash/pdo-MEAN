@@ -1,0 +1,50 @@
+<ion-view name="pdo-history-detail">
+<ion-header-bar align-title="center" class="bar-positive">
+<div class="buttons">
+    <button class="button" ui-sref="pdo.main()"><i class="icon ion-reply"></i></button>
+</div>
+<h1 class="title">{{viewTitle}}</h1>
+</ion-header-bar>
+<ion-content class="has-header" >
+<div class="row">
+    <div class="col col-25">Centro:</div>
+    <div class="col col-75">{{pdo.school.schoolname}}</div>
+</div>
+<div class="row">
+    <div class="col col-25">Programa:</div>
+    <div class="col col-75">{{pdo.program.name}}</div>
+</div>
+<div class="row">
+    <div class="col col-25">Asignatura:</div>
+    <div class="col col-75">{{pdo.course.name}}</div>
+</div>
+<div class="row">
+    <div class="col col-25">Fecha:</div>
+    <div class="col col-75">{{pdo.created_on}}</div>
+</div>
+<div class="row">
+    <div class="col col-25">Titulo:</div>
+    <div class="col col-75">{{pdo.title}}</div>
+</div>
+<div class="row">
+    <div class="col col-25">Texto:</div>
+    <div class="col col-75">{{pdo.text}}</div>
+</div>
+<div class="row center separator">
+    Comentarios
+</div>
+<div class="row center" ng-hide="pdo_comments.length && commentResolved">
+    [Sin comentarios]
+</div>
+<div class="row center pdo-comments">
+    <accordion close-others="oneAtATime">
+	    <accordion-group ng-repeat="comment in pdo_comments" is-open="comment.isOpen">
+	    	<accordion-heading>
+	    	{{comment.title}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': comment.isOpen, 'glyphicon-chevron-right': !comment.isOpen}"></i>
+	    	</accordion-heading>
+	    	{{comment.text}}
+	    </accordion-group>
+    </accordion>
+</div>
+</ion-content>
+</ion-view>

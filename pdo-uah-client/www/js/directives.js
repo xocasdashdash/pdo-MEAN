@@ -60,13 +60,19 @@ angular.module('pdouah.directives', [])
                     if (inputValue === undefined) {
                         return '';
                     }
-                    var transformedInput = inputValue.replace(regexNumero, '');
-                    if (transformedInput !== inputValue) {
-                        modelCtrl.$setViewValue(transformedInput);
-                        modelCtrl.$render();
+                    if (inputValue !== null) {
+                        inputValue = inputValue.toString();
+                        var transformedInput = inputValue.replace(regexNumero, '');
+                        if (transformedInput !== inputValue) {
+                            modelCtrl.$setViewValue(transformedInput);
+                            modelCtrl.$render();
+                        }
+
+                        return transformedInput;
+                    } else {
+                        return '';
                     }
 
-                    return transformedInput;
                 });
             }
         };
