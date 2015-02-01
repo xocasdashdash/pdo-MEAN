@@ -172,8 +172,8 @@ angular.module('pdouah.controllers', [])
     }
 ])
 //History Ctrl
-.controller('PdoHistoryListCtrl', ['$scope', '$stateParams', 'Pdo', '$state',
-    function($scope, $stateParams, Pdo, $state) {
+.controller('PdoHistoryListCtrl', ['$scope', '$stateParams', 'Pdo', '$state', '$ionicPopup',
+    function($scope, $stateParams, Pdo, $state, $ionicPopup) {
         $scope.storedPdos = [];
         $scope.viewTitle = $state.current.data.viewTitle;
         Pdo.getStoredPdos().then(
@@ -183,7 +183,30 @@ angular.module('pdouah.controllers', [])
         catch (function(reason) {
             console.error('PdoNotFound', reason);
         });
-
+        $scope.deletePdo = function(pdoId) {
+            console.log("Pdo:", pdoId);
+            var confirmPopup = $ionicPopup.confirm({
+                title: 'Borrar P.do',
+                template: '¿Estás seguro que quieres borrar este Pdo? Solamente lo borra de la memoria local.'
+            });
+            confirmPopup.then(function(res) {
+                if (res) {
+                    Pdo.deletePdo(pdoId).then(
+                        function() {
+                            Pdo.getStoredPdos().then(
+                                function(pdos) {
+                                    $scope.storedPdos = pdos;
+                                }).
+                            catch (function(reason) {
+                                console.error('PdoNotFound', reason);
+                            });
+                        }
+                    ).catch (function() {
+                        console.error('PdoId no borrado');
+                    });
+                }
+            });
+        };
     }
 ])
 //Controller Basico
@@ -192,7 +215,7 @@ angular.module('pdouah.controllers', [])
     //console.log('state:', $state);
 })
 //Controller de la vista detalle
-.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state','configService',
+.controller('PdoHistoryDetailCtrl', ['$scope', '$stateParams', 'Schools', 'Programs', 'Pdo', '$state', 'configService',
     function($scope, $stateParams, School, Program, Pdo, $state, configService) {
         $scope.viewTitle = $state.current.data.viewTitle;
         $scope.oneAtATime = true;

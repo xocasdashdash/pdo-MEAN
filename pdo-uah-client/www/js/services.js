@@ -1,8 +1,8 @@
 /* global angular, cordova, StatusBar, device  */
 'use strict';
 angular.module('pdouah.services', [])
-    .factory('configService', ['CONSTANTS', '$http', '$window', '$ionicPlatform','$cordovaDevice',
-        function($CONSTANTS, $http, $window, $ionicPlatform,$cordovaDevice) {
+    .factory('configService', ['CONSTANTS', '$http', '$window', '$ionicPlatform', '$cordovaDevice',
+        function($CONSTANTS, $http, $window, $ionicPlatform, $cordovaDevice) {
             var basicUrl, schools, pdo, configService;
             basicUrl = $CONSTANTS.schema +
                 $CONSTANTS.host + ':' +
@@ -44,13 +44,17 @@ angular.module('pdouah.services', [])
                 }
             };
             $ionicPlatform.ready(function(argument) {
-                if ($cordovaDevice.getUUID()) {
-                    if (typeof configService === undefined) {
-                        configService = {};
+                if (ionic.Platform.isWebView()) {
+                    if ($cordovaDevice.getUUID()) {
+                        if (typeof configService === undefined) {
+                            configService = {};
+                        }
+                        configService.uuid = $cordovaDevice.getUUID();
+                    } else {
+                        configService.uuid = 'No uuid';
                     }
-                    configService.uuid = $cordovaDevice.getUUID();
                 } else {
-                    configService.uuid = 'No uuid';
+                    configService.uuid = 'No movil';
                 }
             });
             return configService;
@@ -249,6 +253,25 @@ angular.module('pdouah.services', [])
                     defer.reject('No encontrados');
 
                 }
+                return defer.promise;
+            };
+            pdo.deletePdo = function(pdoId) {
+                var pdoToDelete = false,
+                    defer = $q.defer();
+
+                this.getStoredPdos()
+                    .then(function(storedPdos) {
+                        for (var i = storedPdos.length - 1; i >= 0 && pdoToDelete === false; i--) {
+                            if (storedPdos[i]._id === pdoId) {
+                                storedPdos.splice(i, 1);
+                            }                            
+                        }
+                        defer.resolve(configService.put('pdoStore', storedPdos));
+                    }).
+                catch (function(reason) {
+                    console.error('PdoNotFound', reason);
+                    defer.reject(reason);
+                });;
                 return defer.promise;
             };
             pdo.getById = function(pdoId) {
