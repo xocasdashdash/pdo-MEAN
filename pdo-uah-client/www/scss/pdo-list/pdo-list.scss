@@ -2,6 +2,7 @@
 .pdo-element{
 	height: $pdo-element-height;
 	margin: $pdo-element-margin-top-bottom 0; 
+	border-bottom: 1px solid #ccc;
 	*{
 		font-size: $pdo-text-size;
 	}
@@ -14,7 +15,11 @@ a{
 	color: black;
 }
 .pdo-title, .pdo-action{
+	/*
 	position: relative;
     top: 50%; 
     transform: translateY(-50%);
+    */
+    overflow: hidden;
+    
 }
