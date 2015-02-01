@@ -25,9 +25,9 @@ describe('Tests de creacion de pdo', function() {
             console.log(err.message);
         });
         mongoose.connection.once('open', function() {
-            console.log('Conectado a la bd');  
+            console.log('Conectado a la bd');
             q.all([
-                Program.findOne({ 
+                Program.findOne({
                     code: 'G57'
                 }).exec(),
                 School.findOne({
@@ -44,23 +44,25 @@ describe('Tests de creacion de pdo', function() {
             }).
             catch (function(reason) {
                 console.log(reason.stack);
-                console.log(reason); 
-                done();  
+                console.log(reason);
+                done();
             });
-        });  
-    }); 
+        });
+    });
     it('should create a pdo', function(done) {
         var pdo = {};
-        pdo.name = 'Nombre'; 
+        pdo.name = 'Nombre';
         pdo.surname = 'Apellido';
         pdo.num_id = '123456789A';
         pdo.email = 'email@email.com';
-        pdo.phone = '654654654'; 
-        pdo.school_name = school.schoolname;
-        pdo.program_code = program.code;
-        pdo.course_code = course.code;
-        request(config.url)
-            .post('/api/v1/pdo') 
+        pdo.phone = '654654654';
+        pdo.school = school;
+        pdo.program = program;
+        pdo.course = course;
+        pdo.title = "TITULO DEL PDO ";
+        pdo.text = "TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO ";
+        request(url)
+            .post('/api/v1/pdo')
             .send(pdo)
             .expect('Content-Type', /json/)
             .expect(200)
@@ -76,7 +78,10 @@ describe('Tests de creacion de pdo', function() {
         catch (function(reason) {
             console.log('Error al crear PDO');
             console.log(reason);
-            done();
+            if(reason.actual){
+                console.log(reason.actual);
+            }
+            done(reason);
         });
     });
 

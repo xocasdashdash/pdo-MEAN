@@ -23,6 +23,7 @@
         "afterEach",
         "config",
         "request",
-        "expect"
+        "expect",
+        "url"
     ]
 }

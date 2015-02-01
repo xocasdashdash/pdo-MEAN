@@ -123,8 +123,8 @@ module.exports =
             pdo_group_id: this._id
         }));
         return res.toJSON();
-
     };
+    
     //I use this to be able to access this values on a save hook
     PdoGroupSchema.pre('save', function(next) {
         var pdo_group = this,

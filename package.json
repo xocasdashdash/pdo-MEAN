@@ -4,14 +4,19 @@
     "url": "git@github.com:xocasdashdash/pdo-backend-MEAN.git"
   },
   "name": "pdo-mean",
-  "main": "server.js",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "async": "^0.9.0",
     "bcrypt": "^0.8.0",
     "body-parser": "~1.0.1",
     "cheerio": "^0.18.0",
+    "cors": "^2.5.3",
     "express": "~4.0.0",
     "express-enrouten": "^1.1.1",
+    "express-winston": "^0.2.12",
     "faker": "^2.0.1",
     "gulp-util": "^3.0.1",
     "hal": "^0.1.0",
@@ -23,9 +28,11 @@
     "mongoose-validator": "^1.0.2",
     "q": "^1.1.1",
     "request": "^2.48.0",
+    "should": "^4.6.2",
     "supertest": "^0.15.0",
     "underscore": "^1.7.0",
-    "wait.for": "^0.6.6"
+    "wait.for": "^0.6.6",
+    "winston": "^0.8.3"
   },
   "devDependencies": {
     "chai": "^1.10.0",
