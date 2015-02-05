@@ -14,7 +14,7 @@ var q = require('q');
 describe('Test de grupos de PDOs', function() {
     var school, program, course, created_pdo = [],
         pdo_to_add_later,
-        pdo_group_created;
+        pdo_group_created, created_comment_id;
 
     before(function(done) {
         var prom_array = [];
@@ -103,10 +103,8 @@ describe('Test de grupos de PDOs', function() {
                 pdo_group_created.title.should.equal(pdo_group.title);
                 pdo_group_created.should.have.property('pdos').with.length(2);
                 pdo_group_created.pdos[0].should.equal(created_pdo[0]._id);
-                //console.log(pdo_group_created);
                 done();
             }, function(reason) {
-                //console.log('FALLO1');
                 done(reason);
             });
         return prom.promise;
@@ -133,6 +131,43 @@ describe('Test de grupos de PDOs', function() {
         });
         return prom;
     });
+
+    it('should add a comment to a pdo', function(done) {
+        var comment = {};
+        comment.text = faker.lorem.paragraphs();
+        comment.title = 'Titulo del comentario ' + faker.random.number();
+        request(url)
+            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
+            .send(comment)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(function(res) {
+                var pdo_group = res.body;
+                pdo_group.should.have.property('comments').with.length(1);
+                pdo_group.comments[0].text.should.equal(comment.text);
+                pdo_group.comments[0].title.should.equal(comment.title);
+                created_comment_id = pdo_group.comments[0]._id;
+                done();
+            }).
+        catch (function(reason) {
+            console.log('Error al añadir comentario.', reason);
+            done(reason);
+        });
+    });
+    it('should remove a comment', function(done) {
+        request(url)
+            .delete('/api/v1/pdo_group/' + pdo_group_created._id + '/comment/' + created_comment_id)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(function(res) {
+                res.body.should.have.property('comments').with.length(0);
+                done();
+            }).
+        catch (function(reason) {
+            console.log('Error al borrar comentario.', reason);
+            done(reason);
+        });
+    });
     it('a pdo should have a pdo_group', function(done) {
 
         Pdo.findById(pdo_to_add_later._id, function(err, pdo) {
@@ -143,7 +178,7 @@ describe('Test de grupos de PDOs', function() {
                 done('PDO NOT FOUND');
             }
             pdo.toObject().should.have.property('group_id');
-            pdo.group_id.toString().should.equal(pdo_group_created._id); 
+            pdo.group_id.toString().should.equal(pdo_group_created._id);
             done();
         });
 
@@ -188,6 +223,86 @@ describe('Test de grupos de PDOs', function() {
 
     });
 
+    it('should not add a comment if it doesn\'t have text', function(done) {
+        var bad_comment = {};
+        bad_comment.title = 'Titulo del comentario ' + faker.random.number();
+        request(url)
+            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
+            .send(bad_comment)
+            .expect('Content-Type', /json/)
+            .expect(400)
+            .then(function(res) {
+                //console.log(res.body);
+                res.body.errors.text.type.should.equal('required');
+                done();
+            })
+            .
+        catch (function(reason) {
+            console.log(reason);
+            done(reason);
+        });
+    });
+
+    it('should not add a comment if it doesn\'t have text of at least 50 chars', function(done) {
+        var bad_comment = {};
+        bad_comment.title = 'Titulo del comentario ' + faker.random.number();
+        bad_comment.text = ' ';
+        request(url)
+            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
+            .send(bad_comment)
+            .expect('Content-Type', /json/)
+            .expect(400)
+            .then(function(res) {
+                res.body.errors.text.type.should.equal('Text length should be between 50 and 3500 chars');
+                done();
+            })
+            .
+        catch (function(reason) {
+            console.log(reason);
+            done(reason);
+        });
+    });
+
+    it('should not add a comment if it doesn\'t have title', function(done) {
+        var bad_comment = {};
+        bad_comment.title = '';
+        bad_comment.text = faker.lorem.paragraphs();
+        request(url)
+            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
+            .send(bad_comment)
+        //.expect('Content-Type', /json/)
+        .expect(400)
+            .then(function(res) {
+                res.body.errors.title.type.should.equal('required');
+                done();
+            })
+            .
+        catch (function(reason) {
+            console.log(reason);
+            done(reason);
+        });
+    });
+
+    it('should not add a comment if it doesn\'t have title of at least 10 chars', function(done) {
+        var bad_comment = {};
+        bad_comment.title = 'Titulo';
+        bad_comment.text = faker.lorem.paragraphs();;
+        request(url)
+            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
+            .send(bad_comment)
+            .expect('Content-Type', /json/)
+            .expect(400)
+            .then(function(res) {
+                res.body.errors.title.type.should.equal('Title length should be more than 10 chars');
+                done();
+            })
+            .
+        catch (function(reason) {
+            console.log(reason);
+            done(reason);
+        });
+    });
+
     after(function(done) {
         //done();
         //Limpieza
@@ -197,11 +312,11 @@ describe('Test de grupos de PDOs', function() {
                 return Pdo.findByIdAndRemove(pdo._id).exec();
             })).push(PdoGroup.findByIdAndRemove(pdo_group_created._id).exec())
         ).then(function(result) {
-            console.log('Borrado');
             mongoose.connection.close();
             done();
         }).
         catch (function(reason) {
+            console.log('NO Borrando...');
             mongoose.connection.close();
             done(reason);
         });

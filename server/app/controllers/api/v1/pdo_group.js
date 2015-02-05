@@ -5,7 +5,8 @@ var q = require('q');
 var ee = require('../../../events/emitter.js').ee;
 var logger = require('../../../log/log.js');
 var Pdo = mongoose.model('Pdo'),
-    PdoGroup = mongoose.model('PdoGroup');
+    PdoGroup = mongoose.model('PdoGroup'),
+    PdoGroupComment = mongoose.model('PdoGroupComment');
 
 module.exports = function(router) {
     router({
@@ -36,33 +37,43 @@ module.exports = function(router) {
         name: 'add_comment',
         path: '/:pdo_group_id/comment'
     }).put(function(req, res) {
-        var comment = {
-            title: req.body.title,
-            text: req.body.text
-        };
-        PdoGroup.findByIdAndUpdate(req.params.pdo_group_id, {
-            $push: {
-                comments: comment
-            }
-        }, function(err, pdo_group) {
-            if (err) {
+        var pdo_group_comment = new PdoGroupComment();
+        pdo_group_comment.title = req.body.title;
+        pdo_group_comment.text = req.body.text;
+        pdo_group_comment.validate(function(err) {
+            if (typeof err === 'undefined') {
+                PdoGroup.findByIdAndUpdate(req.params.pdo_group_id, {
+                    $push: {
+                        comments: pdo_group_comment
+                    }
+                }, function(err, pdo_group) {
+                    console.log('aqui!');
+                    if (err) {
+                        res.send(err);
+                        return;
+                    }
+                    if (!pdo_group) {
+                        var error = new Error();
+                        error.message = 'Pdo group not found';
+                        error.code = 404;
+                        res.status(404).send(error);
+                        return;
+                    }
+                    res.send(pdo_group.resource(req.route_gen));
+                    return;
+                });
+            } else {
+                res.status(400);
                 res.send(err);
                 return;
             }
-            if (!pdo_group) {
-                var error = new Error();
-                error.message = 'Pdo group not found';
-                error.code = 404;
-                res.status(404).send(error);
-                return;
-            }
-            res.send(pdo_group.resource(req.route_gen));
         });
+
     });
 
     router({
         name: 'get_comment',
-        path: '/:pdo_group_id/comments/:comment_id'
+        path: '/:pdo_group_id/comment/:comment_id'
     }).get(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
             'comments',
@@ -86,10 +97,9 @@ module.exports = function(router) {
 
     router({
         name: 'delete_comment',
-        path: '/:pdo_group_id/comments/:comment_id'
+        path: '/:pdo_group_id/comment/:comment_id'
     }).delete(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
-            'comments',
             function(err, pdo_group) {
                 if (err) {
                     res.send(err);
@@ -148,8 +158,7 @@ module.exports = function(router) {
         name: 'add_pdo_to_group',
         path: '/:pdo_group_id/pdo'
     }).put(function(req, res) {
-        logger.debug('BODY:');
-        logger.debug(req.body.pdos);
+        logger.debug('BODY:',req.body.pdos);
 
         PdoGroup.findById(req.params.pdo_group_id).exec()
             .then(function(pdo_group) {
@@ -160,9 +169,9 @@ module.exports = function(router) {
                     res.status(404).send(error);
                     return;
                 }
-                logger.debug('MEtiendo PDO ...'+pdo_group.pdos.length);
+                logger.debug('Metiendo PDO ...' + pdo_group.pdos.length);
                 pdo_group.addPdo(req.body.pdos);
-                logger.debug('Guardando grupo...' +pdo_group.pdos.length);
+                logger.debug('Guardando grupo...' + pdo_group.pdos.length);
                 pdo_group.save(function(err, saved_doc) {
                     if (err) {
                         logger.debug(err);
@@ -210,7 +219,7 @@ module.exports = function(router) {
                 }
             }).then(function(pdo_group) {
                 //Incluir aqui llamada para que limpie el campo GROUP_ID del PDO
-                ee.emit('pdo:removed_from_group',req.body.pdo_id);
+                ee.emit('pdo:removed_from_group', req.body.pdo_id);
                 res.send(pdo_group.resource(req.route_gen));
                 return;
             }).reject(function(reason) {
