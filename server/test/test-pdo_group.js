@@ -286,7 +286,7 @@ describe('Test de grupos de PDOs', function() {
     it('should not add a comment if it doesn\'t have title of at least 10 chars', function(done) {
         var bad_comment = {};
         bad_comment.title = 'Titulo';
-        bad_comment.text = faker.lorem.paragraphs();;
+        bad_comment.text = faker.lorem.paragraphs();
         request(url)
             .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
             .send(bad_comment)
@@ -304,7 +304,6 @@ describe('Test de grupos de PDOs', function() {
     });
 
     after(function(done) {
-        //done();
         //Limpieza
         created_pdo.push(pdo_to_add_later);
         q.all(

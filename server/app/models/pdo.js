@@ -22,7 +22,7 @@ module.exports =
             validate: validate({
                 validator: 'isLength',
                 arguments: 10,
-                message: 'Min title length should be 10 chars'
+                message: 'Title length should be more than 10 chars'
             })
         },
         text: {

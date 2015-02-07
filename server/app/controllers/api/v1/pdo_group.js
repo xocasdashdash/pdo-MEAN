@@ -19,7 +19,6 @@ module.exports = function(router) {
         pdo_group.summary = req.body.summary;
         pdo_ids = JSON.parse(req.body.pdos).map(
             function(pdo) {
-                //console.log(pdo);
                 return mongoose.Types.ObjectId(pdo);
             });
         pdo_group.pdos = pdo_ids;
@@ -34,7 +33,7 @@ module.exports = function(router) {
     });
 
     router({
-        name: 'add_comment',
+        name: 'add_pdo_group_comment',
         path: '/:pdo_group_id/comment'
     }).put(function(req, res) {
         var pdo_group_comment = new PdoGroupComment();
@@ -72,7 +71,7 @@ module.exports = function(router) {
     });
 
     router({
-        name: 'get_comment',
+        name: 'get_pdo_group_comment',
         path: '/:pdo_group_id/comment/:comment_id'
     }).get(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
@@ -96,7 +95,7 @@ module.exports = function(router) {
     });
 
     router({
-        name: 'delete_comment',
+        name: 'delete_pdo_group_comment',
         path: '/:pdo_group_id/comment/:comment_id'
     }).delete(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
