@@ -262,7 +262,7 @@ module.exports = function(router) {
                 status: req.body.status
             }, function(err, updated_doc) {
                 if (err) {
-                    res.send(err);
+                    res.status(400).send(err);
                 }
                 if (!updated_doc) {
                     var error = new Error();
@@ -270,9 +270,10 @@ module.exports = function(router) {
                     error.code = '404';
                     res.status(404).send(error);
                 }
-                res.status(200).send(updated_doc.resource(req.route_gen));
+                res.send(updated_doc.resource(req.route_gen));
             });
     });
+
     router({
         name: 'get_pdo_group_statuses',
         path: '/config/statuses'
@@ -285,4 +286,6 @@ module.exports = function(router) {
         statuses.push('STATUS_RESOLVED');
         res.send({statuses: statuses});        
     });
+
+
 };

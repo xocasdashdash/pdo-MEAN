@@ -31,7 +31,7 @@ module.exports =
             required: true,
             validate: validate({
                 validator: 'isLength',
-                arguments: [50,3500],
+                arguments: [50, 3500],
                 message: 'Text length should be between 50 and 3500 chars'
             })
         },
@@ -56,7 +56,12 @@ module.exports =
 
         return res;
     };
-
+    var validStatuses = ['STATUS_RESOLVED',
+        'STATUS_NOT_RESOLVED',
+        'STATUS_ATTENDED',
+        'STATUS_UPCHAINED',
+        'STATUS_PENDING'
+    ];
     var PdoGroupSchema = new Schema({
         title: {
             type: String,
@@ -80,12 +85,7 @@ module.exports =
             default: 'STATUS_PENDING',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['STATUS_RESOLVED',
-                    'STATUS_NOT_RESOLVED',
-                    'STATUS_ATTENDED',
-                    'STATUS_UPCHAINED',
-                    'STATUS_PENDING'
-                ]
+                arguments: validStatuses
             })
         },
         status: {
@@ -94,12 +94,7 @@ module.exports =
             default: 'STATUS_PENDING',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['STATUS_RESOLVED',
-                    'STATUS_NOT_RESOLVED',
-                    'STATUS_ATTENDED',
-                    'STATUS_UPCHAINED',
-                    'STATUS_PENDING'
-                ]
+                arguments: validStatuses
             })
         },
         comments: {
@@ -115,14 +110,14 @@ module.exports =
         }
     };
 
-    PdoGroupSchema.methods.getStatusMessage = function(){
+    PdoGroupSchema.methods.getStatusMessage = function() {
         var messages = {};
         messages.STATUS_PENDING = 'PDO pendiente de tramitar';
         messages.STATUS_NOT_RESOLVED = 'PDO no resuelto';
         messages.STATUS_ATTENDED = 'Estamos atendiendo este PDO';
         messages.STATUS_UPCHAINED = 'Estamos esperando respuesta de la Universidad';
         messages.STATUS_RESOLVED = 'PDO resuelto';
-        return messages[this.status];        
+        return messages[this.status];
     };
 
     PdoGroupSchema.methods.resource = function(route_gen) {
