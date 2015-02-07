@@ -24,6 +24,7 @@
         "config",
         "request",
         "expect",
-        "url"
+        "url",
+        "faker"
     ]
 }

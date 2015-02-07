@@ -2,6 +2,7 @@
 var express = require('express'); // call express
 var mongoose = require('mongoose');
 var q = require('q');
+var logger = require('../../../log/log.js');
 
 
 var School = mongoose.model('School'),
@@ -117,15 +118,49 @@ module.exports = function(router) {
     router({
         name: 'add_comment_pdo',
         path: '/:pdo_id/comment',
-    }).post(function(req, res) {
+    }).put(function(req, res) {
         var pdo_comment = new PdoComment();
         pdo_comment.title = req.body.title;
         pdo_comment.text = req.body.text;
-        Pdo.findByIdAndUpdate(req.params.pdo_id, {
-            $push: {
-                comments: pdo_comment
+        logger.debug('Comentario:', req.body);
+        //logger.debug('New Comment:',pdo_comment);
+        pdo_comment.validate(function(err) {
+            console.log(pdo_comment.title);
+            if (typeof err === 'undefined') {
+                Pdo.findByIdAndUpdate(req.params.pdo_id, {
+                    $push: {
+                        comments: pdo_comment
+                    }
+                }, function(err, pdo) {
+                    if (err) {
+                        res.send(err);
+                        return;
+                    }
+                    if (!pdo) {
+                        var error = new Error();
+                        error.message = 'Pdo not found';
+                        error.code = 404;
+                        res.status(error.code).send(error);
+                        return;
+                    }
+                    logger.debug('**COMMENTS**', pdo.comments.length);
+                    res.send(pdo.resource(req.route_gen));
+                    return;
+                });
+            } else {
+                //logger.debug(err);
+                res.status(400);
+                res.send(err);
+                return;
             }
-        }, function(err, pdo) {
+        });
+    });
+
+    router({
+        name: 'delete_comment_pdo',
+        path: '/:pdo_id/comment/:comment_id',
+    }).delete(function(req, res) {
+        Pdo.findById(req.params.pdo_id, function(err, pdo) {
             if (err) {
                 res.send(err);
                 return;
@@ -134,13 +169,33 @@ module.exports = function(router) {
                 var error = new Error();
                 error.message = 'Pdo not found';
                 error.code = 404;
-                res.status(error.code).send(error);
+                res.status(404).send(error);
                 return;
             }
-            res.send(pdo.resource(req.route_gen));
-            return;
+
+            pdo.comments.id(req.params.comment_id).remove();
+            try {
+                pdo.save(function(err, pdo) {
+                    if (err) {
+                        res.send(err);
+                        return;
+                    }
+                    if (!pdo) {
+                        var error = new Error();
+                        error.message = 'Pdo not found';
+                        error.code = 404;
+                        res.status(404).send(error);
+                        return;
+                    }
+                    res.send(pdo.resource(req.route_gen));
+                    return;
+                });
+            } catch (E) {
+                console.log(E);
+            }
         });
     });
+
 
     router({
         name: 'get_pdo_comments',

@@ -19,11 +19,21 @@ module.exports =
         },
         title: {
             type: String,
-            required: true
+            required: true,
+            validate: validate({
+                validator: 'isLength',
+                arguments: 10,
+                message: 'Title length should be more than 10 chars'
+            })
         },
         text: {
             type: String,
-            required: true
+            required: true,
+            validate: validate({
+                validator: 'isLength',
+                arguments: [50,3500],
+                message: 'Text length should be between 50 and 3500 chars'
+            })
         },
         date_created: {
             type: Date,
@@ -124,7 +134,7 @@ module.exports =
         }));
         return res.toJSON();
     };
-    
+
     //I use this to be able to access this values on a save hook
     PdoGroupSchema.pre('save', function(next) {
         var pdo_group = this,
@@ -166,6 +176,7 @@ module.exports =
         }
         next();
     });
+    mongoose.model('PdoGroupComment', CommentsSchema);
     mongoose.model('PdoGroup', PdoGroupSchema);
 
 })();

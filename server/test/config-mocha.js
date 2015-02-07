@@ -8,3 +8,5 @@ global.assert = chai.assert;
 global.request = require('supertest-as-promised');
 global.config = require('../config/config');
 global.url = global.config.url;
+global.faker = require('faker');
+global.faker.locale = 'es';

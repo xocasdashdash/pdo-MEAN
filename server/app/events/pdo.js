@@ -5,7 +5,7 @@ var Pdo = require('mongoose').model('Pdo');
 var logger = require('../log/log.js');
 module.exports.initialize = function(ee) {
     ee.on('pdo:removed_from_group', function(pdo_id) {
-        logger.debug('Eliminando pdo (%s)', pdo_id);
+        logger.debug('Eliminando pdo group (%s)', pdo_id);
         Pdo.findByIdAndUpdate(pdo_id, {
             $set: {
                 group_id: null

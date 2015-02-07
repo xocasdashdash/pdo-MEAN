@@ -18,11 +18,21 @@ module.exports =
         },
         title: {
             type: String,
-            required: true
+            required: true,
+            validate: validate({
+                validator: 'isLength',
+                arguments: 10,
+                message: 'Title length should be more than 10 chars'
+            })
         },
         text: {
             type: String,
-            required: true
+            required: true,
+            validate: validate({
+                validator: 'isLength',
+                arguments: [50,3500],
+                message: 'Text length should be between 50 and 3500 chars'
+            })
         },
         date_created: {
             type: Date,
@@ -102,7 +112,7 @@ module.exports =
         deviceUUID: {
             type: String
         },
-        
+
     });
     PdoSchema.plugin(denormalize, {
         schoolname: {
@@ -143,5 +153,5 @@ module.exports =
     };
 
     mongoose.model('Pdo', PdoSchema);
-    mongoose.model('PdoComment',CommentsSchema);
+    mongoose.model('PdoComment', CommentsSchema);
 })();
