@@ -16,4 +16,10 @@ module.exports.initialize = function(ee) {
             }
         });
     });
+    ee.on('pdo:added_to_group', function (pdo_id) {
+        logger.debug('Pdo (%s) aniadido al grupo', pdo_id);
+    });
+    ee.on('pdo:added_comment',function (pdo_id) {
+        //Notifico al usuario que se ha añadido un comentario
+    });
 };

@@ -8,6 +8,7 @@ var School = mongoose.model('School');
 var Program = mongoose.model('Program');
 var Course = mongoose.model('Course');
 var PdoGroup = mongoose.model('PdoGroup');
+var sprintf = require("sprintf-js").sprintf;
 
 var q = require('q');
 
@@ -46,16 +47,16 @@ describe('Test de grupos de PDOs', function() {
                 var pdo;
                 for (var i = 0; i < 3; i++) {
                     pdo = {};
-                    pdo.name = 'Nombre';
-                    pdo.surname = 'Apellido';
+                    pdo.name = sprintf('Nombre%d', i);
+                    pdo.surname = sprintf('Apellido%d', i);
                     pdo.num_id = '123456789A';
-                    pdo.email = 'email@email.com';
+                    pdo.email = sprintf('jfcampo+%d@gmail.com', i);
                     pdo.phone = '654654654';
                     pdo.school = school;
                     pdo.program = program;
                     pdo.course = course;
-                    pdo.title = "TITULO DEL PDO ";
-                    pdo.text = "TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO ";
+                    pdo.title = sprintf("TITULO DEL PDO %d", i);
+                    pdo.text = sprintf("TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO %d", i);
                     prom_array.push(
                         request(url)
                         .post('/api/v1/pdo').send(pdo)
@@ -94,9 +95,7 @@ describe('Test de grupos de PDOs', function() {
         prom = request(url)
             .post('/api/v1/pdo_group').send(pdo_group)
             .expect('Content-Type', /json/)
-            .expect(200);
-
-        prom
+            .expect(200)
             .then(function(result) {
                 pdo_group_created = result.body;
                 pdo_group_created.status.should.equal('STATUS_PENDING');
@@ -117,22 +116,21 @@ describe('Test de grupos de PDOs', function() {
             .put('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo')
             .send(payload)
             .expect('Content-Type', /json/)
-            .expect(200);
-
-        prom.then(function(result) {
-            pdo_group_created = result.body;
-            pdo_group_created.status.should.equal('STATUS_PENDING');
-            pdo_group_created.should.have.property('pdos').with.length(3);
-            pdo_group_created.pdos[2].should.equal(pdo_to_add_later._id);
-            done();
-        }).
+            .expect(200)
+            .then(function(result) {
+                pdo_group_created = result.body;
+                pdo_group_created.status.should.equal('STATUS_PENDING');
+                pdo_group_created.should.have.property('pdos').with.length(3);
+                pdo_group_created.pdos[2].should.equal(pdo_to_add_later._id);
+                done();
+            }).
         catch (function(reason) {
             done(reason);
         });
         return prom;
     });
-
-    it('should add a comment to a pdo', function(done) {
+    /*
+    it('should add a comment to a pdo group', function(done) {
         var comment = {};
         comment.text = faker.lorem.paragraphs();
         comment.title = 'Titulo del comentario ' + faker.random.number();
@@ -167,7 +165,7 @@ describe('Test de grupos de PDOs', function() {
             console.log('Error al borrar comentario.', reason);
             done(reason);
         });
-    });
+    });*/
     it('a pdo should have a pdo_group', function(done) {
 
         Pdo.findById(pdo_to_add_later._id, function(err, pdo) {
@@ -305,19 +303,21 @@ describe('Test de grupos de PDOs', function() {
 
     after(function(done) {
         //Limpieza
-        created_pdo.push(pdo_to_add_later);
-        q.all(
-            (created_pdo.map(function(pdo) {
-                return Pdo.findByIdAndRemove(pdo._id).exec();
-            })).push(PdoGroup.findByIdAndRemove(pdo_group_created._id).exec())
-        ).then(function(result) {
-            mongoose.connection.close();
-            done();
-        }).
+        /*created_pdo.push(pdo_to_add_later);
+        q.all(created_pdo.map(function(pdo) {
+            return Pdo.findByIdAndRemove(pdo._id).exec();
+        }).push(PdoGroup.findByIdAndRemove(pdo_group_created._id)
+            .exec()))
+            .then(function(result) {
+                mongoose.connection.close();
+                done();
+            }).
         catch (function(reason) {
             console.log('NO Borrando...');
             mongoose.connection.close();
             done(reason);
-        });
+        });*/
+        mongoose.connection.close();
+        done();
     });
 });

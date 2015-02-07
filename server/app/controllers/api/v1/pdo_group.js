@@ -28,6 +28,7 @@ module.exports = function(router) {
                 res.send(err);
                 return;
             }
+            ee.emit('pdo_group:added_to_group',  JSON.parse(req.body.pdos));
             res.send(pdo_group.resource(req.route_gen));
         });
     });
@@ -46,7 +47,6 @@ module.exports = function(router) {
                         comments: pdo_group_comment
                     }
                 }, function(err, pdo_group) {
-                    console.log('aqui!');
                     if (err) {
                         res.send(err);
                         return;
@@ -59,6 +59,7 @@ module.exports = function(router) {
                         return;
                     }
                     res.send(pdo_group.resource(req.route_gen));
+                    ee.emit('pdo_group:added_comment', pdo_group, pdo_group_comment);
                     return;
                 });
             } else {
@@ -157,9 +158,9 @@ module.exports = function(router) {
         name: 'add_pdo_to_group',
         path: '/:pdo_group_id/pdo'
     }).put(function(req, res) {
-        logger.debug('BODY:',req.body.pdos);
-
-        PdoGroup.findById(req.params.pdo_group_id).exec()
+        PdoGroup
+            .findById(req.params.pdo_group_id)
+            .exec()
             .then(function(pdo_group) {
                 if (!pdo_group) {
                     var error = new Error();
@@ -177,7 +178,8 @@ module.exports = function(router) {
                         res.send(err);
                         return;
                     }
-
+                    logger.debug('PDOs añadidos');
+                    ee.emit('pdo_group:added_to_group', req.body.pdos);
                     res.send(saved_doc.resource(req.route_gen));
                     return;
                 });
@@ -270,5 +272,17 @@ module.exports = function(router) {
                 }
                 res.status(200).send(updated_doc.resource(req.route_gen));
             });
+    });
+    router({
+        name: 'get_pdo_group_statuses',
+        path: '/config/statuses'
+    }).get( function(req,res){
+        var statuses = [];
+        statuses.push('STATUS_PENDING');
+        statuses.push('STATUS_NOT_RESOLVED');
+        statuses.push('STATUS_ATTENDED');
+        statuses.push('STATUS_UPCHAINED');
+        statuses.push('STATUS_RESOLVED');
+        res.send({statuses: statuses});        
     });
 };

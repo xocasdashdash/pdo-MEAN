@@ -33,7 +33,6 @@ module.exports = function(router) {
         pdo.text = req.body.text;
         pdo.posted_at = req.body.postedAt;
         pdo.deviceUUID = req.body.deviceUUID;
-        console.log(req.body);
         promise_array.push(deferred_school.promise);
         School.findOne({
             schoolname: req.body.school.schoolname
@@ -42,9 +41,9 @@ module.exports = function(router) {
                 deferred_school.reject(err);
             }
             if (!school) {
-                console.log(req.body);
+                logger.error('No school found!SchoolName:%s',req.body.school.schoolname);
                 deferred_school.reject(
-                    'No school found with[' + req.body.school_name + ']');
+                    'No school found with[' + req.body.school.schoolname + ']');
             }
             pdo.school = school;
             deferred_school.resolve(school);
@@ -87,7 +86,7 @@ module.exports = function(router) {
                 res.json(pdo);
             });
         }).fail(function(reason) {
-            console.log('Promesa rechazada', reason);
+            logger.error('Promesa rechazada. Razon: %s', reason);
             var err = new Error(reason);
             res.send(err);
         });
@@ -125,7 +124,6 @@ module.exports = function(router) {
         logger.debug('Comentario:', req.body);
         //logger.debug('New Comment:',pdo_comment);
         pdo_comment.validate(function(err) {
-            console.log(pdo_comment.title);
             if (typeof err === 'undefined') {
                 Pdo.findByIdAndUpdate(req.params.pdo_id, {
                     $push: {
@@ -191,7 +189,7 @@ module.exports = function(router) {
                     return;
                 });
             } catch (E) {
-                console.log(E);
+                logger.error('Error! %s', E);
             }
         });
     });
@@ -224,13 +222,12 @@ module.exports = function(router) {
             res.send(respuesta);
             return;
         }).fail(function(reason) {
-            console.log('Promesa rechazada');
+            logger.error('Promesa rechazada. Razon: %s', reason);
             res.status(reason.code ? reason.code : 400).send(reason);
             return;
         });
         Pdo.findById(req.params.pdo_id,
             function(err, pdo) {
-                console.log('Buscando pdo', req.params.pdo_id);
                 if (err) {
                     res.send(err);
                     return;
@@ -250,7 +247,6 @@ module.exports = function(router) {
                     );
                 }
                 if (pdo.pdo_group) {
-                    console.log('has group');
                     PdoGroup.findById(pdo.pdo_group, function(err, pdo_group) {
                         if (err) {
                             promPdoGroupComments.reject(err);

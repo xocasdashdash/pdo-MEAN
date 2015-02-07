@@ -44,12 +44,12 @@ module.exports =
     CommentsSchema.methods.resource = function(route_gen) {
 
         var res = new hal.Resource(this.toObject(),
-            route_gen.path('get_comment', {
+            route_gen.path('get_pdo_group_comment', {
                 pdo_group_id: this.parent()._id,
                 comment_id: this._id
             }));
 
-        res.link('delete', route_gen.path('delete_comment', {
+        res.link('delete', route_gen.path('delete_pdo_group_comment', {
             pdo_group_id: this.parent()._id,
             comment_id: this._id
         }));
@@ -115,13 +115,23 @@ module.exports =
         }
     };
 
+    PdoGroupSchema.methods.getStatusMessage = function(){
+        var messages = {};
+        messages.STATUS_PENDING = 'PDO pendiente de tramitar';
+        messages.STATUS_NOT_RESOLVED = 'PDO no resuelto';
+        messages.STATUS_ATTENDED = 'Estamos atendiendo este PDO';
+        messages.STATUS_UPCHAINED = 'Estamos esperando respuesta de la Universidad';
+        messages.STATUS_RESOLVED = 'PDO resuelto';
+        return messages[this.status];        
+    };
+
     PdoGroupSchema.methods.resource = function(route_gen) {
         var res = new hal.Resource(this.toObject(),
             route_gen.path('get_pdo_group', {
                 pdo_group_id: this._id
             }));
 
-        res.link('comment', route_gen.path('add_comment', {
+        res.link('comment', route_gen.path('add_pdo_group_comment', {
             pdo_group_id: this._id
         }));
 

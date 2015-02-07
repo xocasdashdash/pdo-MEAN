@@ -1,6 +1,6 @@
 'use strict';
 
-var events = ['pdo.js'];
+var events = ['pdo.js','pdo_group.js'];
 var emitter = require('./emitter.js');
 var logger = require('../log/log');
 module.exports = (function(ee) {
