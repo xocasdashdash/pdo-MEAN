@@ -303,7 +303,7 @@ describe('Test de grupos de PDOs', function() {
 
     after(function(done) {
         //Limpieza
-        /*created_pdo.push(pdo_to_add_later);
+        created_pdo.push(pdo_to_add_later);
         q.all(created_pdo.map(function(pdo) {
             return Pdo.findByIdAndRemove(pdo._id).exec();
         }).push(PdoGroup.findByIdAndRemove(pdo_group_created._id)
@@ -314,10 +314,9 @@ describe('Test de grupos de PDOs', function() {
             }).
         catch (function(reason) {
             console.log('NO Borrando...');
+            console.log(reason);
             mongoose.connection.close();
             done(reason);
-        });*/
-        mongoose.connection.close();
-        done();
+        });
     });
 });
