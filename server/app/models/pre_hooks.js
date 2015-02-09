@@ -14,6 +14,7 @@ module.exports = (function() {
         Course.find({
             program: prog._id
         }).remove();
+        next();
     });
     //Course hooks
     Course.schema.pre('save', function(next) {

@@ -1,13 +1,6 @@
 'use strict';
-var express = require('express'); // call express
 var mongoose = require('mongoose');
-var q = require('q');
-var hal = require('hal');
-
-
-var School = mongoose.model('School'),
-    Pdo = mongoose.model('Pdo'),
-    Course = mongoose.model('Course'),
+var Course = mongoose.model('Course'),
     Program = mongoose.model('Program');
 
 module.exports = function(router) {

@@ -1,11 +1,9 @@
 'use strict';
-var express = require('express'); // call express
 var mongoose = require('mongoose');
 var q = require('q');
 var ee = require('../../../events/emitter.js').ee;
 var logger = require('../../../log/log.js');
-var Pdo = mongoose.model('Pdo'),
-    PdoGroup = mongoose.model('PdoGroup'),
+var PdoGroup = mongoose.model('PdoGroup'),
     PdoGroupComment = mongoose.model('PdoGroupComment');
 
 module.exports = function(router) {
