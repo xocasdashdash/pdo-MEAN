@@ -30,7 +30,7 @@ module.exports =
             required: true,
             validate: validate({
                 validator: 'isLength',
-                arguments: [50,3500],
+                arguments: [50, 3500],
                 message: 'Text length should be between 50 and 3500 chars'
             })
         },
@@ -39,6 +39,8 @@ module.exports =
             default: Date.now()
         }
     });
+
+    var validStatuses = ['STATUS_PENDING', 'STATUS_ADDED_TO_PDOGROUP', 'STATUS_REJECTED'];
     var PdoSchema = new Schema({
         name: {
             type: String,
@@ -112,6 +114,15 @@ module.exports =
         deviceUUID: {
             type: String
         },
+        status: {
+            type: String,
+            required: true,
+            default: 'STATUS_PENDING',
+            validator: validate({
+                validator: 'isIn',
+                arguments: validStatuses
+            })
+        }
 
     });
     PdoSchema.plugin(denormalize, {
@@ -126,12 +137,20 @@ module.exports =
         },
     });
 
+    PdoSchema.methods.getStatusMessage = function() {
+        var messages = {};
+        messages.STATUS_PENDING = 'Pendiente de incluir en un grupo';
+        messages.STATUS_ADDED_TO_PDOGROUP = 'PDo añadido a un grupo';
+        messages.STATUS_REJECTED = 'PDo rechazado';
+        return messages[this.status];
+    };
     PdoSchema.methods.resource = function(route_gen) {
         var res = new hal.Resource(this.toObject(), route_gen.path('get_pdo', {
             pdo_id: this._id
         }));
+
         if (this.group_id) {
-            res.link('group', route_gen.path('get_group', {
+            res.link('group', route_gen.path('get_pdo_group', {
                 group_id: this.group_id
             }));
         }

@@ -39,5 +39,5 @@ node_modules
 *sublime-workspace
 
 #Ignorar test
-test/
+#test/
 test2/

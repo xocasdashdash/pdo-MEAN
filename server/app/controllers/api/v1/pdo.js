@@ -40,7 +40,7 @@ module.exports = function(router) {
                 deferred_school.reject(err);
             }
             if (!school) {
-                logger.error('No school found!SchoolName:%s',req.body.school.schoolname);
+                logger.error('No school found!SchoolName:%s', req.body.school.schoolname);
                 deferred_school.reject(
                     'No school found with[' + req.body.school.schoolname + ']');
             }
@@ -115,6 +115,7 @@ module.exports = function(router) {
                 return;
             });
     });
+
     router({
         name: 'add_comment_pdo',
         path: '/:pdo_id/comment',
@@ -304,7 +305,7 @@ module.exports = function(router) {
         pdo_filter.created_on = {
             $lte: from
         };
-        
+
         if (req.query.status_filter) {
             pdo_filter.status = req.query.status_filter;
         }

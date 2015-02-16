@@ -63,14 +63,17 @@ module.exports = function(router) {
             function(err, school) {
                 if (err) {
                     res.send(err);
+                    return;
                 }
                 if (!school) {
                     var error = new Error();
                     error.message = 'School not found';
                     error.code = '404';
-                    res.status(404).send(error);
+                    res.status(error.code).send(error);
+                    return;
                 }
                 res.send(school.resource(req.route_gen));
+                return;
             });
     });
 
