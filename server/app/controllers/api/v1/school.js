@@ -1,8 +1,6 @@
 'use strict';
 
-var express = require('express'); // call express
 var mongoose = require('mongoose');
-var _ = require('underscore');
 
 var School = mongoose.model('School');
 var Program = mongoose.model('Program');
@@ -63,7 +61,6 @@ module.exports = function(router) {
         School.findById(
             req.params.school_id,
             function(err, school) {
-                var resp;
                 if (err) {
                     res.send(err);
                     return;

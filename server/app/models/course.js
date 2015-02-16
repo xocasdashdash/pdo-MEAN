@@ -8,7 +8,6 @@ var validate = require('mongoose-validator');
 var denormalize = require('mongoose-denormalize');
 
 var Schema = mongoose.Schema;
-var q = require('q');
 var hal = require('hal');
 
 module.exports = (function() {

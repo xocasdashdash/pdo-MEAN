@@ -1,9 +1,7 @@
 'use strict';
 
-var express = require('express'); // call express
 var mongoose = require('mongoose');
 
-var School = mongoose.model('School');
 var Program = mongoose.model('Program');
 var Course = mongoose.model('Course');
 

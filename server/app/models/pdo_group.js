@@ -5,7 +5,6 @@ Uses MongoDB for storage and mongoose for data access
 'use strict';
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
-var denormalize = require('mongoose-denormalize');
 var hal = require('hal');
 var Schema = mongoose.Schema;
 

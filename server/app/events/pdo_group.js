@@ -1,12 +1,11 @@
 'use strict';
 var events = require('events');
-var PdoGroup = require('mongoose').model('PdoGroup');
-var Pdo = require('mongoose').model('Pdo');
+var mongoose = require('mongoose');
+//var PdoGroup = mongoose.model('PdoGroup');
+var Pdo = mongoose.model('Pdo');
 var logger = require('../log/log.js');
 var nodemailer = require('nodemailer');
 var smtpPool = require('nodemailer-smtp-pool');
-var q = require('q');
-var mongoose = require('mongoose');
 
 //------------------------//
 module.exports.initialize = function(ee) {
@@ -44,7 +43,7 @@ module.exports.initialize = function(ee) {
                 logger.error('Pdos NO encontrados');
                 logger.error('IDs: ', pdos_ids);
             } else {
-                pdos.map(function(pdo, i) {
+                pdos.map(function(pdo) {
                     transporter.sendMail({
                         from: 'Administración de PDO <pdo.uah@gmail.com>',
                         sender: 'Administración de PDO <pdo.uah@gmail.com>',
@@ -68,7 +67,7 @@ module.exports.initialize = function(ee) {
             }
         }, function(err, pdo) {
             if (err) {
-                logger.error('Error al modificar el PDO(%s):%s', pdo_id, err);
+                logger.error('Error al modificar el PDO(%s):%s. Pdo: %s', pdo_id, err, pdo);
             }
         });
         return;
@@ -78,9 +77,9 @@ module.exports.initialize = function(ee) {
         logger.debug('pdo_group:added_comment');
         Pdo.find({
             group_id: pdo_group._id
-        }, "email")
+        }, 'email')
             .exec()
-            .then(function(Pdos) {
+            .then(function(pdos) {
                     var mail_callback = function(error, info) {
                         if (error) {
                             logger.error('Error al enviar e-mail: %s', error);
@@ -88,24 +87,24 @@ module.exports.initialize = function(ee) {
                             logger.debug('Correo enviado. Info: %s', info);
                         }
                     };
-                    var mail_array = Pdos.map(function(e, i) {
+                    var mail_array = pdos.map(function(pdo) {
                         transporter.sendMail({
                             from: 'Administración de PDO <pdo.uah@gmail.com>',
                             sender: 'Administración de PDO <pdo.uah@gmail.com>',
-                            to: e.email,
+                            to: pdo.email,
                             subject: 'Nuevo comentario en tu pdo!',
                             html: 'Titulo: ' + comment.title +
                                 '<br> Texto: ' + comment.text +
                                 '<br> Un saludo!'
                         }, mail_callback);
 
-                        return e.email;
+                        return pdo.email;
                     });
                     logger.debug('Emails: %s', mail_array.join(','));
 
                 },
                 function(err) {
-                    logger.error('Error en evento \'pdo_group:added_comment\'. Grupo: %s', pdo_group);
+                    logger.error('Error en evento \'pdo_group:added_comment\'. Grupo: %s. Error: %s', pdo_group,err);
                 });
         logger.debug('Saliendo del evento...');
     });
@@ -115,9 +114,9 @@ module.exports.initialize = function(ee) {
         logger.debug('pdo_group:status_changed');
         Pdo.find({
             group_id: pdo_group._id
-        }, "email")
+        }, 'email')
             .exec()
-            .then(function(Pdos) {
+            .then(function(pdos) {
                     var mail_callback = function(error, info) {
                         if (error) {
                             logger.error('Error al enviar e-mail:', error);
@@ -125,22 +124,22 @@ module.exports.initialize = function(ee) {
                             logger.debug('Correo enviado. Info: ', info);
                         }
                     };
-                    var mail_array = Pdos.map(function(e, i) {
+                    var mail_array = pdos.map(function(pdo) {
                         transporter.sendMail({
                             from: 'Administración de PDO <pdo.uah@gmail.com>',
                             sender: 'Administración de PDO <pdo.uah@gmail.com>',
-                            to: e.email,
+                            to: pdo.email,
                             subject: 'Ha habido un cambio en el estado de este PDO',
                             html: 'Estado: ' + pdo_group.getStatusMessage()
                         }, mail_callback);
 
-                        return e.email;
+                        return pdo.email;
                     });
                     logger.debug('Emails: %s', mail_array.join(','));
 
                 },
                 function(err) {
-                    logger.error('Error en evento \'pdo_group:added_comment\'. Grupo: %s', pdo_group);
+                    logger.error('Error en evento \'pdo_group:added_comment\'. Grupo: %s. Error: %s', pdo_group, err);
                 });
         logger.debug('Saliendo del evento...');
     });

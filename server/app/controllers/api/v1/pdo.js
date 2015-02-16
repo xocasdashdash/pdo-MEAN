@@ -1,5 +1,4 @@
 'use strict';
-var express = require('express'); // call express
 var mongoose = require('mongoose');
 var q = require('q');
 var logger = require('../../../log/log.js');
@@ -76,7 +75,10 @@ module.exports = function(router) {
             pdo.course = course;
             deferred_course.resolve(course);
         });
-        q.all(promise_array).then(function(results) {
+        q.all(promise_array).spread(function(school,program, course) {
+            pdo.course = course;
+            pdo.program = program;
+            pdo.school = school;
             pdo.save(function(err) {
                 if (err) {
                     res.send(err);
@@ -88,7 +90,7 @@ module.exports = function(router) {
         }).fail(function(reason) {
             logger.error('Promesa rechazada. Razon: %s', reason);
             var err = new Error(reason);
-            res.send(err);
+            res.status(400).send(err);
         });
     });
 
@@ -96,7 +98,6 @@ module.exports = function(router) {
         name: 'get_pdo',
         path: '/:pdo_id'
     }).get(function(req, res) {
-        var pdo;
         Pdo.findById(req.params.pdo_id,
             function(err, pdo) {
                 if (err) {
@@ -200,7 +201,7 @@ module.exports = function(router) {
         name: 'get_pdo_comments',
         path: '/:pdo_id/comment'
     }).get(function(req, res) {
-        var pdo_comments, promise_array = [];
+        var promise_array = [];
         var promPdoComments = q.defer(),
             promPdoGroupComments = q.defer();
         promise_array[0] = promPdoComments.promise;
@@ -306,7 +307,7 @@ module.exports = function(router) {
         };
 
         if (req.query.status_filter) {
-            pdo_filter.status = req.query.status_filter
+            pdo_filter.status = req.query.status_filter;
         }
         Pdo.find(pdo_filter)
             .limit(limit)
@@ -318,7 +319,7 @@ module.exports = function(router) {
                     if (!pdos) {
                         pdoResp = [];
                     } else {
-                        pdoResp = pdos.map(function(e, i) {
+                        pdoResp = pdos.map(function(e) {
                             return e.resource(req.route_gen);
                         });
                     }
@@ -347,16 +348,16 @@ module.exports = function(router) {
         //Else: No debería llegar aquí
         //pdo_filter.school = mongoose.Types.ObjectId(req.params.school_id);
         if (req.query.status_filter) {
-            pdo_filter.status = req.query.status_filter
+            pdo_filter.status = req.query.status_filter;
         }
-        Pdo.find(pdo_filter).then(
+        Pdo.find(pdo_filter).limit(limit).then(
             function(pdos) {
                 logger.debug('Encontrados (%d) Pdos', pdos.length);
                 var pdoResp;
                 if (!pdos) {
                     pdoResp = [];
                 } else {
-                    pdoResp = pdos.map(function(e, i) {
+                    pdoResp = pdos.map(function(e) {
                         return e.resource(req.route_gen);
                     });
                 }
@@ -368,5 +369,4 @@ module.exports = function(router) {
             }
         );
     });
-
 };
