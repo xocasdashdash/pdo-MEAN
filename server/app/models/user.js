@@ -7,7 +7,6 @@ Uses MongoDB for storage and mongoose for data access
 'use strict';
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
-var denormalize = require('mongoose-denormalize');
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 
@@ -57,6 +56,18 @@ module.exports = (function() {
             default: Date.now
         }
     });
+    UserSchema.methods.authenticate = function(password,cb) {
+        var user = this;
+        return bcrypt.compareSync(password, user.password);
+
+        /*, function(err, result) {
+            if (err) {
+                cb(err,null);
+            }
+            console.log('Result:',result);
+            return cb(null,result);
+        });*/
+    };
     UserSchema.pre('save', function(next) {
         var user = this;
         if (!user.isModified('password')) {

@@ -14,6 +14,10 @@ var moment = require('moment');
 var config = require('./config/config');
 var logger = require('./app/log/log.js');
 var cors = require('cors');
+var blade = require('blade');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 mongoose.connect(config.db.mongodb); // connect to our database
 
 // CONNECTION EVENTS
@@ -66,6 +70,38 @@ app.use(cors());
 app.use(enrouten({
     directory: 'app/controllers'
 }));
+
+//Configure blade for views
+app.set('views', './app/views');
+app.set("view engine", "blade");
+
+//Configure passport for Auth
+var User = mongoose.model('User');
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        User.findOne({
+            username: username
+        }, function(err, user) {
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                console.log('No user');
+                return done(null, false, {
+                    message: 'Incorrect username.'
+                });
+            }
+            if (!user.authenticate(password)) {
+                console.log('no pass');
+                return done(null, false, {
+                    message: 'Incorrect password.'
+                });
+            }
+            return done(null, user);
+        });
+    }
+));
+app.use(passport.initialize());
 
 
 // START THE SERVER
