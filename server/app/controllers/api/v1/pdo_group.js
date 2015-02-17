@@ -5,6 +5,7 @@ var ee = require('../../../events/emitter.js').ee;
 var logger = require('../../../log/log.js');
 var PdoGroup = mongoose.model('PdoGroup'),
     PdoGroupComment = mongoose.model('PdoGroupComment');
+var unless = require('express-unless');
 
 module.exports = function(router) {
     router({
@@ -15,6 +16,7 @@ module.exports = function(router) {
             pdo_ids = [];
         pdo_group.title = req.body.title;
         pdo_group.summary = req.body.summary;
+        pdo_group.school = mongoose.Types.ObjectId(req.body.school._id);
         pdo_ids = JSON.parse(req.body.pdos).map(
             function(pdo) {
                 return mongoose.Types.ObjectId(pdo);
@@ -26,7 +28,7 @@ module.exports = function(router) {
                 res.send(err);
                 return;
             }
-            ee.emit('pdo_group:added_to_group',  JSON.parse(req.body.pdos));
+            ee.emit('pdo_group:added_to_group', JSON.parse(req.body.pdos));
             res.send(pdo_group.resource(req.route_gen));
         });
     });
@@ -275,14 +277,16 @@ module.exports = function(router) {
     router({
         name: 'get_pdo_group_statuses',
         path: '/config/statuses'
-    }).get( function(req,res){
+    }).get(function(req, res) {
         var statuses = [];
         statuses.push('STATUS_PENDING');
         statuses.push('STATUS_NOT_RESOLVED');
         statuses.push('STATUS_ATTENDED');
         statuses.push('STATUS_UPCHAINED');
         statuses.push('STATUS_RESOLVED');
-        res.send({statuses: statuses});        
+        res.send({
+            statuses: statuses
+        });
     });
 
 

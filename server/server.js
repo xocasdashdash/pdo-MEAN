@@ -1,12 +1,11 @@
 // server.js
 
 // BASE SETUP
-// =============================================================================
+// ==============================================================
 'use strict';
 
 // call the packages we need
 var express = require('express'); // call express
-var app = express(); // define our app using express
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var enrouten = require('express-enrouten');
@@ -23,7 +22,8 @@ mongoose.connect(config.db.mongodb); // connect to our database
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function() {
-    console.log('Mongoose default connection open to ' + config.db.mongodb);
+    console.log('Mongoose default connection open to ' +
+        config.db.mongodb);
 });
 // If the connection throws an error
 mongoose.connection.on('error', function(err) {
@@ -37,7 +37,8 @@ mongoose.connection.on('disconnected', function() {
 // If the Node process ends, close the Mongoose connection
 process.on('SIGINT', function() {
     mongoose.connection.close(function() {
-        console.log('Mongoose default connection disconnected through app termination');
+        console.log('Mongoose default connection disconnected '+
+            'through app termination');
         process.exit(0);
     });
 });
@@ -46,6 +47,8 @@ process.on('SIGINT', function() {
 require('./app/models/models.js').initialize();
 
 var events = require('./app/events/events.js');
+//
+var app = express(); // define our app using express
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -60,7 +63,9 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(req, res, next) {
-    req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
+    req.query.createdOnBefore = req.query.createdOnBefore ?
+        moment.unix(req.query.createdOnBefore).format() :
+        moment().format();
     req.query.limit = req.query.limit ? req.query.limit : 10;
     next();
 });
@@ -105,7 +110,10 @@ app.use(passport.initialize());
 
 
 // START THE SERVER
-// =============================================================================
+// ======================================================
 app.listen(config.port, config.host, function() {
-    console.log((new Date()) + ' Server is listening on port: ' + config.port + ',host:' + config.host);
+    console.log((new Date()) +
+        ' Server is listening on port: ' +
+        config.port +
+        ',host:' + config.host);
 });

@@ -45,7 +45,7 @@ module.exports = (function() {
             default: 'ROLE_BASICO',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
+                arguments: ['ROLE_SUPER_ADMIN','ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
             })
         },
         school_name: {
@@ -56,17 +56,9 @@ module.exports = (function() {
             default: Date.now
         }
     });
-    UserSchema.methods.authenticate = function(password,cb) {
+    UserSchema.methods.authenticate = function(password) {
         var user = this;
         return bcrypt.compareSync(password, user.password);
-
-        /*, function(err, result) {
-            if (err) {
-                cb(err,null);
-            }
-            console.log('Result:',result);
-            return cb(null,result);
-        });*/
     };
     UserSchema.pre('save', function(next) {
         var user = this;

@@ -1,10 +1,8 @@
 'use strict';
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
-var tokenSecret = 'jajajaja';
+var config = require('./config/config');
 module.exports = function(router) {
-
-
     router({
         name: 'basic_login',
         path: '/'
@@ -37,7 +35,7 @@ module.exports = function(router) {
             }
 
             // We are sending the profile inside the token
-            var token = jwt.sign(user, tokenSecret, {
+            var token = jwt.sign(user, config.tokenSecret, {
                 expiresInMinutes: 60 * 5
             });
 

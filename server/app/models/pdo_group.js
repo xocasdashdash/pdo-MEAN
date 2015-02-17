@@ -78,6 +78,11 @@ module.exports =
             ref: 'User',
             required: false
         },
+        school: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'School',
+            required: false
+        },        
         old_status: {
             type: String,
             required: true,
