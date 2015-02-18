@@ -6,11 +6,17 @@ var logger = require('../../../log/log.js');
 var PdoGroup = mongoose.model('PdoGroup'),
     PdoGroupComment = mongoose.model('PdoGroupComment');
 var unless = require('express-unless');
+var acl = require('../../../auth/acl');
 
 module.exports = function(router) {
     router({
         name: 'create_pdo_group',
-        path: '/'
+        path: '/',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).post(function(req, res) {
         var pdo_group = new PdoGroup(),
             pdo_ids = [];
@@ -35,7 +41,12 @@ module.exports = function(router) {
 
     router({
         name: 'add_pdo_group_comment',
-        path: '/:pdo_group_id/comment'
+        path: '/:pdo_group_id/comment',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         var pdo_group_comment = new PdoGroupComment();
         pdo_group_comment.title = req.body.title;
@@ -97,7 +108,12 @@ module.exports = function(router) {
 
     router({
         name: 'delete_pdo_group_comment',
-        path: '/:pdo_group_id/comment/:comment_id'
+        path: '/:pdo_group_id/comment/:comment_id',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).delete(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
             function(err, pdo_group) {
@@ -156,7 +172,12 @@ module.exports = function(router) {
 
     router({
         name: 'add_pdo_to_group',
-        path: '/:pdo_group_id/pdo'
+        path: '/:pdo_group_id/pdo',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         PdoGroup
             .findById(req.params.pdo_group_id)
@@ -192,7 +213,12 @@ module.exports = function(router) {
 
     router({
         name: 'remove_pdo_from_group',
-        path: '/:pdo_group_id/pdo'
+        path: '/:pdo_group_id/pdo',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).delete(function(req, res) {
         PdoGroup.findOne({
             _id: req.params.pdo_group_id
@@ -232,7 +258,13 @@ module.exports = function(router) {
 
     router({
         name: 'delete_group',
-        path: '/:pdo_group_id'
+        path: '/:pdo_group_id',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
+
     }).delete(function(req, res) {
         PdoGroup.findByIdAndRemove(
             req.params.pdo_group_id, function(err, removedDoc) {
@@ -255,7 +287,12 @@ module.exports = function(router) {
 
     router({
         name: 'change_pdo_group_status',
-        path: '/:pdo_group_id'
+        path: '/:pdo_group_id',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         PdoGroup.findByIdAndUpdate(
             req.params.pdo_group_id, {

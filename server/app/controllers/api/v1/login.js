@@ -1,7 +1,7 @@
 'use strict';
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
-var config = require('./config/config');
+var config = require('../../../../config/config.js');
 module.exports = function(router) {
     router({
         name: 'basic_login',

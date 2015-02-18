@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
+var acl = require('../auth/acl');
 
 module.exports = (function() {
     var UserSchema = new Schema({

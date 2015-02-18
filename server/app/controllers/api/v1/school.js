@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 
 var School = mongoose.model('School');
 var Program = mongoose.model('Program');
+var acl = require('../../../auth/acl');
 
 module.exports = function(router) {
 
@@ -105,7 +106,7 @@ module.exports = function(router) {
     router({
         name: 'edit_school',
         path: '/:school_id'
-    }).patch(function(req, res) {
+    }).put(function(req, res) {
         School.findByIdAndUpdate(
             req.params.school_id, {
                 $set: req.body
