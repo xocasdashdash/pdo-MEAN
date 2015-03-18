@@ -5,16 +5,24 @@ var ee = require('../../../events/emitter.js').ee;
 var logger = require('../../../log/log.js');
 var PdoGroup = mongoose.model('PdoGroup'),
     PdoGroupComment = mongoose.model('PdoGroupComment');
+var unless = require('express-unless');
+var acl = require('../../../auth/acl');
 
 module.exports = function(router) {
     router({
         name: 'create_pdo_group',
-        path: '/'
+        path: '/',
+        middleware: acl({
+            level: 'secured',
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).post(function(req, res) {
         var pdo_group = new PdoGroup(),
             pdo_ids = [];
         pdo_group.title = req.body.title;
         pdo_group.summary = req.body.summary;
+        pdo_group.school = mongoose.Types.ObjectId(req.body.school._id);
         pdo_ids = JSON.parse(req.body.pdos).map(
             function(pdo) {
                 return mongoose.Types.ObjectId(pdo);
@@ -26,14 +34,19 @@ module.exports = function(router) {
                 res.send(err);
                 return;
             }
-            ee.emit('pdo_group:added_to_group',  JSON.parse(req.body.pdos));
+            ee.emit('pdo_group:added_to_group', JSON.parse(req.body.pdos));
             res.send(pdo_group.resource(req.route_gen));
         });
     });
 
     router({
         name: 'add_pdo_group_comment',
-        path: '/:pdo_group_id/comment'
+        path: '/:pdo_group_id/comment',
+        middleware: acl({
+            level: 'secured',
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         var pdo_group_comment = new PdoGroupComment();
         pdo_group_comment.title = req.body.title;
@@ -95,7 +108,12 @@ module.exports = function(router) {
 
     router({
         name: 'delete_pdo_group_comment',
-        path: '/:pdo_group_id/comment/:comment_id'
+        path: '/:pdo_group_id/comment/:comment_id',
+        middleware: acl({
+            level: 'secured',
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).delete(function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id,
             function(err, pdo_group) {
@@ -154,7 +172,12 @@ module.exports = function(router) {
 
     router({
         name: 'add_pdo_to_group',
-        path: '/:pdo_group_id/pdo'
+        path: '/:pdo_group_id/pdo',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         PdoGroup
             .findById(req.params.pdo_group_id)
@@ -190,7 +213,12 @@ module.exports = function(router) {
 
     router({
         name: 'remove_pdo_from_group',
-        path: '/:pdo_group_id/pdo'
+        path: '/:pdo_group_id/pdo',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).delete(function(req, res) {
         PdoGroup.findOne({
             _id: req.params.pdo_group_id
@@ -230,7 +258,13 @@ module.exports = function(router) {
 
     router({
         name: 'delete_group',
-        path: '/:pdo_group_id'
+        path: '/:pdo_group_id',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
+
     }).delete(function(req, res) {
         PdoGroup.findByIdAndRemove(
             req.params.pdo_group_id, function(err, removedDoc) {
@@ -253,7 +287,12 @@ module.exports = function(router) {
 
     router({
         name: 'change_pdo_group_status',
-        path: '/:pdo_group_id'
+        path: '/:pdo_group_id',
+        middleware: acl({
+            secured: true,
+            type: 'pdo_group',
+            id_param: 'pdo_group_id'
+        })
     }).put(function(req, res) {
         PdoGroup.findByIdAndUpdate(
             req.params.pdo_group_id, {
@@ -275,14 +314,16 @@ module.exports = function(router) {
     router({
         name: 'get_pdo_group_statuses',
         path: '/config/statuses'
-    }).get( function(req,res){
+    }).get(function(req, res) {
         var statuses = [];
         statuses.push('STATUS_PENDING');
         statuses.push('STATUS_NOT_RESOLVED');
         statuses.push('STATUS_ATTENDED');
         statuses.push('STATUS_UPCHAINED');
         statuses.push('STATUS_RESOLVED');
-        res.send({statuses: statuses});        
+        res.send({
+            statuses: statuses
+        });
     });
 
 

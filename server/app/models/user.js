@@ -7,9 +7,9 @@ Uses MongoDB for storage and mongoose for data access
 'use strict';
 var mongoose = require('mongoose');
 var validate = require('mongoose-validator');
-var denormalize = require('mongoose-denormalize');
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
+var acl = require('../auth/acl');
 
 module.exports = (function() {
     var UserSchema = new Schema({
@@ -46,7 +46,7 @@ module.exports = (function() {
             default: 'ROLE_BASICO',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
+                arguments: ['ROLE_SUPER_ADMIN','ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
             })
         },
         school_name: {
@@ -57,6 +57,10 @@ module.exports = (function() {
             default: Date.now
         }
     });
+    UserSchema.methods.authenticate = function(password) {
+        var user = this;
+        return bcrypt.compareSync(password, user.password);
+    };
     UserSchema.pre('save', function(next) {
         var user = this;
         if (!user.isModified('password')) {

@@ -4,12 +4,16 @@ var mongoose = require('mongoose');
 
 var School = mongoose.model('School');
 var Program = mongoose.model('Program');
+var acl = require('../../../auth/acl');
 
 module.exports = function(router) {
 
     router({
         name: 'create_school',
-        path: '/'
+        path: '/',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).post(function(req, res) {
         var school = new School();
         school.schoolname = req.body.schoolname;
@@ -104,8 +108,11 @@ module.exports = function(router) {
 
     router({
         name: 'edit_school',
-        path: '/:school_id'
-    }).patch(function(req, res) {
+        path: '/:school_id',
+        middleware: acl({
+            level: 'super_secured'
+        })
+    }).put(function(req, res) {
         School.findByIdAndUpdate(
             req.params.school_id, {
                 $set: req.body
@@ -127,7 +134,10 @@ module.exports = function(router) {
 
     router({
         name: 'delete_school',
-        path: '/:school_id'
+        path: '/:school_id',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).delete(function(req, res) {
         School.findByIdAndRemove(
             req.params.school_id, function(err, removedDoc) {

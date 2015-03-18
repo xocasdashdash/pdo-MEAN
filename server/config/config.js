@@ -13,7 +13,9 @@ module.exports = (function(enviroment) {
                 "level": "debug"
             },
             "host": "xokas-desktop.local",
-            "port": "8081"
+            "port": "8081", 
+            "tokenSecret": "jajajaja",
+            "env" : "dev"
         },
         prod: {
             "db": {
@@ -27,7 +29,9 @@ module.exports = (function(enviroment) {
                 "level": "warn"
             },
             "host": "http://pdo-xocasdasdash.rhcloud.com",
-            "port": "3000"
+            "port": "3000",
+            "tokenSecret": "process.env.XPRESS_SECRET",
+            "env" : "prod"
         }
     };
     for (var propName in config) {
@@ -38,6 +42,7 @@ module.exports = (function(enviroment) {
         config[enviroment].db.mongodb = "mongodb://pdo-db:" + process.env.MONGO_PASSWORD + "@ds039211.mongolab.com:39211/pdo";
         config[enviroment].port = process.env.OPENSHIFT_NODEJS_PORT;
         config[enviroment].host = process.env.OPENSHIFT_NODEJS_IP;
+        config[enviroment].tokenSecret = process.env.XPRESS_SECRET;
         config[enviroment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
         config[enviroment].logger.exception = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/exception.log";
     } else {

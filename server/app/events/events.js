@@ -8,5 +8,4 @@ module.exports = (function(ee) {
     for (var i = 0; i < l; i++) {
         require('./' + events[i]).initialize(ee);
     }
-    logger.debug('Eventos cargados');
 })(emitter.ee);

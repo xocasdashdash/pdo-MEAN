@@ -6,7 +6,6 @@
 var mongoose = require('mongoose');
 var faker = require('faker');
 var data = require('./data.js');
-var async = require('async');
 var _ = require('underscore');
 var bcrypt = require('bcrypt');
 
