@@ -13,7 +13,7 @@ module.exports = function(router) {
         name: 'create_pdo_group',
         path: '/',
         middleware: acl({
-            secured: true,
+            level: 'secured',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })
@@ -43,7 +43,7 @@ module.exports = function(router) {
         name: 'add_pdo_group_comment',
         path: '/:pdo_group_id/comment',
         middleware: acl({
-            secured: true,
+            level: 'secured',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })
@@ -110,7 +110,7 @@ module.exports = function(router) {
         name: 'delete_pdo_group_comment',
         path: '/:pdo_group_id/comment/:comment_id',
         middleware: acl({
-            secured: true,
+            level: 'secured',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })

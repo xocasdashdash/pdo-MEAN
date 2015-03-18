@@ -8,7 +8,7 @@ module.exports = function(router) {
         name: 'create_course',
         path: '/',
         middleware: acl({
-            super_secured: true
+            level: 'super_secured'
         })
     }).post(function(req, res) {
         var course = new Course();
@@ -85,9 +85,9 @@ module.exports = function(router) {
         name: 'edit_course',
         path: '/:course_id',
         middleware: acl({
-            super_secured: true
+            level: 'super_secured'
         })
-    }).patch(function(req, res) {
+    }).put(function(req, res) {
         Course.findByIdAndUpdate(
             req.params.course_id, {
                 $set: req.body
@@ -108,7 +108,7 @@ module.exports = function(router) {
         name: 'delete_course',
         path: '/:course_id',
         middleware: acl({
-            super_secured: true
+            level: 'super_secured'
         })
     }).delete(function(req, res) {
         Course.findByIdAndRemove(

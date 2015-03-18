@@ -5,39 +5,13 @@
   gulp-imagemin gulp-notify gulp-rename gulp-livereload
    gulp-cache del --save-dev
  */
-
+'use strict';
 // Load plugins
 var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
-    minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
-    uglify = require('gulp-uglify'),
-    imagemin = require('gulp-imagemin'),
-    rename = require('gulp-rename'),
-    concat = require('gulp-concat'),
     notify = require('gulp-notify'),
     nodemon = require('gulp-nodemon'),
-    cache = require('gulp-cache'),
-    //livereload = require('gulp-livereload'),
-    del = require('del'),
-    wait = require('gulp-wait'),
     mocha = require('gulp-mocha');
-
-// Styles
-/*
-gulp.task('styles', function() {
-  return gulp.src('src/styles/main.scss')
-    .pipe(sass({ style: 'expanded', }))
-    .pipe(autoprefixer('last 2 version',
-     'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    .pipe(gulp.dest('dist/styles'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(minifycss())
-    .pipe(gulp.dest('dist/styles'))
-    .pipe(notify({ message: 'Styles task complete' }));
-});
-*/
 // Scripts
 gulp.task('scripts', function() {
     return gulp.src('server/**/*.js')
@@ -71,9 +45,8 @@ gulp.task('serve', function() {
             'NODE_ENV': 'development',
             'ENVIROMENT': 'dev'
         },
-        ignore: ['server/test/*', 'node_modules/*'],
+        ignore: ['server/test/*', '*node_modules*','node_modules/*'],
         nodeArgs: ['--debug']
-
     });
 });
 
@@ -100,7 +73,6 @@ gulp.task('test-watch', function() {
 });
 
 // Default task
-
 gulp.task('default', function() {
     gulp.start('scripts');
     gulp.start('watch');

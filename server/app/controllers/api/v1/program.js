@@ -1,15 +1,15 @@
 'use strict';
-
 var mongoose = require('mongoose');
-
 var Program = mongoose.model('Program');
 var Course = mongoose.model('Course');
-
+var acl = require('../../../auth/acl');
 module.exports = function(router) {
-
     router({
         name: 'create_program',
-        path: '/'
+        path: '/',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).post(function(req, res) {
         var program = new Program();
         program.name = req.body.programname;
@@ -22,11 +22,12 @@ module.exports = function(router) {
             res.json(program);
         });
     });
-
-
     router({
         name: 'edit_program',
-        path: '/:program_id/edit'
+        path: '/:program_id/edit',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).put(function(req, res) {
         Program.findById(req.params.program_id, function(err, program) {
             if (err) {
@@ -40,8 +41,7 @@ module.exports = function(router) {
             } else {
                 program.name = req.body.name ? req.body.name : program.name;
                 program.code = req.body.code ? req.body.code : program.code;
-                program.school = req.body.school ?
-                    mongoose.Types.ObjectId(req.body.school) : program.school;
+                program.school = req.body.school ? mongoose.Types.ObjectId(req.body.school) : program.school;
                 program.save(function(err) {
                     if (err) {
                         res.send(err);
@@ -49,10 +49,8 @@ module.exports = function(router) {
                     res.json(program);
                 });
             }
-
         });
     });
-
     router({
         name: 'get_program_courses',
         path: '/:program_id/courses'
@@ -74,10 +72,12 @@ module.exports = function(router) {
             }));
         });
     });
-
     router({
         name: 'get_programs',
-        path: '/'
+        path: '/',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).get(function(req, res) {
         Program.find({}, function(err, programs) {
             if (err) {
@@ -89,15 +89,11 @@ module.exports = function(router) {
                 error.code = 404;
                 res.status(404).send(error);
             }
-
-            res.send(
-                programs.map(function(program) {
-                    return program.resource(req.route_gen);
-                }));
-
+            res.send(programs.map(function(program) {
+                return program.resource(req.route_gen);
+            }));
         });
     });
-
     router({
         name: 'get_program',
         path: '/:program_id'
@@ -115,29 +111,28 @@ module.exports = function(router) {
             res.send(program.resource(req.route_gen));
         });
     });
-
     router({
         name: 'delete_program',
-        path: '/:program_id'
+        path: '/:program_id',
+        middleware: acl({
+            level: 'super_secured'
+        })
     }).get(function(req, res) {
-        Program.findOneAndRemove(
-            req.params.program_id,
-            function(err, removedDoc) {
-                if (err) {
-                    res.send(err);
-                }
-                if (!removedDoc) {
-                    var error = new Error();
-                    error.message = 'Program not found';
-                    error.code = '404';
-                    res.status(404).send(error);
-                }
-                res.status(200).send({
-                    message: 'Removed',
-                    type: 'success',
-                    removedDoc: removedDoc
-                });
-
+        Program.findOneAndRemove(req.params.program_id, function(err, removedProgram) {
+            if (err) {
+                res.send(err);
+            }
+            if (!removedProgram) {
+                var error = new Error();
+                error.message = 'Program not found';
+                error.code = '404';
+                res.status(404).send(error);
+            }
+            res.status(200).send({
+                message: 'Removed',
+                type: 'success',
+                removedProgram: removedProgram
             });
+        });
     });
 };

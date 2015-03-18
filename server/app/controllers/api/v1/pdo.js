@@ -97,7 +97,12 @@ module.exports = function(router) {
 
     router({
         name: 'get_pdo',
-        path: '/:pdo_id'
+        path: '/:pdo_id',
+        middleware: acl({
+            level: 'secured',
+            type: 'pdo',
+            id_param: 'pdo_id'
+        })
     }).get(function(req, res) {
         Pdo.findById(req.params.pdo_id,
             function(err, pdo) {
@@ -120,6 +125,11 @@ module.exports = function(router) {
     router({
         name: 'add_comment_pdo',
         path: '/:pdo_id/comment',
+        middleware: acl({
+            level: 'secured',
+            type: 'pdo',
+            id_param: 'pdo_id'
+        })
     }).put(function(req, res) {
         var pdo_comment = new PdoComment();
         pdo_comment.title = req.body.title;
@@ -161,7 +171,7 @@ module.exports = function(router) {
         name: 'delete_comment_pdo',
         path: '/:pdo_id/comment/:comment_id',
         middleware: acl({
-            secured: true,
+            level: 'secured',
             type: 'pdo',
             id_param: 'pdo_id'
         })
@@ -280,7 +290,7 @@ module.exports = function(router) {
         name: 'reject_pdo',
         path: '/:pdo_id/reject',
         middleware: acl({
-            secured: true,
+            level: 'basic',
             type: 'pdo',
             id_param: 'pdo_id'
         })
@@ -309,9 +319,9 @@ module.exports = function(router) {
         name: 'get_pdo_by_school',
         path: '/school/:school_id',
         middleware: acl({
-            secured: true,
+            level: 'basic',
             type: 'school',
-            id_param: 'school_id'
+            param: 'school_id'
         })
     }).get(function(req, res) {
         var from = req.query.createdOnBefore,
@@ -351,9 +361,12 @@ module.exports = function(router) {
         name: 'get_my_pdos',
         path: '/school',
         middleware: acl({
-            school: true
+            level: 'basic'
         })
     }).get(function(req, res) {
+        //Si es nivel basic y no trae un parametro school_id lo inyecto
+        //en el middleware
+
         var from = req.query.createdOnBefore,
             limit = req.query.limit,
             pdo_filter = {};

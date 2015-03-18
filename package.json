@@ -9,7 +9,6 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "async": "^0.9.0",
     "bcrypt": "^0.8.0",
     "blade": "^3.3.0",
     "body-parser": "~1.0.1",
@@ -19,14 +18,13 @@
     "express-enrouten": "^1.1.1",
     "express-unless": "^0.1.0",
     "express-winston": "^0.2.12",
-    "faker": "^2.0.1",
     "gulp-util": "^3.0.1",
     "hal": "^0.1.0",
     "iconv-lite": "^0.4.4",
     "jsonfile": "^2.0.0",
     "jsonwebtoken": "^3.2.2",
     "moment": "^2.8.4",
-    "mongoose": "~3.6.13",
+    "mongoose": "~3.8.x",
     "mongoose-denormalize": "0.0.1",
     "mongoose-validator": "^1.0.2",
     "nodemailer": "^1.3.0",
