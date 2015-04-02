@@ -28,6 +28,7 @@ var securityLevels = {
 */
 module.exports = function(options) {
     var f = function(req, res, next) {
+        console.log('llamada a acl');
         var token = req.header('Authorization');
         jwt.verify(token, config.tokenSecret, function(err, decoded) {
             //Tiene un token de autorizacion valido

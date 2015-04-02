@@ -183,7 +183,7 @@ describe('Tests de creacion de pdo', function() {
             .expect('Content-Type', /json/)
             .expect(400)
             .then(function(res) {
-                res.body.errors.text.type.should.equal('Text length should be between 50 and 3500 chars');
+                res.body.errors.text.message.should.equal('Text length should be between 50 and 3500 chars');
                 done();
             })
             .
@@ -223,7 +223,7 @@ describe('Tests de creacion de pdo', function() {
             .expect('Content-Type', /json/)
             .expect(400)
             .then(function(res) {
-                res.body.errors.title.type.should.equal('Title length should be more than 10 chars');
+                res.body.errors.title.message.should.equal('Title length should be more than 10 chars');
                 done();
             })
             .

@@ -1,22 +1,17 @@
 'use strict';
 var mongoose = require('mongoose');
-
 require('../app/models/models.js').initialize();
-
 var Pdo = mongoose.model('Pdo');
 var School = mongoose.model('School');
 var Program = mongoose.model('Program');
 var Course = mongoose.model('Course');
 var PdoGroup = mongoose.model('PdoGroup');
 var sprintf = require("sprintf-js").sprintf;
-
 var q = require('q');
-
 describe('Test de grupos de PDOs', function() {
     var school, program, course, created_pdo = [],
         pdo_to_add_later,
         pdo_group_created, created_comment_id;
-
     before(function(done) {
         var prom_array = [];
         mongoose.connect(config.db.mongodb, function(err) {
@@ -57,11 +52,7 @@ describe('Test de grupos de PDOs', function() {
                     pdo.course = course;
                     pdo.title = sprintf("TITULO DEL PDO %d", i);
                     pdo.text = sprintf("TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO %d", i);
-                    prom_array.push(
-                        request(url)
-                        .post('/api/v1/pdo').send(pdo)
-                        .expect('Content-Type', /json/).expect(200)
-                    );
+                    prom_array.push(request(url).post('/api/v1/pdo').send(pdo).expect('Content-Type', /json/).expect(200));
                 }
                 q.all(prom_array).then(function(results) {
                     for (var i = results.length - 1; i >= 0; i--) {
@@ -70,21 +61,18 @@ describe('Test de grupos de PDOs', function() {
                         } else {
                             pdo_to_add_later = results[i].body;
                         }
-
                     }
                     done();
                 }).
                 catch (function(reason) {
                     done(reason);
                 });
-
             }).
             catch (function(reason) {
                 done(reason);
             });
         });
     });
-
     it('should create a pdo_group', function(done) {
         var pdo_group = {}, pdo_group_creado, prom;
         pdo_group.title = 'Titulo del grupo de pdo';
@@ -92,38 +80,28 @@ describe('Test de grupos de PDOs', function() {
         pdo_group.pdos = JSON.stringify(created_pdo.map(function(pdo) {
             return pdo._id;
         }));
-        prom = request(url)
-            .post('/api/v1/pdo_group').send(pdo_group)
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .then(function(result) {
-                pdo_group_created = result.body;
-                pdo_group_created.status.should.equal('STATUS_PENDING');
-                pdo_group_created.title.should.equal(pdo_group.title);
-                pdo_group_created.should.have.property('pdos').with.length(2);
-                pdo_group_created.pdos[0].should.equal(created_pdo[0]._id);
-                done();
-            }, function(reason) {
-                done(reason);
-            });
+        prom = request(url).post('/api/v1/pdo_group').send(pdo_group).expect('Content-Type', /json/).expect(200).then(function(result) {
+            pdo_group_created = result.body;
+            pdo_group_created.status.should.equal('STATUS_PENDING');
+            pdo_group_created.title.should.equal(pdo_group.title);
+            pdo_group_created.should.have.property('pdos').with.length(2);
+            pdo_group_created.pdos[0].should.equal(created_pdo[0]._id);
+            done();
+        }, function(reason) {
+            done(reason);
+        });
         return prom.promise;
     });
-
     it('should add a pdo to a group', function(done) {
         var prom, payload = {};
         payload.pdos = pdo_to_add_later._id;
-        prom = request(url)
-            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo')
-            .send(payload)
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .then(function(result) {
-                pdo_group_created = result.body;
-                pdo_group_created.status.should.equal('STATUS_PENDING');
-                pdo_group_created.should.have.property('pdos').with.length(3);
-                pdo_group_created.pdos[2].should.equal(pdo_to_add_later._id);
-                done();
-            }).
+        prom = request(url).put('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo').send(payload).expect('Content-Type', /json/).expect(200).then(function(result) {
+            pdo_group_created = result.body;
+            pdo_group_created.status.should.equal('STATUS_PENDING');
+            pdo_group_created.should.have.property('pdos').with.length(3);
+            pdo_group_created.pdos[2].should.equal(pdo_to_add_later._id);
+            done();
+        }).
         catch (function(reason) {
             done(reason);
         });
@@ -166,8 +144,7 @@ describe('Test de grupos de PDOs', function() {
             done(reason);
         });
     });*/
-    it('a pdo should have a pdo_group', function(done) {
-
+    it('an added pdo should have a pdo_group', function(done) {
         Pdo.findById(pdo_to_add_later._id, function(err, pdo) {
             if (err) {
                 done(err);
@@ -179,18 +156,11 @@ describe('Test de grupos de PDOs', function() {
             pdo.group_id.toString().should.equal(pdo_group_created._id);
             done();
         });
-
     });
     it('should remove a pdo from a group', function(done) {
         var prom, payload = {};
         payload.pdo_id = pdo_to_add_later._id;
-
-        prom = request(url)
-            .delete('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo')
-            .send(payload)
-            .expect('Content-Type', /json/)
-            .expect(200);
-
+        prom = request(url).delete('/api/v1/pdo_group/' + pdo_group_created._id + '/pdo').send(payload).expect('Content-Type', /json/).expect(200);
         prom.then(function(result) {
             var pdo_group_edited = result.body;
             pdo_group_edited.should.have.property('pdos');
@@ -202,12 +172,10 @@ describe('Test de grupos de PDOs', function() {
         catch (function(reason) {
             done(reason);
         });
-
         return prom;
     });
     it('a pdo should not have a pdo_group', function(done) {
         var pdo_deleted_from_group = pdo_to_add_later;
-
         Pdo.findById(pdo_deleted_from_group._id, function(err, found_pdo) {
             if (err) {
                 done(err);
@@ -218,100 +186,77 @@ describe('Test de grupos de PDOs', function() {
             expect(found_pdo.toObject().group_id).to.be.null;
             done();
         });
-
     });
-
     it('should not add a comment if it doesn\'t have text', function(done) {
         var bad_comment = {};
         bad_comment.title = 'Titulo del comentario ' + faker.random.number();
-        request(url)
-            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
-            .send(bad_comment)
-            .expect('Content-Type', /json/)
-            .expect(400)
-            .then(function(res) {
-                //console.log(res.body);
-                res.body.errors.text.type.should.equal('required');
-                done();
-            })
-            .
+        request(url).put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment').send(bad_comment).expect('Content-Type', /json/).expect(400).then(function(res) {
+            //console.log(res.body);
+            res.body.errors.text.type.should.equal('required');
+            done();
+        }).
         catch (function(reason) {
             console.log(reason);
             done(reason);
         });
     });
-
     it('should not add a comment if it doesn\'t have text of at least 50 chars', function(done) {
         var bad_comment = {};
         bad_comment.title = 'Titulo del comentario ' + faker.random.number();
         bad_comment.text = ' ';
-        request(url)
-            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
-            .send(bad_comment)
-            .expect('Content-Type', /json/)
-            .expect(400)
-            .then(function(res) {
-                res.body.errors.text.type.should.equal('Text length should be between 50 and 3500 chars');
-                done();
-            })
-            .
+        request(url).put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment').send(bad_comment).expect('Content-Type', /json/).expect(400).then(function(res) {
+            res.body.errors.text.message.should.equal('Text length should be between 50 and 3500 chars');
+            done();
+        }).
         catch (function(reason) {
             console.log(reason);
             done(reason);
         });
     });
-
     it('should not add a comment if it doesn\'t have title', function(done) {
         var bad_comment = {};
         bad_comment.title = '';
         bad_comment.text = faker.lorem.paragraphs();
-        request(url)
-            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
-            .send(bad_comment)
-        //.expect('Content-Type', /json/)
-        .expect(400)
-            .then(function(res) {
-                res.body.errors.title.type.should.equal('required');
-                done();
-            })
-            .
+        request(url).
+        put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment').
+        send(bad_comment)
+        .expect('Content-Type', /json/)
+        .expect(400).then(function(res) {
+            res.body.errors.title.type.should.equal('required');
+            done();
+        }).
         catch (function(reason) {
             console.log(reason);
             done(reason);
         });
     });
-
     it('should not add a comment if it doesn\'t have title of at least 10 chars', function(done) {
         var bad_comment = {};
         bad_comment.title = 'Titulo';
         bad_comment.text = faker.lorem.paragraphs();
-        request(url)
-            .put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment')
-            .send(bad_comment)
-            .expect('Content-Type', /json/)
-            .expect(400)
-            .then(function(res) {
-                res.body.errors.title.type.should.equal('Title length should be more than 10 chars');
-                done();
-            })
-            .
+        request(url).
+        put('/api/v1/pdo_group/' + pdo_group_created._id + '/comment').
+        send(bad_comment).
+        expect('Content-Type', /json/).
+        expect(400).
+        then(function(res) {
+            res.body.errors.title.message.should.equal('Title length should be more than 10 chars');
+            done();
+        }).
         catch (function(reason) {
             console.log(reason);
             done(reason);
         });
     });
-
     after(function(done) {
         //Limpieza
         created_pdo.push(pdo_to_add_later);
         q.all(created_pdo.map(function(pdo) {
             return Pdo.findByIdAndRemove(pdo._id).exec();
-        }).push(PdoGroup.findByIdAndRemove(pdo_group_created._id)
-            .exec()))
-            .then(function(result) {
-                mongoose.connection.close();
-                done();
-            }).
+        }).push(PdoGroup.findByIdAndRemove(pdo_group_created._id).exec())).then(function(result) {
+            mongoose.connection.close();
+            done();
+        }).
         catch (function(reason) {
             console.log('NO Borrando...');
             console.log(reason);

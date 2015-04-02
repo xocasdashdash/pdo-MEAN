@@ -53,14 +53,20 @@ app.use(function(req, res, next) {
 app.use(function(req, res, next) {
     req.query.createdOnBefore = req.query.createdOnBefore ? 
         moment.unix(req.query.createdOnBefore).format() : moment().format();
-    req.query.limit = req.query.limit ? req.query.limit : 10;
+    req.query.limit = req.query.limit || 10;
+    
     next();
 });
 //Enable CORS for all routes
 app.use(cors());
 //All the Routes are in the controllers directory
+var fu = function (req, res, next) {
+        console.log('Time:', Date.now());
+        next();
+    };
 app.use(enrouten({
-    directory: 'app/controllers'
+    directory: 'app/controllers',
+    middleware: [fu]
 }));
 //Configure blade for views
 app.set('views', './app/views');

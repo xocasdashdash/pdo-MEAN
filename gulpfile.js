@@ -12,9 +12,10 @@ var gulp = require('gulp'),
     notify = require('gulp-notify'),
     nodemon = require('gulp-nodemon'),
     mocha = require('gulp-mocha');
+var debug = require('gulp-debug');
 // Scripts
 gulp.task('scripts', function() {
-    return gulp.src('server/**/*.js')
+    return gulp.src(['server/app/**/*.js','!./server/app/fixtures/**/*'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(notify({
@@ -46,7 +47,7 @@ gulp.task('serve', function() {
             'ENVIROMENT': 'dev'
         },
         ignore: ['server/test/*', '*node_modules*','node_modules/*'],
-        nodeArgs: ['--debug']
+        nodeArgs: []//['--debug','--debug-brk']
     });
 });
 
@@ -61,7 +62,8 @@ gulp.task('test', function() {
                 should: require('./server/test/config-mocha')
             },
             bail:true,
-            timeout: 2000
+            timeout: 2000,
+            slow: 1
         })).pipe(notify({
             message: 'Scripts testeados',
             onLast: true
