@@ -5,7 +5,6 @@ var ee = require('../../../events/emitter.js').ee;
 var logger = require('../../../log/log.js');
 var PdoGroup = mongoose.model('PdoGroup'),
     PdoGroupComment = mongoose.model('PdoGroupComment');
-var unless = require('express-unless');
 var acl = require('../../../auth/acl');
 module.exports = function(router) {
     router({
