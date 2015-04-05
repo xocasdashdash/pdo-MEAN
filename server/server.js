@@ -18,7 +18,9 @@ mongoose.connect(config.db.mongodb); // connect to our database
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function() {
-    logger.log('Mongoose default connection open to %s,  Using version :%s ' ,config.db.mongodb, mongoose.version, {date: new Date()});
+    logger.log('Mongoose default connection open to %s,  Using version :%s ', config.db.mongodb, mongoose.version, {
+        date: new Date()
+    });
 });
 // If the connection throws an error
 mongoose.connection.on('error', function(err) {
@@ -51,22 +53,15 @@ app.use(function(req, res, next) {
     next();
 });
 app.use(function(req, res, next) {
-    req.query.createdOnBefore = req.query.createdOnBefore ? 
-        moment.unix(req.query.createdOnBefore).format() : moment().format();
+    req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
     req.query.limit = req.query.limit || 10;
-    
     next();
 });
 //Enable CORS for all routes
 app.use(cors());
 //All the Routes are in the controllers directory
-var fu = function (req, res, next) {
-        console.log('Time:', Date.now());
-        next();
-    };
 app.use(enrouten({
-    directory: 'app/controllers',
-    middleware: [fu]
+    directory: 'app/controllers'
 }));
 //Configure blade for views
 app.set('views', './app/views');
@@ -99,5 +94,7 @@ app.use(passport.initialize());
 // START THE SERVER
 // ======================================================
 app.listen(config.port, config.host, function() {
-    logger.log('Server is listening on port: %s, host %s ', config.port, config.host, {date: new Date()});
+    logger.log('Server is listening on port: %s, host %s ', config.port, config.host, {
+        date: new Date()
+    });
 });

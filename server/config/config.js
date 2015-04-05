@@ -1,6 +1,6 @@
 'use strict';
 var os = require('os');
-module.exports = (function(enviroment) {
+module.exports = (function(environment) {
     var config = {
         dev: {
             "db": {
@@ -37,16 +37,16 @@ module.exports = (function(enviroment) {
     for (var propName in config) {
         config[propName].url = config[propName].host + ":" + config[propName].port;
     }
-    if (enviroment === "prod") {
+    if (environment === "prod") {
         console.log('Cargando entorno de producción[OPENSHIFT]');
-        config[enviroment].db.mongodb = "mongodb://pdo-db:" + process.env.MONGO_PASSWORD + "@ds039211.mongolab.com:39211/pdo";
-        config[enviroment].port = process.env.OPENSHIFT_NODEJS_PORT;
-        config[enviroment].host = process.env.OPENSHIFT_NODEJS_IP;
-        config[enviroment].tokenSecret = process.env.XPRESS_SECRET;
-        config[enviroment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
-        config[enviroment].logger.exception = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/exception.log";
+        config[environment].db.mongodb = "mongodb://pdo-db:" + process.env.MONGO_PASSWORD + "@ds039211.mongolab.com:39211/pdo";
+        config[environment].port = process.env.OPENSHIFT_NODEJS_PORT;
+        config[environment].host = process.env.OPENSHIFT_NODEJS_IP;
+        config[environment].tokenSecret = process.env.XPRESS_SECRET;
+        config[environment].logger.api = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/api.log";
+        config[environment].logger.exception = "/var/lib/openshift/54cba74be0b8cd26ba0001a0/app-root/logs/exception.log";
     } else {
-        console.log('Cargando entorno de desarollo:', enviroment);
+        console.log('Cargando entorno de desarollo:', environment);
         config.dev.host = os.hostname() + '.local';
     }
     return (function(env) {
@@ -56,6 +56,6 @@ module.exports = (function(enviroment) {
         } else {
             return config.dev;
         }
-    })(enviroment);
+    })(environment);
 
-})(process.env.ENVIROMENT);
+})(process.env.ENVIRONMENT);

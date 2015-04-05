@@ -26,4 +26,11 @@ module.exports = function(router) {
     }).post(function(req, res, next) {
         LoginService.login(req,res,next);
     });
+
+    router({
+        name: 'logout',
+        path: '/logout'
+    }).all(function (req,res,next) {
+        LoginService.logout(req,res,next);
+    });
 };

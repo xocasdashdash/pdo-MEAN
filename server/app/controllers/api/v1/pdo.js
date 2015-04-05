@@ -15,6 +15,7 @@ module.exports = function(router) {
             res.send(newPdo.resource(req.route_gen));
         }).
         catch (function(reason) {
+            logger.error('Reason',reason);
             if (reason.code) {
                 res.status(reason.code).send(reason);
             } else {
@@ -22,16 +23,14 @@ module.exports = function(router) {
             }
         });
     });
-
     router({
         name: 'add_comment_pdo',
-        path: '/:pdo_id/comment',
-        middleware: acl({
-            level: 'secured',
-            type: 'pdo',
-            id_param: 'pdo_id'
-        })
-    }).put(function(req, res) {
+        path: '/:pdo_id/comment'
+    }).put(acl({
+        level: 'basic',
+        type: 'pdo',
+        id_param: 'pdo_id'
+    }), function(req, res) {
         PdoService.addCommentToPDO(req.params.pdo_id, req.body).
         then(function(newPdo) {
             res.send(newPdo.resource(req.route_gen));
@@ -102,7 +101,6 @@ module.exports = function(router) {
             }
         });
     });
-    
     router({
         name: 'get_pdo_by_school',
         path: '/school/:school_id?',
@@ -112,7 +110,6 @@ module.exports = function(router) {
             param: 'school_id'
         })
     }).get(function(req, res) {
-
         var from = req.query.createdOnBefore;
         var limit = req.query.limit;
         var pdo_filter = {};
@@ -123,16 +120,16 @@ module.exports = function(router) {
         if (req.query.status_filter) {
             pdo_filter.status = req.query.status_filter;
         }
-        PdoService.filterPdoBySchool(limit,pdo_filter).
-        then(function(pdos){
-            res.send(pdos.map(function (pdo) {
+        PdoService.filterPdoBySchool(limit, pdo_filter).
+        then(function(pdos) {
+            res.send(pdos.map(function(pdo) {
                 return pdo.resource(req.route_gen);
             }));
         }).
-        catch(function (reason) {
-            if(reason.code){
+        catch (function(reason) {
+            if (reason.code) {
                 res.status(reason.code).send(reason);
-            }else{
+            } else {
                 res.status(400).send(reason);
             }
         });
@@ -140,7 +137,9 @@ module.exports = function(router) {
     router({
         name: 'get_my_pdos',
         path: '/myschool'
-    }).get(acl({level: 'basic'}),function(req, res) {
+    }).get(acl({
+        level: 'basic'
+    }), function(req, res) {
         //Si es nivel basic y no trae un parametro school_id lo inyecto
         //en el middleware
         var from = req.query.createdOnBefore,
@@ -149,7 +148,6 @@ module.exports = function(router) {
         pdo_filter.created_on = {
             $lte: from
         };
-        console.log('a');
         //Filtro por los PDo a los que tiene acceso el usuario
         //Si es super-admin puede ver todos
         //Si es local-admin puede ver los de un centro
@@ -177,7 +175,6 @@ module.exports = function(router) {
             return;
         });*/
     });
-
     router({
         name: 'get_pdo',
         path: '/:pdo_id',

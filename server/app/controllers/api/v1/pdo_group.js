@@ -9,16 +9,13 @@ var acl = require('../../../auth/acl');
 module.exports = function(router) {
     router({
         name: 'create_pdo_group',
-        path: '/',
-        middleware: acl({
-            level: 'secured',
-            type: 'pdo_group',
-            id_param: 'pdo_group_id'
-        })
-    }).post(function(req, res) {
+        path: '/'
+    }).post(acl({
+        level: 'basic',
+        type: 'pdo_group'
+    }), function(req, res) {
         var pdo_group = new PdoGroup();
         var pdo_ids = [];
-
         pdo_group.title = req.body.title;
         pdo_group.summary = req.body.summary;
         if (req.body.school) {
@@ -29,23 +26,21 @@ module.exports = function(router) {
         });
         pdo_group.save(function(err, pdo_group) {
             if (err) {
-                res.json(err);
-                return;
+                res.send(err);
+            } else {
+                res.send(pdo_group.resource(req.route_gen));
+                //ee.emit('pdo_group:added_to_group', JSON.parse(req.body.pdos));
             }
-            console.log('here');
-            ee.emit('pdo_group:added_to_group', JSON.parse(req.body.pdos));
-            res.json(pdo_group.resource(req.route_gen));
         });
     });
     router({
         name: 'add_pdo_group_comment',
-        path: '/:pdo_group_id/comment',
-        middleware: acl({
-            level: 'secured',
-            type: 'pdo_group',
-            id_param: 'pdo_group_id'
-        })
-    }).put(function(req, res) {
+        path: '/:pdo_group_id/comment'
+    }).put(acl({
+        level: 'basic',
+        type: 'pdo_group',
+        id_param: 'pdo_group_id'
+    }), function(req, res) {
         var pdo_group_comment = new PdoGroupComment();
         pdo_group_comment.title = req.body.title;
         pdo_group_comment.text = req.body.text;
@@ -61,6 +56,7 @@ module.exports = function(router) {
                         return;
                     }
                     if (!pdo_group) {
+                        console.log('Pdo No encontrado');
                         var error = new Error();
                         error.message = 'Pdo group not found';
                         error.code = 404;
@@ -96,13 +92,12 @@ module.exports = function(router) {
     });
     router({
         name: 'delete_pdo_group_comment',
-        path: '/:pdo_group_id/comment/:comment_id',
-        middleware: acl({
-            level: 'secured',
-            type: 'pdo_group',
-            id_param: 'pdo_group_id'
-        })
-    }).delete(function(req, res) {
+        path: '/:pdo_group_id/comment/:comment_id'
+    }).delete(acl({
+        level: 'basic',
+        type: 'pdo_group',
+        id_param: 'pdo_group_id'
+    }), function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id, function(err, pdo_group) {
             if (err) {
                 res.send(err);
@@ -155,13 +150,12 @@ module.exports = function(router) {
     });
     router({
         name: 'add_pdo_to_group',
-        path: '/:pdo_group_id/pdo',
-        middleware: acl({
-            secured: true,
-            type: 'pdo_group',
-            id_param: 'pdo_group_id'
-        })
-    }).put(function(req, res) {
+        path: '/:pdo_group_id/pdo'
+    }).put(acl({
+        level: 'basic',
+        type: 'pdo_group',
+        id_param: 'pdo_group_id'
+    }), function(req, res) {
         PdoGroup.findById(req.params.pdo_group_id).exec().then(function(pdo_group) {
             if (!pdo_group) {
                 var error = new Error();
@@ -193,7 +187,7 @@ module.exports = function(router) {
         name: 'remove_pdo_from_group',
         path: '/:pdo_group_id/pdo',
         middleware: acl({
-            secured: true,
+            level: 'basic',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })
@@ -235,7 +229,7 @@ module.exports = function(router) {
         name: 'delete_group',
         path: '/:pdo_group_id',
         middleware: acl({
-            secured: true,
+            level: 'basic',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })
@@ -261,7 +255,7 @@ module.exports = function(router) {
         name: 'change_pdo_group_status',
         path: '/:pdo_group_id',
         middleware: acl({
-            secured: true,
+            level: 'basic',
             type: 'pdo_group',
             id_param: 'pdo_group_id'
         })

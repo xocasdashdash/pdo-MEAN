@@ -44,16 +44,16 @@ gulp.task('serve', function() {
         'script': 'server/server.js',
         env: {
             'NODE_ENV': 'development',
-            'ENVIROMENT': 'dev'
+            'ENVIRONMENT': 'dev'
         },
         ignore: ['server/test/*', '*node_modules*','node_modules/*'],
-        nodeArgs: []//['--debug','--debug-brk']
+        nodeArgs: ['--debug']
     });
 });
 
 gulp.task('test', function() {
 
-    return gulp.src(['server/test/test-*.js'], {
+    return gulp.src(['server/test/**/test*.js'], {
         read: false
     })
         .pipe(mocha({

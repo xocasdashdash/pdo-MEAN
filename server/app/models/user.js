@@ -1,6 +1,4 @@
 /**
-
-
 * DataModel of the app. 
 Uses MongoDB for storage and mongoose for data access
 */
@@ -10,7 +8,6 @@ var validate = require('mongoose-validator');
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 var acl = require('../auth/acl');
-
 module.exports = (function() {
     var UserSchema = new Schema({
         username: {
@@ -24,7 +21,7 @@ module.exports = (function() {
             unique: true,
             validate: validate({
                 validator: 'isEmail',
-                message: 'Tiene que se un e-mail valido'
+                message: 'Tiene que ser un e-mail valido'
             })
         },
         password: {
@@ -46,7 +43,7 @@ module.exports = (function() {
             default: 'ROLE_BASICO',
             validator: validate({
                 validator: 'isIn',
-                arguments: ['ROLE_SUPER_ADMIN','ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
+                arguments: ['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_BASICO']
             })
         },
         school_name: {
@@ -80,5 +77,4 @@ module.exports = (function() {
         });
     });
     mongoose.model('User', UserSchema);
-
 }());

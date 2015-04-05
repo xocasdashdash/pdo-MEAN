@@ -234,7 +234,6 @@ PdoService.rejectPDo = function(pdoId) {
             error.code = 404;
             defer.reject(error);
         } else {
-            logger.debug('Pdo rechazado: (%s)', pdo.status);
             defer.resolve(pdo);
         }
     });
@@ -247,13 +246,51 @@ PdoService.filterPdoBySchool = function(limit, pdoFilter) {
     exec().
     then(function(pdos) {
         logger.debug('Encontrados (%d) Pdos', pdos.length);
-        if(!pdos){
+        if (!pdos) {
             defer.resolve([]);
-        }else{
+        } else {
             defer.resolve(pdos);
         }
     }, function(err) {
         defer.reject(err);
+    });
+    return defer.promise;
+};
+PdoService.checkAccess = function(pdo_id, user_profile) {
+    var defer = q.defer();
+    Pdo.findById(pdo_id, function(err, pdo) {
+        if (err) {
+            defer.reject(err);
+            return;
+        }
+        if (!pdo) {
+            var pdo_not_found_error = new Error();
+            pdo_not_found_error.message = 'Not foundP';
+            pdo_not_found_error.code = 400;
+            defer.reject(pdo_not_found_error);
+            return;
+        }
+        School.findById(pdo.school, function(err, school) {
+            var toUp =function(e) {
+                return e.toUpperCase();
+            }; 
+            if (err) {
+                defer.reject(err);
+            }else if (!school) {
+                var school_not_found_error = new Error();
+                school_not_found_error.message = 'Not foundS';
+                school_not_found_error.code = 400;
+                defer.reject(school_not_found_error);
+            } else if (user_profile.school_name.map(toUp).indexOf(school.schoolname.toUpperCase()) !== -1) {
+                defer.resolve('Found!');
+            } else {
+                logger.debug('Not found :(');
+                var unauthorized_access = new Error();
+                unauthorized_access.message = 'Not found';
+                unauthorized_access.code = 400;
+                defer.reject(unauthorized_access);
+            }
+        });
     });
     return defer.promise;
 };
