@@ -113,6 +113,9 @@ module.exports =
             this.pdos.push(pdo_id);
         }
     };
+    PdoGroupSchema.methods.whoAmI = function(){
+        return 'PdoGroupSchema';
+    };
 
     PdoGroupSchema.methods.getStatusMessage = function() {
         var messages = {};

@@ -5,7 +5,7 @@ var Course = mongoose.model('Course'),
 var logger = require('../log/log.js');
 var CourseService = {};
 var q = require('q');
-CourseService.createCourse = function(newCourseData, programData, callback) {
+CourseService.createCourse = function(newCourseData, programData) {
     var course = new Course();
     var defer = q.defer();
     course.name = newCourseData.name;
@@ -37,7 +37,6 @@ CourseService.createCourse = function(newCourseData, programData, callback) {
     return defer.promise;
 };
 CourseService.findCourses = function(optionalLimit, optionalStartTime, optionalSortCriteria) {
-    var courses = [];
     var limit = optionalLimit || 10;
     var sortCriteria = optionalSortCriteria || '-createdOn';
     var from = optionalStartTime || Math.floor(Date.now() / 1000);

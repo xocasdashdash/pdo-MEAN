@@ -1,6 +1,4 @@
 'use strict';
-var jwt = require('jsonwebtoken');
-var config = require('../../../../config/config.js');
 var LoginService = require('../../../services/login.js');
 module.exports = function(router) {
     router({

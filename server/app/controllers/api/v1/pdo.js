@@ -1,6 +1,5 @@
 'use strict';
 var mongoose = require('mongoose');
-var q = require('q');
 var logger = require('../../../log/log.js');
 var acl = require('../../../auth/acl');
 var PdoService = require('../../../services/pdo.js');
@@ -31,7 +30,7 @@ module.exports = function(router) {
         type: 'pdo',
         id_param: 'pdo_id'
     }), function(req, res) {
-        PdoService.addCommentToPDO(req.params.pdo_id, req.body).
+        PdoService.addCommentToPDo(req.params.pdo_id, req.body).
         then(function(newPdo) {
             res.send(newPdo.resource(req.route_gen));
         }).
@@ -91,7 +90,7 @@ module.exports = function(router) {
     }).put(function(req, res) {
         PdoService.rejectPDo(req.params.pdo_id).
         then(function(pdo) {
-            res.json(pdo.resource(req.route_gen));
+            res.send(pdo.resource(req.route_gen));
         }).
         catch (function(reason) {
             if (reason.code) {
@@ -184,7 +183,6 @@ module.exports = function(router) {
             id_param: 'pdo_id'
         })
     }).get(function(req, res) {
-        console.log('aqu');
         PdoService.getPdo(req.params.pdo_id).
         then(function(pdo) {
             res.send(pdo.resource(req.route_gen));

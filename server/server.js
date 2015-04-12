@@ -11,7 +11,7 @@ var moment = require('moment');
 var config = require('./config/config');
 var logger = require('./app/log/log.js');
 var cors = require('cors');
-var blade = require('blade');
+//var blade = require('blade');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 mongoose.connect(config.db.mongodb); // connect to our database
@@ -38,7 +38,7 @@ process.on('SIGINT', function() {
     });
 });
 require('./app/models/models.js').initialize();
-var events = require('./app/events/events.js');
+require('./app/events/events.js');
 //
 var app = express(); // define our app using express
 // configure app to use bodyParser()
@@ -59,6 +59,11 @@ app.use(function(req, res, next) {
 });
 //Enable CORS for all routes
 app.use(cors());
+//JSON Middleware Server
+app.use(function(req, res, next) {
+  //res.contentType('application/json');
+  next();
+});
 //All the Routes are in the controllers directory
 app.use(enrouten({
     directory: 'app/controllers'

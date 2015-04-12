@@ -13,8 +13,8 @@ var securityLevels = {
 };
 var logger = require('../log/log');
 var PdoService = false;
-var PdoGroupService = false; 
-var SchoolService = false;
+/*var PdoGroupService = false; 
+var SchoolService = false;*/
 /**
  * ROLE_SUPER_ADMIN: Puede dar de alta usuarios, escuelas, titulaciones y cursos
  * ROLE_ADMIN: Puede interactuar con todos los PDO y PDOGroup
@@ -69,6 +69,7 @@ module.exports = function(options) {
                     next();
                 }
             } else if (options.level === securityLevels.basic) {
+
                 if (roles[securityLevels.basic].indexOf(role) === -1) {
                     var error_basic = new Error();
                     error_basic.message = 'Not authorized';
@@ -82,7 +83,7 @@ module.exports = function(options) {
                         }
                         PdoService.
                         checkAccess(req.params[options.id_param], userProfile).
-                        then(function(resolved) {
+                        then(function() {
                             next();
                         }).
                         catch (function(reason) {

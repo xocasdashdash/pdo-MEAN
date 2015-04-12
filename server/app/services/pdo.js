@@ -81,10 +81,9 @@ PdoService.createPDo = function(pdo) {
     });
     return defer.promise;
 };
-PdoService.addCommentToPDO = function addCommentToPDO(pdoId, pdoComment) {
+PdoService.addCommentToPDo = function (pdoId, pdoComment) {
     var new_pdo_comment = new PdoComment();
     var defer = q.defer();
-    var error_not_valid;
     new_pdo_comment.title = pdoComment.title;
     new_pdo_comment.text = pdoComment.text;
     new_pdo_comment.validate(function(err) {
@@ -102,7 +101,6 @@ PdoService.addCommentToPDO = function addCommentToPDO(pdoId, pdoComment) {
                     error.code = 404;
                     defer.reject(error);
                 } else {
-                    logger.debug('**COMMENTS**', pdo.comments.length);
                     defer.resolve(pdo);
                 }
             });

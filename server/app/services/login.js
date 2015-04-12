@@ -9,7 +9,7 @@ LoginService.login = function(req, res, next) {
             return next(err);
         }
         if (!user) {
-            return res.json(401, {
+            return res.send(401, {
                 error: 'Bad credentials'
             });
         }
@@ -17,15 +17,13 @@ LoginService.login = function(req, res, next) {
         var token = jwt.sign(user, config.tokenSecret, {
             expiresInMinutes: 60 * 60 * 5
         });
-        res.json({
+        res.send({
             token: token
         });
     })(req, res, next);
 };
-
-LoginService.logout = function (req,res,next) {
+LoginService.logout = function(req) {
     req.logout();
-    req.session.destroy(); 
+    req.session.destroy();
 };
-
 module.exports = LoginService;
