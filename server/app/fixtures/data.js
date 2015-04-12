@@ -5,8 +5,18 @@ Los datos sacados de la web tienen dos duplicados (G500 y G550) asi que les he p
 
 module.exports = {
     Users: [{
-        "username": "joaquin.fernandez@uah.es",
-        "email": "joaquin.fernandez@edu.uah.es",
+        "username": "joaquin.fernandez+superAdmin@uah.es",
+        "email": "joaquin.fernandez+superAdmin@edu.uah.es",
+        "password": "1234",
+        "role": "ROLE_SUPER_ADMIN"
+    },{
+        "username": "joaquin.fernandez+schoolManager@uah.es",
+        "email": "joaquin.fernandez+schoolManager@edu.uah.es",
+        "password": "1234",
+        "role": "ROLE_GESTOR"
+    },{
+        "username": "joaquin.fernandez+admin@uah.es",
+        "email": "joaquin.fernandez+admin@edu.uah.es",
         "password": "1234",
         "role": "ROLE_ADMIN"
     }],

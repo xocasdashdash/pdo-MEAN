@@ -1,7 +1,5 @@
 'use strict';
-var passport = require('passport');
-var jwt = require('jsonwebtoken');
-var config = require('../../../../config/config.js');
+var LoginService = require('../../../services/login.js');
 module.exports = function(router) {
     router({
         name: 'basic_login',
@@ -24,25 +22,13 @@ module.exports = function(router) {
         name: 'login',
         path: '/'
     }).post(function(req, res, next) {
-        passport.authenticate('local', function(err, user) {
-            if (err) {
-                return next(err);
-            }
-            if (!user) {
-                return res.json(401, {
-                    error: 'Bad credentials'
-                });
-            }
+        LoginService.login(req,res,next);
+    });
 
-            // We are sending the profile inside the token
-            var token = jwt.sign(user, config.tokenSecret, {
-                expiresInMinutes: 60 * 5
-            });
-
-            res.json({
-                token: token
-            });
-
-        })(req, res, next);
+    router({
+        name: 'logout',
+        path: '/logout'
+    }).all(function (req,res,next) {
+        LoginService.logout(req,res,next);
     });
 };

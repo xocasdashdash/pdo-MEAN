@@ -1,5 +1,4 @@
 'use strict';
-var jwt = require('jsonwebtoken');
 var config = require('./config/config');
 var expressJwt = require('express-jwt');
 

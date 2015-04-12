@@ -67,7 +67,7 @@ module.exports = (function() {
             return deferred.promise;
         });
 
-        q.all(prom_array).then(function(value) {
+        q.all(prom_array).then(function() {
             next();
         }, function(reason) {
             next(reason);

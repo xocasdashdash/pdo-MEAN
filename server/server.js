@@ -11,14 +11,16 @@ var moment = require('moment');
 var config = require('./config/config');
 var logger = require('./app/log/log.js');
 var cors = require('cors');
-var blade = require('blade');
+//var blade = require('blade');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 mongoose.connect(config.db.mongodb); // connect to our database
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function() {
-    logger.log('Mongoose default connection open to %s,  Using version :%s ' ,config.db.mongodb, mongoose.version, {date: new Date()});
+    logger.log('Mongoose default connection open to %s,  Using version :%s ', config.db.mongodb, mongoose.version, {
+        date: new Date()
+    });
 });
 // If the connection throws an error
 mongoose.connection.on('error', function(err) {
@@ -36,7 +38,7 @@ process.on('SIGINT', function() {
     });
 });
 require('./app/models/models.js').initialize();
-var events = require('./app/events/events.js');
+require('./app/events/events.js');
 //
 var app = express(); // define our app using express
 // configure app to use bodyParser()
@@ -51,13 +53,17 @@ app.use(function(req, res, next) {
     next();
 });
 app.use(function(req, res, next) {
-    req.query.createdOnBefore = req.query.createdOnBefore ? 
-        moment.unix(req.query.createdOnBefore).format() : moment().format();
-    req.query.limit = req.query.limit ? req.query.limit : 10;
+    req.query.createdOnBefore = req.query.createdOnBefore ? moment.unix(req.query.createdOnBefore).format() : moment().format();
+    req.query.limit = req.query.limit || 10;
     next();
 });
 //Enable CORS for all routes
 app.use(cors());
+//JSON Middleware Server
+app.use(function(req, res, next) {
+  //res.contentType('application/json');
+  next();
+});
 //All the Routes are in the controllers directory
 app.use(enrouten({
     directory: 'app/controllers'
@@ -93,5 +99,7 @@ app.use(passport.initialize());
 // START THE SERVER
 // ======================================================
 app.listen(config.port, config.host, function() {
-    logger.log('Server is listening on port: %s, host %s ', config.port, config.host, {date: new Date()});
+    logger.log('Server is listening on port: %s, host %s ', config.port, config.host, {
+        date: new Date()
+    });
 });
